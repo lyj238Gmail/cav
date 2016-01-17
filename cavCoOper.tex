@@ -1,0 +1,517 @@
+\documentclass{llncs}
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%   PACKAGES   %%%%
+%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{makeidx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{latexsym}
+\usepackage{url}
+\usepackage{color}
+\usepackage{isabelle}
+\usepackage{isabellesym}
+\usepackage{theorem}
+\usepackage{algorithmic}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+%\usepackage{program}
+\usepackage{cases}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%For Isabelle code
+\newlength{\fminilength}
+\newsavebox{\fminibox}
+\newenvironment{fmini}[1][\linewidth]
+  {\setlength{\fminilength}{#1\fboxsep-2\fboxrule}%
+   \vspace{2ex}\noindent\begin{lrbox}{\fminibox}\begin{minipage}{\fminilength}%
+   \mbox{ }\hfill\vspace{-2.5ex}}%
+  {\end{minipage}\end{lrbox}\vspace{1ex}\hspace{0ex}%
+   \framebox{\usebox{\fminibox}}}
+
+\newenvironment{specification}
+{\noindent\scriptsize
+\tt\begin{fmini}\begin{tabbing}X\=X12345\=XXXX\=XXXX\=XXXX\=XXXX\=XXXX
+\=\+\kill} {\end{tabbing}\normalfont\end{fmini}}
+\def \twoSpaces {\ \ }
+\def \oneSpace {\ }
+\def \eqc {\doteq }
+\def \andc {\barwedge }
+\def \negc {!}
+\def \orc {\veebar }
+\def \alt {$/\backslash$ }
+\def \cat {\symbol{94}}
+
+\def \dbRight {$\backslash\backslash$}
+\def \iInv {iInv}
+\def \iR {iR}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for comments
+\newcommand\JP[1]{\textcolor{magenta}{JP: #1}}
+\newcommand\lyj[1]{\textcolor{green}{lyj: #1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Additional math operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[colorlinks,
+            linkcolor=black,
+            anchorcolor=black,
+            citecolor=blue,
+            urlcolor=black,
+            bookmarks=true
+            ]{hyperref}
+
+\input{tcilatex}
+
+%=========================================
+\begin{document}
+
+\title{ {\sf A Novel Approach to Parameterized verification of Cache Coherence Protocols}}
+\titlerunning{A Novel Approach to Parameterized verification of Cache Coherence Protocols}
+\author{~}
+\authorrunning{~}
+\institute{~}
+
+\maketitle
+\vspace{-2.6cm}
+%-------------------------------------------------------------------------
+\begin{abstract}
+%-------------------------------------------------------------------------
+Parameterized verification of parameterized protocols like cache coherence protocols is important
+but hard.   Our tool {\sf paraVerifier} handles this hard problem in
+a unified framework: (1) it automatically  discovers auxiliary invariants and the
+corresponding causal relations %between invariants and rules
+ from a small reference instance of the verified protocol; (2) the above
+invariants and causal relation information  can be also  automatically generalized into a parameterized
+form to construct a formally parameterized proof in a theorem prover
+(e.g., Isabelle). The principle underlying the generalization is the
+symmetry mapping. Our method is successfully applied to typical
+benchmarks including  snoopy-based and directory-based. Another novel
+feature of our method lies in that the last verification result of a
+protocol is provided by a formally readable proof.% in a theorem
+%prover like Isabelle.
+
+%-------------------------------------------------------------------------
+\end{abstract}
+%-------------------------------------------------------------------------
+%-------------------------------------------------------------------------
+\vspace{-1.5cm}
+\section{Introduction }
+%-------------------------------------------------------------------------
+%=========================================
+Verification of parameterized concurrent systems is interesting in
+the area of formal methods, mainly due to the practical importance
+of such systems. Parameterized systems exist in many important
+application areas: cache coherence protocols, security systems, and
+network communication protocols, \emph{etc}. %In this work, we will
+%focus on cache coherence protocols, which play a key role in modern
+%computer architectures. They require complex algorithms that must
+%deal with asynchrony, unpredictable message delays, and multiple
+%communication paths between many clients. Therefore, the highest
+%possible assurance for the correctness of these complex
+%parameterized systems should be guaranteed by formal reasoning
+%techniques.
+The real challenge posed by parameterized verification is that the
+desired properties should hold in any instance of the parameterized
+system, not just for a single protocol instance. Model checking is
+automatical but able to verify just an instance of the parameterized
+ system. The correctness of the reference instance  does
+not formally suffice to conclude the correctness for all instances.
+Due to the extreme importance of many parameterized system, it is
+preferable to have a proof that the correctness holds for any
+instance.
+
+\paragraph*{Related Work} There have been a lot of research papers in the field of  parameterized
+verification~\cite{Pnueli1996,Bj√∏rner1997,Arons2001,Pnueli2001,Tiwari2001,Chou2004,Pandav2005,Lv2007,cubicle2011}.
+Among them, the `invisible invariants' method, proposed in~\cite{Arons2001},
+is an automatic technique for parameterized verification. In this
+method, auxiliary invariants are computed in a finite system
+instance to aid inductive invariant checking.  % Work~\cite{Arons2001,Lv2007} attempts to automatically
+%find invariants. However, the invisible invariants are raw boolean formulas transferred from the reachable sate set of a small finite instance
+%of a protocol, which are BDDs computed by TLV (an variant of BDD\_based SMV model checker). They are too raw to have an intuitive meanings. The capacity of the invisible invariant method is seriously limited when computing the reachable  set of invisible invariants for  the inductive checking is not feasible in the case of a large example like FLASH . Until now, the  examples, which can be handled by the "invisible invariant" method, are quite small,  we still can't find successful experiments  on large examples like FLASH with data paths.
+The CMP method, which adopts parameter abstraction and guard strengthening, is proposed
+in~\cite{Chou2004} for verifying a safety property $inv$ of
+a parameterized system.
+ An abstract instance of the parameterized protocol %$, % which consists of m + 1
+%nodes $\{P_1, \ldots , P_m, P^*\}$ with $m$ normal nodes and one
+%abstract node $P^*$, is constructed iteratively. The abstract system
+is constructed by a counter-example-guided refinement process.  %However, this method's soundness is only argued in an
+informal way. %To the best of our knowledge, no one has
+%formally proved its correctness in a theorem prover although the authors argued for a mechanized proof for all the thing of CMP in \cite{Chou2004}. Besides, the analysis of counter-example and generation of new auxiliary invariants usually
+% depend on human's deep insightful understanding of the protocol. It is too laborious for people to do these analysis. %and some effective automatic  tool is needed to help people.
+%It was demonstrated in
+%[7] that this method is powerful enough to handle complex
+%cache coherence protocols such as FLASH effectively.
+
+
+
+
+
+The degree of scalability and automatic is the most important of all to estimate an approach in the field of parameterized verification. For instance, FLASH is a hard real-world benchmark for any proposed method for parameterized verification. Human guidance still plays a key role in the existing successful verification for FLASH in \cite{Park1996a,McMillan2001,Chou2004} up to now.%: °∞if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols°± \cite{Chou2004}. However, the existing approaches, which have verified FLASH, need too much human intervention. The first full verification of safety properties of FLASH is done by work in \cite{Park1996a}. Park and Dill  proved the safety properties of FLASH using  PVS \cite{cade92-pvs}. %They introduce the aggressioned FLASH protocol, which
+%is in fact an abstracted transaction version of FLASH,   need prove
+%the correspondence between the abstract and the original FLASH
+%protocol, and then prove the correctness of the abstracted protocol, and subsequently derive the correctness of  the
+%original protocol by the correspondence. New   auxiliary state variables
+%like {\tt fwdSrc} are   introduced  for verification. Deep human insight for FLASH is needed for both the construction of the aggressioned model  and  introducing new state variables.  Later research on FLASH must also rely on these auxiliary
+%variables for verification.
+%McMillan applied compositional
+%model checking \cite{McMillan2001}  and used Candence SMV  \cite{cadenceSMV} to the verification of both safety and liveness properties of FLASH. In a different context, safety
+%properties of German 2000 and FLASH were proved via
+%Murphi tool \cite{alanHuMurphi} by adopting CMP method in \cite{Chou2004}. In
+%all the three methods mentioned above, auxiliary invariants
+%have to be supplied manually. Predicate abstraction based
+%methods were applied to verify
+%FLASH in \cite{dillPred}. Users need to manually provide plausible properties
+%in predicate abstraction and automated predicate discovery
+%techniques to find large predicates. So verifying large protocols
+%like FLASH using predicate abstraction is also difficult. In contrast to previous work, our work need fewer human's aid in the verification of FLASH.   Both the auxiliary invariants and formal proof are generated automatically, and these   auxiliary invariants have intuitive meanings which can  be used to analyze FLASH.  %  The abstractions
+%we used, the reliance on apparently circular reasoning, and the counterexampleguided
+%discovery of noninterference lemmas are all deeply influenced by McMillan°Øs
+%work.
+There are two central problems which need better solution in the parameterized verification for complex protocols like FLASH.  How to find a set of sufficient and necessary invariants
+is the core in the field of parameterized verification. It is desirable that the
+invariants are provided with less human intervention.
+Besides, the theory foundation of a technique of parameterized verification and its
+soundness are only discussed in a paper proof style.  We will compare our approach in \ref{sec:experiments}.%For instance,
+%the theory contains the apparent circularity in reasoning and
+%applying the auxialiary invariants, and is based on the classical
+%notion of a so-called simulation proofs \cite{Chou2004}. Frankly speaking, the
+%theory itself is not easy to be understood, and  needs to be
+%checked mechanically due to its soundness of should be
+%guaranteed without conditions.
+It is preferable to make all the verification can be formulated in a publicly-recognized trust-worthy framework like a theorem prover\cite{Chou2004}. However,
+ theorem proving in a theorem prover like Isabelle usually is interactive, not automatical.
+
+%which are either used for inductive verification or abstraction
+%model construction. Therefore, how to find ans use these auxiliary
+%invariants is the central problem in the research field of
+%parameterized verification.
+
+In order to solve the parameterized
+verification of cache coherence protocols in a both automatical and rigorous way, we design a tool {\sf
+paraVerifier}, which is based on a a simple but elegant theory.  Three kinds of causal
+relations are introduced, which are
+essentially special cases of the general induction rule. Then a
+so-called consistency lemma is proposed, which is the cornerstone in
+our framework. Especially, the theory foundation itself is  verified as a
+formal theory in Isabelle, which is the basically formal library to verify protocol case studies. The library provides basical type and constant definitions to model protocol cases and lemmas to prove invariant properties. Therefore the theoretical foundation is
+the most rigourous.
+
+{\sf
+paraVerifier} composed of two parts:  an invariant finder {\tt invFinder}
+and a proof generator {\tt proofGen}. %In order to verify  that an
+%invariant $inv$ holds for any parameterizd instance of a protocol.
+Given a protocol $\mathcal{P}$, and a property $inv$. {\tt invFinder} tries to search
+interesting auxiliary invariants and causal relations which are
+capable of proving $inv$. This process is guided by the heuristics inspired by constructing auxiliary invariants and causal relations that satisfy
+consistency relation.  Oracles will be used such as  a reference model of $\mathcal{P}$ with a fixed number
+of clients in different model-checkers, and a SMT-solver
+
+
+Next, {\tt proofGen}
+ generalizes the auxiliary invariants and causal relations, which  are output  in the first stage,  into a parameterized form, and uses them
+ construct a completely parameterized
+formal proof in a theorem prover(e.g., Isabelle) to model $\mathcal{P}$ and to prove the property $inv$. After the base theory is imported, the generated proof is  checked automatically.  Usually a proof is done interactively. Special efforts in the design of the proof generation are made in order to make the proof checking automatically. %In order to make the proof checking automatical, the basically formal library theory should be imported, and support
+
+The organization of this work is as follows: Section \ref{sec:Preliminaries} introduces the theoretical foundation; \ref{sec:invFinder} the {\sf invFinder}; \ref{sec:generalization} the generalization strategy; \ref{sec:prooGen} the {\sf proofGen} and the generated proof. We go through these sections by verifying a small example - mutual exclusion example. Section \ref{} shows the further experiments on real-world protocols. Section \ref{} compares ours with the previous work.
+
+\section{Preliminaries}\label{sec:Preliminaries}
+%\subsection{Protocol syntax} \label{sec:protocolSyntax}
+%Variable are defined by the following BNF grammar:
+%\begin{equation*}
+%\left.
+%\begin{array}{l}
+%\mathtt{
+%var ::=id |var[int] |rcd.id}
+%\end{array}%
+%\right.
+%\end{equation*}
+There are three kinds of $variables$:
+1) simple identifier, denoted by a string;
+2) element of an array, denoted by a string followed by a natural inside a square bracket. E.g., $arr[i]$ indicates the $i$th element of the array $arr$;
+3) filed of a record, denoted by a string followed by a dot and then another string. E.g., $rcd.f$ indicates the filed $f$ of the record $rcd$.
+Each variable is associated with its $type$. There are three types in our model, including enumeration, natural number, and Boolean.
+
+%%Expressions and formulas are defined recursively by the following BNF grammar:
+%\begin{equation*}
+%\left.
+%\begin{array}{l}
+%\mathtt{
+%exp::=var | const | formula?exp:exp|}\\
+%\mathtt{formula::=True| False| exp=exp | formula ~op~ formula | \neg formula }
+
+%\end{array}%
+%\right.
+%\end{equation*}
+
+$Experssions$ and $formulas$ are define mutually recursively. can be simple or compound. A simple expression is either a variable or a constant, while a compound expression is constructed with the ite(if-then-else) form $f?e_1:e_2$, where $e_1$ and $e_2$ are expressions, and $f$ is a formula.
+A $formula$ can be an atomic formula or a compound formula. An atomic formula can be a boolean variable or boolean constant, or in the equivalence form $e_1\eqc e_2$, where $e_1$ and $e_2$ are two expressions. A $formula$ can also be constructed from formulas using the logic connectives, including negation ($\negc$), conjunction ($\andc$), disjunction ($\orc$), implication ($\dashrightarrow$). %, logical equivalence ($\longleftrightarrow$).
+
+An $assignment$ is a mapping from a variable to an expression, and is denoted with the assigning operation symbol ``:=''. A $statement$ $\alpha$ is a set of assignments which are executed in parallel, e.g., $ x_1:=e_1;x_2:=e_2;...;x_k:=e_k $. If an assignment maps a variable to a (constant) value, then we say it is a $value$-$assignment$.  We use $\alpha|_x$ to denote the expression assigned to $x$ under the statement $\alpha$. For example, let $\alpha$ be $\{arr[1]:=C;x:=false\}$, then $\alpha|_x$ returns $false$. A $state$ is an instantaneous snapshot of its behavior given by a set of value-assignments.
+
+
+
+
+For every expression $e$ and formula $f$, we denote the value of $e$ (or $f$) under the state $s::var \Rightarrow valueType $ as $\mathbb{A}[e,s]$ (or $\mathbb{B}[f,s]$)
+For   a formula $f$, we write %$s,e\mapsto c$ and
+$s\models f$ to mean %$\mathbb{A}[e,s]=c$ and
+$\mathbb{B}[f,s]=true$.
+Formal semantics of expressions and formulas are given in HOL (higer-order logics) as usual, which is shown in the appendix.   \footnote{The  logic to specify parameterized system is a special logic, which can be embedded in HOL supported by Isabelle. Therefore HOL can be seen as the main meta-logic to specify our work.}
+
+
+For an expression $e$ and a statement $\alpha= x_1:=e_1;x_2:=e_2;...;x_k:=e_k $, we use $\mathsf{vars(\alpha)}$ to denote the variables to be assigned $\{x_1,x_2,...x_k\}$; and use $e^{\alpha}$ to denote the expression transformed from $e$ by substituting each $x_i$ with $e_i$ simultaneously.
+Similarly, for a formula $f$  and a statement $\alpha= x_1:=e_1;x_2:=e_2;...;x_k:=e_k $, we use $f^{\alpha}$ to denote the formula transformed from $f$ by substituting each $x_i$ with $e_i$.
+Moreover, $f^{\alpha}$ can be regarded as the weakest precondition of formula $f$ w.r.t. statement $\alpha$, and we denote $preCond(f,\alpha)\equiv f^{\alpha}$. Noting that a state transition is caused by an execution of the statement, formally, we define: $s\overset{\alpha}{\twoheadrightarrow } s' \equiv$ $(\forall x \in \mathsf{vars}(\alpha). s'(x)= \mathbb{A}[\alpha|_x,s])$ $\wedge (\forall x \notin \mathsf{vars}(\alpha). s'(x)= s(x))$ .
+
+A $rule$ $r$ is a pair $<g,\alpha>$, where $g$ is a formula and is called the $guard$ of rule $r$, and $\alpha$ is a statement and is called the $action$ of rule $r$.
+ For convenience, we denote a rule with the guard $g$ and the statement $\alpha$ as $g \vartriangleright \alpha$, $\mathsf{act}(g \vartriangleright \alpha)\equiv \alpha$ and $\mathsf{guard}(g \vartriangleright \alpha)\equiv g$. If the guard $g$ is satisfied at state $s$, then $\alpha$ can be executed, thus a new state $s'$ is derived. We call the rule $g \vartriangleright \alpha$ is triggered at $s$, and transitioned into $s'$. Formally we define: $s\overset{r}{\rightarrow } s' \equiv s\models \mathsf{guard}(r) \wedge s\overset{\mathsf{act}(r)}{\twoheadrightarrow } s'$.
+
+A $protocol$ $\mathcal{P}$ is a pair $(I,R)$, where $I$ is a set of $formulas$ and is called the initializing formula  set, and $R$ is a set of rules. %A $state$ is an instantaneous snapshot of its behavior given by a set of assignments.
+ As usual, the reachable state set of protocol  $\mathcal{P}=(I,R)$, denoted as $\mathsf{reachableSet}(\mathcal{P})$, can be defined inductively: (1) a state $s$ is in
+$\mathsf{reachableSet}(\mathcal{P})$ if there exists a formula $f \in I$, and $s \models  f$; (2) a state $s$ is in
+$\mathsf{reachableSet}(\mathcal{P})$ if there exists a  state $s_0$  and a rule $r \in R$ such that $s_0 \in \mathsf{reachableSet}(\mathcal{P})$ and $s_0\overset{r}{\rightarrow } s$.
+
+A parameterized object(T) is simple a function from a natural number to T, namely of type $nat \Rightarrow T$. For instance, a parameterized formula $pf$ is of type $nat \Rightarrow formula$, and we define
+$\mathsf{forallForm}(1,pf)\equiv~pf(1)$, and $\mathsf{forallForm}((n+1),pf)\equiv\mathsf{forallForm}(n,pf) \andc pf(n +1)$. $\mathsf{existsForm}(1,pf)\equiv~pf(1)$, and $\mathsf{existsForm}((n+1),pf)\equiv\mathsf{existsForm}(n,pf) \orc pf(n +1)$.
+
+
+
+
+
+Now we use a simple example to illustrate the above definitions by a simple mutual exclusion protocol with $N$ nodes. Let $\mathsf{I}$, $\mathsf{T}$,
+ $\mathsf{C}$, and  $\mathsf{E}$  be three enumerating values, $x$,    $n$ are  simple and array variables, $N$ a natural number,  $pini(N)$   the predicate to specify the inial state, prules(N) the four rules of the protocol, $mutualInv(i,j)$ a property that $n[i]$ and $ n[j]$ cann't be $C$ at the same time. We want to verify that $mutualInv(i,j)$ holds for any $i\le N$, $j \le N$ s.t. $i \neq j$.
+
+\begin{example}\label{example1}Mutual-exclusion example.
+
+\begin{specification}
+assignN(i)$\equiv$n[i]=I\\
+ pini(N) $\equiv$
+   x=true $\wedge$  forallForm(N,assignN )\\
+
+    try(i) $\equiv$ n[i] $\eqc$ I $\vartriangleright$ n[i] := T \\
+
+    crit(i) $\equiv$ n[i] $\eqc$ T$\wedge$ x = true $\vartriangleright$  n[i] := C; x := false\\
+
+%
+   exit(i) $\equiv$ n[i] $\eqc$ C $\vartriangleright$ n[i] := E \\
+
+
+   idle(i) $\equiv$  n[i] $\eqc$ E $\vartriangleright$ n[i] := I;  x := true
+  \\% \\
+   prules(N) $\equiv$ \{r. $\exists$ i. i $\le$ N $\wedge$( r=crit(i)~$\vee$ r=exit(i)  $\vee$ r=idle (i)~$\vee$ r=try (i)\}\\
+%\\
+
+mutualEx(N)$\equiv$ (pIni(N), prules(N))\\
+
+mutualInv(i,j) $\equiv$
+  $\negc$ (n[i]$\eqc$ C $\andc$ n[j]$\eqc$ C)\\
+
+
+
+\end{specification}
+\end{example}
+
+
+As Hoare logics specifies,  after executing statement $S$, $f$ holds iff $\mathsf{preCond}~f~S$ holds before the execution.
+\begin{lemma}\label{lemma-preCond}
+Suppose $s\overset{S}{\twoheadrightarrow } s'$,
+$s\models (\mathsf{preCond} (f, S))$ if and only if $s'\models f$
+\end{lemma}
+%definition statementEnableForm:: rule $\Rightarrow$
+%formula$\Rightarrow$bool
+%\\
+% where statementEnableForm r f$\equiv$
+%$\forall$s. formEval (pre r) s \\
+%$\longrightarrow$ formEval  (preCond f (act r)) s\\
+%definition statementDisableForm::rule$\Rightarrow$formula$\Rightarrow$bool\\
+%where statementDisableForm r f $\equiv$
+ %    $\forall$s. formEval (pre r) s \\
+%$\longrightarrow$ $\neg$ formEval  (preCond f (act r)) s
+%\end{specification}
+
+%Function $\mathsf{statementEnableForm}$ says that the guard of the rule implies
+% the pre-condition of  formula $f$  w.r.t. statement of
+% the rule. This means that $f$ must be valid after statement $S$ is executed.
+%On the other hand,  $\mathsf{statementDisableForm}$ says that   the
+%guard of the rule implies the negation of the pre-condition of
+%formula $f$ w.r.t. statement of the rule. This means that $f$ must
+%be invalid after statement $S$ is executed.
+%For instance,  for the statement $S=\mathsf{assign}~
+%((\mathsf{Para}~  n~ 0), (\mathsf{Const} ~\mathsf{T}))$, formula
+%$f_1= \mathsf{eqn}~ (\mathsf{IVar}~ (\mathsf{Para}~ n 0))
+%(\mathsf{Const}~ \mathsf{T})) $, $f_2= \mathsf{eqn}~ (\mathsf{IVar}~
+%(\mathsf{Para}~ n ~0))\mathsf (\mathsf{Const}~ \mathsf{E}))$, we
+%have $\mathsf{statementEnableForm}~S~f_1$ and
+%$\mathsf{statementDisableForm}~S~f_2$. We also define two functions
+%$\mathsf{varOfForm}~f$ and $\mathsf{varOfSent}~S$ to denote the set
+%of variables used in the formula $f$ and statement $S$.
+%\section{Causal relations and consistency lemma} \label{sec:causal_rel}
+A novel feature of our work lies in that three kinds of causal
+relations are exploited, which are essentially special cases of the
+general induction rule.  Consider a rule $r$, a formula $f$, and a formula set $fs$, three
+ kinds of causal relations are defined as follows:\\
+ \begin{definition}
+We define the following relations: $\mathsf{invHoldForRule_1}::state \times formula\times rule \Rightarrow bool$, $\mathsf{invHoldForRule_2}::state\times  formula\times rule  \Rightarrow bool$,  $\mathsf{invHoldForRule_3}::state \times formula\times rule \times rule set\Rightarrow bool$, and $\mathsf{invHoldForRule_3}::state \times formula\times rule \times rule set\Rightarrow bool$.
+\begin{enumerate}
+\item $\mathsf{invHoldForRule_1} (s,f,r) \equiv $$s \models \mathsf{pre}(r) \longrightarrow s \models \mathsf{preCond}(f ,\mathsf{act}(r))$;\footnote{Here  $\longrightarrow$ and $\longleftrightarrow$ are HOL connectives.  }
+\item $\mathsf{invHoldForRule_2}(s,f,r) \equiv  $$s \models f \longleftrightarrow s \models \mathsf{preCond}( f,(\mathsf{act}( r))$;
+\item $\mathsf{invHoldForRule_3}(s,f,r,fs) \equiv$  $\exists f' \in fs$ s.t.
+$s \models ( f' \andc (\mathsf{pre}(r))  \longrightarrow s \models \mathsf{preCond}(f ,\mathsf{act}(r))$;
+\item $\mathsf{invHoldForRule}(s,f,r, fs) \equiv$   $s \models\mathsf{invHoldForRule_1}(s,f,r) \vee s\models\mathsf{invHoldForRule_2}(s,f,r) \vee s\models \mathsf{invHoldForRule_3}(s,f,r,fs)$.
+%\item $\mathsf{invHoldForRule}~ f~ r ~fs \equiv (\mathsf{invHoldForRule_1} ~f
+%  ~r) \lor (\mathsf{invHoldForRule_2} ~f ~r) \lor (\mathsf{invHoldForRule_3}~ f~ r~fs)$.
+\end{enumerate}
+\end{definition}
+%\begin{specification}
+%definition invHoldForRule1::
+%formula $\Rightarrow$ state $\Rightarrow $ rule $\Rightarrow$ bool where\\
+%invHoldForRule1 s f  r$\equiv$ %\\
+%(  formEval (pre r) s $\longrightarrow$
+%  formEval  (preCond f  (act r)) s ) \\ %\\
+
+%definition invHoldForRule2:: state $\Rightarrow$ formula $\Rightarrow$ rule $\Rightarrow$ bool
+% where \\
+
+%invHoldForRule2 s f  r $\equiv$  (  formEval  (preCond f  (act r)) s  =  formEval f s\\
+%\end{specification}
+
+%\vspace{2mm}
+% \begin{specification}
+%definition   invHoldForRule3::
+%state $\Rightarrow$ formula $\Rightarrow$ rule $\Rightarrow$formula set$\Rightarrow$ bool\\
+
+% invHoldForRule3 s f r fs  $\equiv$\\
+%  (let pref=preCond f (act r) in\\
+%  ( $\exists$f'. f' $\in$ fs $\wedge$  (formEval   (andForm (pre r)  f') s$\longrightarrow$
+% formEval  pref s)))\\
+%\\
+%abbreviation invHoldForRule::
+%state $\Rightarrow$formula $\Rightarrow$ rule $\Rightarrow$ (formula set) $\Rightarrow$ bool
+% where\\
+
+%invHoldForRule s inv0 r invs $\equiv$\\
+%    invHoldForRule1 s inv0 r $\vee$  invHoldForRule2 s inv0 r $\vee$
+ %  invHoldForRule3 s inv0 r invs\\
+
+
+
+
+%\%end{specification}
+
+We can view the relation $\mathsf{invHoldForRule}(s, f,r,fs)$ in two ways. Firstly it defines some causality relation
+between $f$, $r$, and $fs$.  $\mathsf{invHoldForRule}_1(s,f, r)$
+  means that after rule $r$ is executed,
+ $f$ will be true immediately;   $\mathsf{invHoldForRule}_2(s,f, r)$ specifies that
+ $\mathsf{preCond}(S,f)$ is equivalent to $f$, intuitively this means that none of state variables in $f$ is
+ changed, and the execution of statement $S$ does not affect the
+ evaluation of $f$.
+ $\mathsf{invHoldForRule}_3(s,f, r,fs)$ states
+  that  there exists another invariant $f' \in fs$ such that
+  the conjunction of the guard of $r$ and $f'$ implies the precondition  $\mathsf{preCond}(S,f)$.
+Intuitively, $\mathsf{invHoldForRule}(s, f, r, fs)$ defines a causal
+relation, which can guaranttee that if each of formula in $fs$ holds
+before the execution of the rule $r$, then  $f$ also holds after the
+execution of the rule $r$. Secondly the relation
+$\mathsf{invHoldForRule}(s, f, r, fs)$ can also be regarded as a
+special kind of inductive tactics, which can be applied to prove
+each formula in $fs$ holds at each inductive protocol rule cases. The most important of all is that the three kind of inductive tactics can be done by a theorem prover, which is the cornerstone of our work.
+
+
+
+A consistency relation $\mathsf{consistent}( invs,ini, rs)$,
+ which holds between a protocol $(inis,rs)$ and
+a set of invariants $invs=\{inv_1,\ldots, inv_n\}$,  is defined as
+follows:
+\begin{definition}
+we define a relation $consistent::formula~ set \times formula~ set
+\times rule ~set \Rightarrow bool$.
+ $consistent( invs,ini, rs)$ holds if the following conditions hold:
+\begin{enumerate}
+\item for all formulas $inv\in invs$ and $ini\in inis$ and all states $s$,
+$s \models ini$ implies $s \models inv$;
+\item for all formulas $inv\in invs$ and rules  $r \in rs$ and all states $s$,  $\mathsf{invHoldForRule}(s, inv, r, invs   )$
+\end{enumerate}
+\end{definition}
+
+%Intuitively, the above definition specifies that:
+%\begin{itemize}
+%\item For any invariant $inv \in invs$,
+%initializing predicate $ini \in ini$, and state $s$, if $ini$ is
+%evaluated true at state $s$, then $inv$ is also evaluated true at
+%state $s$.
+
+%\item For any invariant $inv \in invs$, $r$ in the rule set
+%$rs$, either one of the following five types of relation holds,
+%i.e., $\mathsf{invHoldForRule_{1-3}}inv r$.
+
+%\end{itemize}
+
+%For instance,
+
+\begin{example}\label{example2}
+Let us define a set of auxiliary invariants:
+
+\begin{specification}
+invOnXC(i)  $\equiv$ $\negc$(x $\doteq$ true $\andc$ n[i]$\doteq$ C)   \ \ \
+
+invOnXE(i)   $\equiv \negc$ (x $\doteq$ true$\andc$ n[i] $\doteq$ E)  \\
+
+
+aux$_1$(i,j)   $\equiv \negc$ ( n[i]$\doteq$ C$\andc$n[j] $\doteq$ E)   \ \ \
+
+aux$_2$ (i,j) $\equiv \negc$  ( n[i]$\doteq$ E$\andc$n[j]$\doteq$ C)\\
+
+  pinvs(N)$\equiv$ \{f. $\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 $\wedge$   f =mutualInv   \iInv1 \iInv2) \\
+ $ \vee(\exists$ \iInv1. \iInv1 $\le$ N $\wedge$  f =invOnXC  \iInv1)   \\
+$\vee(\exists$ \iInv1. \iInv1 $\le$ N $\wedge$  f= invOnXE \iInv1)    \\
+$\vee(\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 $\wedge$ f =  aux1  \iInv1 \iInv2) \\
+$\vee(\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 $\wedge$ f =  aux2  \iInv1 \iInv2) \}.
+
+\end{specification}
+\begin{itemize}
+\item  $\mathsf{invHoldForRule_1 }(s,\mathsf{invOnXC}( 1),
+\mathsf{crit}(1))$ because $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(1)),
+ \mathsf{invOnXC} (1))=\negc (\mathsf{flase}\eqc\mathsf{true}\andc \mathsf{C}\eqc\mathsf{C})$ which is a tautology;
+
+\item  $\mathsf{invHoldForRule_2 }(s,\mathsf{mutual}(
+1,2), \mathsf{try}(3))$ because $\mathsf{preCond}(\mathsf{act}(\mathsf{try}(3)),
+ \mathsf{mutual}( 1,2))=\mathsf{mutual} (1,2)$;
+
+ \item   $\mathsf{invHoldForRule_3 }(s,\mathsf{mutual} (1,2), \mathsf{crit}(1),(\mathsf{pinvs} (N))$.
+   because
+ $\mathsf{invOnXC}( 2) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(1)),
+ \mathsf{mutual} (1,2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[2]\eqc\mathsf{C})$,
+ and $  s \models \mathsf{guard}(\mathsf{crit}(1)) \andc \mathsf{invOnXC}(2)$ implies
+ $ s \models \negc (\mathsf{C}\eqc\mathsf{C}\andc n[2]\eqc\mathsf{C})$. Notice that  the guard condition of
+ $\mathsf{crit}(1)$ is $n[1]\eqc T \andc x\eqc\mathsf{true}$.
+ \end{itemize}
+\end{example}
+
+
+
+  %It is not diffcult to verify
+%$\mathsf{consistent}~ (\mathsf{pinvs}~ N) ~(\mathsf{pini}~N)~
+%(\mathsf{prules}~N)$ also holds.
+
+
+
+ Suppose that the consistency relation
+$\mathsf{consistent}( invs, inis, rs)$ holds, for any $inv \in invs$,
+$inv$ holds for any reachable state $s$ such that $s  \in
+\mathsf{reachableSet}( ini, rs)$. A so-called
+consistency lemma formalizes the essence of the aforementioned causal relation.
+
+\begin{lemma}\label{consistentLemma}%[(consistency lemma)]
+ If $P=(ini,rs)$, $\mathsf{consistent}( invs, ini, rs)$, and $s  \in \mathsf{reachableSet}(P)$, %  $\isasymrbrakk\Longrightarrow$
+ then   for all $inv$ s.t. $inv \in invs$, $s \models inv $.
+\end{lemma}
+
+
+
+
+
+\end{document}
