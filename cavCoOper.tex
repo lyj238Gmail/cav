@@ -209,15 +209,15 @@ Given a protocol $\mathcal{P}$, and a property $inv$. {\tt invFinder} tries to s
 interesting auxiliary invariants and causal relations which are
 capable of proving $inv$. This process is guided by the heuristics inspired by constructing auxiliary invariants and causal relations that satisfy
 consistency relation.  Oracles will be used such as  a reference model of $\mathcal{P}$ with a fixed number
-of clients in different model-checkers, and a SMT-solver
+of clients in different model-checkers, and a SMT-solver 
 
 
 Next, {\tt proofGen}
- generalizes the auxiliary invariants and causal relations, which  are output  in the first stage,  into a parameterized form, and uses them
+ generalizes the auxiliary invariants and causal relations, which  are output  in the first stage,  into a parameterized form, and uses them 
  construct a completely parameterized
 formal proof in a theorem prover(e.g., Isabelle) to model $\mathcal{P}$ and to prove the property $inv$. After the base theory is imported, the generated proof is  checked automatically.  Usually a proof is done interactively. Special efforts in the design of the proof generation are made in order to make the proof checking automatically. %In order to make the proof checking automatical, the basically formal library theory should be imported, and support
 
-The organization of this work is as follows: Section \ref{sec:Preliminaries} introduces the theoretical foundation; \ref{sec:invFinder} the {\sf invFinder}; \ref{sec:generalization} the generalization strategy; \ref{sec:prooGen} the {\sf proofGen} and the generated proof. We go through these sections by verifying a small example - mutual exclusion example. Section \ref{} shows the further experiments on real-world protocols. Section \ref{} compares ours with the previous work.
+The organization of this work is as follows: Section \ref{sec:Preliminaries} introduces the theoretical foundation; \ref{sec:invFinder} the {\sf invFinder}; \ref{sec:generalization} the generalization strategy; \ref{sec:prooGen} the {\sf proofGen} and the generated proof. We go through these sections by verifying a small example - mutual exclusion example. Section \ref{} shows the further experiments on real-world protocols. Section \ref{} compares ours with the previous work. 
 
 \section{Preliminaries}\label{sec:Preliminaries}
 %\subsection{Protocol syntax} \label{sec:protocolSyntax}
@@ -283,7 +283,7 @@ $\mathsf{forallForm}(1,pf)\equiv~pf(1)$, and $\mathsf{forallForm}((n+1),pf)\equi
 
 
 Now we use a simple example to illustrate the above definitions by a simple mutual exclusion protocol with $N$ nodes. Let $\mathsf{I}$, $\mathsf{T}$,
- $\mathsf{C}$, and  $\mathsf{E}$  be three enumerating values, $x$,    $n$ are  simple and array variables, $N$ a natural number,  $pini(N)$   the predicate to specify the inial state, prules(N) the four rules of the protocol, $mutualInv(i,j)$ a property that $n[i]$ and $ n[j]$ cann't be $C$ at the same time. We want to verify that $mutualInv(i,j)$ holds for any $i\le N$, $j \le N$ s.t. $i \neq j$.
+ $\mathsf{C}$, and  $\mathsf{E}$  be three enumerating values, $x$,    $n$ are  simple and array variables, $N$ a natural number,  $pini(N)$   the predicate to specify the inial state, prules(N) the four rules of the protocol, $mutualInv(i,j)$ a property that $n[i]$ and $ n[j]$ cann't be $C$ at the same time. We want to verify that $mutualInv(i,j)$ holds for any $i\le N$, $j \le N$ s.t. $i \neq j$. 
 
 \begin{example}\label{example1}Mutual-exclusion example.
 

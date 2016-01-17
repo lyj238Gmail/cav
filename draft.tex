@@ -1,0 +1,166 @@
+%-------------------------------------------------------------------------
+\begin{abstract}
+%-------------------------------------------------------------------------
+Parameterized verification of cache coherence protocols is an important
+but challenging research problem.  In this paper, we present our tool {\sf paraVerifier}
+to handle this problem in a unified framework: (1) it discovers auxiliary invariants and the
+corresponding causal information between invariants and protocol rules from a
+small reference instance of the verified protocol; (2) the discovered
+invariants and information can then be generalized into a parameterized
+form to construct a formal proof of the correctness of the protocol.
+The principle underlying our generalization is the symmetry mapping.
+and a novel feature of our work lies in that the last verification result of a
+protocol is provided by a formally readable proof in a theorem prover like Isabelle.
+Our tool has been successfully applied to typical benchmarks. 
+
+%-------------------------------------------------------------------------
+\end{abstract}
+%-------------------------------------------------------------------------
+
+%=========================================
+\section{Introduction}
+%=========================================
+Verification of parameterized concurrent systems is interesting in
+the area of formal methods, mainly due to the practical importance
+of such systems. Parameterized systems exist in many
+application areas: cache coherence protocols, security systems, and
+network communication protocols, etc. In this work, we will
+focus on cache coherence protocols, which play a key role in modern
+computer architecture. They require complex algorithms that must
+deal with asynchrony, unpredictable message delays, and multiple
+communication paths between many nodes. Therefore, the highest
+possible assurance for the correctness of these complex
+parameterized systems should be guaranteed by formal reasoning
+techniques.
+
+The real challenge posed by parameterized verification of cache coherence protocols
+is that the desired properties should hold in any instance of the parameterized
+protocol, not just for a single protocol instance. Model checking is
+automatic but able to verify just an instance of the parameterized
+concurrent protocol. The correctness of the reference instance does
+not formally suffice to conclude the correctness for all instances.
+Due to the extreme importance of many parameterized system, it is
+preferable to have a proof that the correctness holds for any
+instance.
+
+Some advanced techniques such as compositional and abstraction model
+checking are proposed to handle this challenge. However, auxiliary
+invariants, which is usually provided by  human basing on his
+insights of the verification cases, are needed to make these
+techniques work. How to find a sufficient and necessary invariants
+is the core in the field of parameterized verification.
+Many papers in the literature have focused on the
+construction of a set of auxiliary
+invariants~\cite{Pnueli2001,Chou2004,Pandav2005,cubicle2011}.
+Besides, the theoretical foundation of these techniques and their
+soundness proofs are only discussed in the respective papers.
+For instance, many of these theories contain the apparent circularity in reasoning and
+applying the auxiliary invariants, and are based on the classical
+notion of a so-called simulation proofs. Frankly speaking, these
+theories themselves are not easy to understand, and are subjects
+to be mechanically checked, as their soundness needs to be
+guaranteed without any conditions.
+
+The aim of our tool {\sf paraVerifier} is to solve the parameterized
+verification of cache coherence protocols in a unified way. {\sf
+paraVerifier} consists of two parts:  an invariant finder {\sf invFinder}
+and a proof generator {\sf proofGen}. In order to verify the that an
+invariant $inv$ holds for any parameterizd instance of a protocol.
+Firstly,  from a reference model of a protocol with a fixed parameter
+is constructed, {\sf invFinder} tries to search for
+interesting auxiliary invariants and causal relations which is
+capable of proving $inv$. Next, {\sf proofGen}
+ uses the output of {\sf invFinder} in the first stage, and
+ constructs a complete and parameterized
+formal proof in a theorem prover (e.g., Isabelle). Such a proof can
+be checked automatically.
+
+The originality of our work lies in the following aspects:
+
+\begin{itemize}
+\item Our work is based on a simple but elegant theory. Three kinds of causal
+relations between protocol rules and invariants are introduced, which are
+essentially special cases of the general induction rule. Then a
+so-called consistency lemma is introduced, which is the cornerstone in
+our framework. One one side, it is heuristics inspired by trying to
+construct the consistency relation that guides the tool {\sf
+invFinder} to find auxiliary invariants. On the other side, the
+consistency lemma gives a general guiding principle to prove
+invariants  in the parameterized model of a cache coherence
+protocol. Especially, the theoretical foundation itself is verified as a
+formal theory in Isabelle.
+
+\item Our verification products are a list of interesting invariants
+and a formal proof script. Our invariants are visible,
+which can characterize the special semantical features of the protocol,
+and are helpful for the users to precisely understand the design of the protocol.
+Furthermore, formalizing all the theories in a theorem prover not only models protocols
+rigorously and specifies invariants without any ambiguity, but also
+leads to automatic mechanical proofs.
+
+\item Our tool is fully automatic.
+To the best of our knowledge, {\sf paraVerifier} is the first work
+that automatically generates formal proofs in a theorem prover for
+the verification of cache coherence protocols. 
+%
+Despite the requirement of an invariant set $invs$, and a rule $r$ in a set of
+protocol rules $rs$ as its inputs, {\sf invFinder} works in a simple way: it
+tries to prove the existence of some kind of casual relations
+between the rule $r$ and an invariant $inv$, then it tries to construct a new
+invariant $inv'$ and adds it into the invariant set $invs$ if the
+current proving step is blocked. At this step, it will analyze the
+form of the rule and the invariant, then create new invariants. This
+searching procedure stops until no new invariants are created. 
+
+\JP{I am confused with the following part.}
+The originality of our work lies the following aspects: (1) {\sf
+paraVerifier} is guided by heuristics inspired by a so-called
+principle of consistency lemma, which specifies several kinds of
+casual relations which hold between of a set of invariants with the
+transition rules the protocol instance;~\cite{LiCache13} (2)
+Although the invariants are created from a finite protocol instance,
+they can be refined to either construct a completely parameterized
+formal proof in a theorem prover(e.g., Isabelle). Instead of
+discussing the soundness of our verification method, we provide a
+formal proof in Isabelle, which can be used as the formal documents
+of the analysis of the protocols.
+
+
+%
+%In safety-critical
+%applications in China such as nuclear-station control or high-speed
+%train control networks, not only are no bugs  required to be found
+%in  these applications, but also  formal proofs of correctness are
+%required in order to achieve the highest possible assurance. For
+%instance, the Godson-T protocol in our case studies is a cache
+%coherence protocol adopted in a mutlti-core NOCs, which is designed
+%by the Institute of Computing, Chinese Academy of Sciences. Due to
+%use of the protocol in many safety-critical application fields, the
+%designer want a formal proof of the correctness of the protocol,
+%after informal verification methods like testing and formal
+%verifications methods like model-checking by Murphi.
+%
+Being different from  the automatic  methods of checking
+invariants of parameterized system, our method focuses on helping
+users to understand  the correctness of protocol  by finding
+auxiliary invariants. The auxiliary invariants should
+be visible to the designers of the protocol. Namely,  the found
+invariants should verify the intuition behind the design of
+protocols. The proofs tell us how the mechanism of the protocol
+guarantees the invariants step by step.
+
+\item Our tool is also scaleable. Some industrial cases studies are
+successfully verified in {\sf paraVerifier}.
+A surprising result is that we were able to generate a new
+proof for the original Flash protocol without adding new auxiliary
+variables. This proof is different from that of Park et al \cite{}.
+They first introduce an abstract transaction model of the Flash
+protocol, and need to prove the correspondence between the abstract model and the original Flash
+model. Then they prove the correctness of the protocol in the abstract
+model, and subsequently derive the correctness of protocol in the
+original model by the correspondence. New auxiliary variables
+like {\tt fwdSrc} are needed to capture deep human insights of the Flash protocol.
+%Later research on Flash must also rely on these auxiliary variables for verification.
+Our proof is done for the original model
+of Flash without any abstraction.
+\end{itemize}

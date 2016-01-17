@@ -1,0 +1,713 @@
+\documentclass{llncs}
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%   PACKAGES   %%%%
+%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{makeidx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{latexsym}
+\usepackage{url}
+\usepackage{color}
+\usepackage{isabelle}
+\usepackage{isabellesym}
+\usepackage{theorem}
+\usepackage{multicol}
+\usepackage{algorithmic}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%For Isabelle code
+\newlength{\fminilength}
+\newsavebox{\fminibox}
+\newenvironment{fmini}[1][\linewidth]
+  {\setlength{\fminilength}{#1\fboxsep-2\fboxrule}%
+   \vspace{2ex}\noindent\begin{lrbox}{\fminibox}\begin{minipage}{\fminilength}%
+   \mbox{ }\hfill\vspace{-2.5ex}}%
+  {\end{minipage}\end{lrbox}\vspace{1ex}\hspace{0ex}%
+   \framebox{\usebox{\fminibox}}}
+
+\newenvironment{specification}
+{\noindent\scriptsize
+\tt\begin{fmini}\begin{tabbing}X\=X12345\=XXXX\=XXXX\=XXXX\=XXXX\=XXXX
+\=\+\kill} {\end{tabbing}\normalfont\end{fmini}}
+\def \twoSpaces {\ \ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for comments
+\newcommand\JP[1]{\textcolor{magenta}{JP: #1}}
+\newcommand\lyj[1]{\textcolor{green}{lyj: #1}}
+\def \pInv {i}
+%\def \pInv1 {i2}
+%\def $\wedge$ {$\wedge$}
+%\def $\Rightarrow$ {$\Rightarrow$}
+%\def  \<equiv> {$\equiv$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Additional math operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[colorlinks,
+            linkcolor=black,
+            anchorcolor=black,
+            citecolor=blue,
+            urlcolor=black,
+            bookmarks=true
+            ]{hyperref}
+
+\input{tcilatex}
+
+%=========================================
+\begin{document}
+
+\title{  A Parameterized Verification of  FLASH Cache Coherence Protocols by Paraverifier}
+\titlerunning{paraVerifier: An Invariant Finder}
+\author{~}
+\authorrunning{~}
+\institute{~}
+
+\maketitle
+
+%-------------------------------------------------------------------------
+\begin{abstract}
+%-------------------------------------------------------------------------
+The FALSH protocol is an industrial-scale cache coherence protocol, whose parameterized verification is a notoriously hard challenge to the field of formal methods. In this paper, we show how to verify its important property like mutual exclusion by our tool {\sf paraverifier}. Being distinguished from any other approach, our proof product are a formal  proof by induction in Isabelle and a series of message flows which reflect the semantics of the protocol intuitively. Among all the work, our work is the most automatical. Both delay and early versions of FLASH protocol are verified, and the differences between the two versions can be reflected in the auxiliary invariants and flow charts for them found by the tool.
+
+%-------------------------------------------------------------------------
+\end{abstract}
+%-------------------------------------------------------------------------
+
+%=========================================
+\section{Introduction}
+%=========================================
+Verification of parameterized concurrent systems is interesting in
+the area of formal methods, mainly due to the practical importance
+of such systems. Parameterized systems exist in many important
+application areas: cache coherence protocols, security systems, and
+network communication protocols, \emph{etc}. In this work, we will
+focus on cache coherence protocols. The challenge posed by
+parameterized verification is that the desired properties should
+hold in any instance of the parameterized system. %The core of
+%parameterized verification is the construction of a set of auxiliary
+%invariants~\cite{Pnueli2001,Chou2004,Pandav2005,cubicle2011}, which
+%are either used for inductive verification or abstraction model
+%construction. Therefore, how to find these auxiliary invariants is
+%the central problem in the research field of parameterized
+%verification.
+%\JP{It is unclear what is the initial invariant and what are the correctness proofs.}
+%\JP{To make the concepts clear, it will be better to briefly describe the standard
+%procedure for parameterized verification.
+%Then you can talk about initial invariant, correctness proofs, auxiliary invariants, etc.
+%(Such terms are not explained so far in the current paper.)}
+%\JP{Here, still the statement of the research problem is missing.
+%Why an invariant finder is needed (the motivation)?}
+
+Stanford FLASH cache coherence protocol \cite{FLASHCache} is a publicly-recognized challenging benchmark in the field of formal
+ verification. In the pioneering work,
+Park and Dill applied the general purpose theorem prover PVS\cite{cade92-pvs}
+to the verify  the protocol for arbitrary $N$ nodes\cite{Park1996a}. This is a laborious process, since they introduce the aggregated FLASH protocol, which
+is in fact an abstracted transaction version of FLASH,   need prove
+the correspondence between the abstract and the original FLASH
+protocol, and then prove the correctness of the abstracted protocol, and subsequently derive the correctness of  the
+original protocol by the correspondence. New   auxiliary state variables
+like {\tt fwdSrc} are   introduced  for verification. Deep human insight for FLASH is needed for both the construction of the aggregated protocol  and  introducing new state variables. Inductive invariants must be
+ provided by human, and the theorem prover must be manually guided to perform the induction proof to prove the correspondence between the aggregated protocol  and the original one. %This work is really pioneering because later research on FLASH must also rely on the version of FLASH in \cite{}. Especially, the auxiliary
+%variables proposed  are reserved and needed for verification in later work.
+
+Mcmillan consider applies methods of compositional model
+checking \cite{McMillan2001} to the verification of FLASH by using SMV \cite{cadenceSMV}, and  %This approach has the advantage that parameterized
+%systems can be proved correct without the need to state inductive invariants explicitly,
+%since invariant information is obtained by model checking abstract systems. McMillan
+%use the Candence-SMV  proof assistant [McM99] to
+verifies both safety and liveness of the
+FLASH protocol. Despite the fact SMV is designed as a model-checker to automatically checking properties, the core techniques for FLASH parameterized verification adopted by Mcmillan is SMV's advanced features for proof such as composition proof and temporal case splitting, and abstraction. Human interaction must be heavily relied on to  guide SMV to prove, depending on his deep insight to FLASH. Unlike general theorem prover like Isabelle, SMV does not have a good logical foundation to perform theorem proving because its initial design philosophy is based on state enumerating. The above proofs are neither rigorous as that done in a theorem prover, nor easily understood to a non-specialist of SMV.  Because these proof techniques is only special for SMV,  they are  difficult to be generalized to other protocols yet.
+
+The CMP method, which adopts parameter abstraction and guard strengthening, is proposed
+in~\cite{Chou2004} for verifying a safety property $inv$ of
+a parameterized system.
+ An abstract instance of the parameterized protocol,  which consists of m + 1
+nodes $\{P_1, \ldots , P_m, P^*\}$ with $m$ normal nodes and one
+abstract node $P^*$, is constructed iteratively. The abstract system is an
+abstraction for any protocol instance whose size is greater than
+$m$. Normally the initial abstract system does not satisfy the
+invariant $inv$. Nevertheless it is still submitted to a model
+checker for verification. When a counterexample is produced, one needs to
+carefully analyze it and comes up with an auxiliary invariant
+$inv'$, then uses it to strengthen the guards of some transition
+rules of the abstract node. The `strengthened' system is then
+subject to model checking again. This process stops until the
+refined abstract system  eventually satisfies the original invariant
+  as well as all the auxiliary invariants supplied by the
+user. However, this method's soundness is only argued in an
+informal way. To the best of our knowledge, no one has
+formally proved its correctness in a theorem prover. This
+situation may be not ideal because its application domain for cache
+coherence protocols  which demands the highest assurance for
+correctness. Besides, the analysis of counter-example and generation of new auxiliary invariants usually
+ depend on human's deep insightful understanding of the protocol. It is too laborious for people to do these analysis and some effective automatic  tool is needed to help people.
+
+In \cite{cubeicBeyond}, an algorithm, called BRAB,    computes over-approximations of
+backward reachable states that are checked to be unreachable in
+a finite instance of the system. These approximations (candidate
+invariants) are then model checked in together with the original
+safety properties. Finite instances (even small) are regarded as
+oracles for guiding the choice of candidate
+invariants. Our work differs from this work in two main points:
+ we  propose three kinds of causal relations and consistency lemmas, which guide the tool to find invariants and construct an inductive proof; (2) we also develop a system approach to generalize the found concrete invariants and causal relations into a symbolic proofs for parameterized verification. For the full version of FLASH protocol with data path, the   invariants computed by BARB are different from ours. Until now, we still can not find a completely formal proof is constructed to verify the full-version of FLAH protocol by adopting the invariants computed by BRAB.
+
+To sum up,  FLASH is a hard  benchmark with significance for any proposed method for parameterized verification. First it is a cache coherence protocol in real-world, which is  the most important landmark in this field.  As Chou, Mannava, Park pointed out in  \cite{Chou2004}, ¡°if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols¡±. Second
+FLASH protocol is  sufficiently hard that only two or three methods have  fully verify
+the protocol parametrically. However, human guidance still plays a key role in these successful verification methods. This fact reveals  the weakness of automatical tool in the parameterized verification. %Therefore, our approach has reached the most important landmark in this field.
+Third, further  effort are needed for clear mechanization. As argued in \cite{Chou2004}, "the first priority is clearly mechanization. Ideally, we want to formalize not only the reasoning
+steps  but also the theory developed in a theorem
+prover, so that we can have a completely formal proof". It is preferable to  have a completely formal proof for verification of FLASH in a well-known theorem prover. Previous work is too far away from giving a formal proof for FLASH. Even for a moderate case GERMAN protocol, which is much simpler than FLASH, no formal proof is not available yet. Let alone FLASH.
+
+
+The aim of this paper is to apply the tool {\sf paraVerifier} to parameterized verification of FLASH protocol. {\sf paraVerifier} can be regarded
+as both an invariant finder and  a formal proof generator. Given an invariant $inv$ such as a mutual-exclusion property, and a rule set $rs$ in MURPHI which represents a protocol,
+ {\sf paraVerifier} works in an automatical way:  it tries to find a set of inductive invariants, if succeeds, then
+ generates a formal proof in a theorem prover like Isabelle. More interestingly, it also generates a series of flow charts to show some typical READ (or WRITE)  transactions of the protocol.   The orginality of our
+work lies the following aspects:
+\begin{enumerate}
+\item Our work is based on a simple but elegant theory. Three kinds of causal
+relations are introduced, which are
+essentially special cases of the general induction rule. Then a
+so-called consistency lemma is proposed, which is the cornerstone in
+our framework. On one side, it is heuristics inspired by trying to
+construct the consistency relation that guides the tool  to find auxiliary invariants. On the other side, the
+consistency lemma gives a general guiding principle to prove
+invariants  in the parameterized instance of a cache coherence
+protocol. Especially, the theory foundation itself is  verified as a
+formal theory in Isabelle, therefore the theoretical foundation is
+the most rigourous.
+
+\item Our verification products are a list of interesting invariants
+and a formally readable proof script. Our invariants are visible,
+ which can characterize the semantical features of the protocol, and help people to
+   precisely
+    understand the design of the protocol. This feature distinguish ours from  the so-called ``the invisible invariants" method clearly.
+  Furthermore, the formal proof script not  only models the protocol
+rigorously and specifies its properties without any ambiguity, but also
+proves them mechanically in the theorem prover. Therefore, it helps us to achieve the highest possible
+assurance for formal reasoning of the protocol.
+
+
+\item Our work is both automatical and scalable, which is in contrast to most of previous work done for parameterized verification of FLASH. After the FLASH protocol is modelled in {\sf paraVerifier}, auxiliary invariants
+ are searched automatically,  the formal proof script in Isabelle is also  automatically generated by the tool, and   checked by Isabelle without human guidance. Thus the most automatical degree is preserved.
+
+\end{enumerate}
+%{\sf paraVerifier} is guided by
+%heuristics inspired by a so-called principle of consistency lemma,
+%which specifies several kinds of  casual relations which hold
+%between  of a set of invariants with the transition rules the
+%protocol instance;~\cite{LiCache13} (2) Although the invariants are
+%created from a finite protocol instance, they can be refined to
+%either construct a completely formal proof in a theorem prover(e.g.,
+%Isabelle) or an abstract model which fully models the behavior of a
+%single client. Here we emphasize that either the proof and the
+%abstract model can account for any parameterized model of the
+%protocol under study. The formal proofs and the abstract model with
+%the interpretation of the invariants can be used as the formal
+%documents of the analysis of the protocols.
+
+%=========================================
+\section{The Verifying  Principle of {\sf paraVerifier}}
+%=========================================
+Consider a set of state variables $V$,
+$e$, $f$ and $\alpha$ are an expression, a formula, and a statement over
+the set of state variables $V$.
+A  state   $s$ is an instantaneous snapshot of its
+behaviour given by a mapping from variables to their values. For every expression $e$ and formula $f$, we denote the value of $e$ (or $f$) under a state $s$ as $\mathbb{A}[e,s]$ (or $\mathbb{B}[f,s]$).
+For   a formula $f$, we write %$s,e\mapsto c$ and
+$s\models f$ to mean %$\mathbb{A}[e,s]=c$ and
+$\mathbb{B}[f,s]=true$.
+Formal semantics of expressions and formulas are given as usual.
+
+%A cache coherence protocol is formalized by a pair $(inis,rules)$,
+%where
+%
+%\begin{itemize}
+%\item $inis $ is a set of initialization predicates;
+
+%\item $rules$ is a set of transition rules, each of which is defined as
+%  $g \vartriangleright  S$, where $g$ is a predicate, and $S$ is a
+%  parallel assignment to distinct  variables $v_i$ with expressions
+%  $e_i$.
+%\end{itemize}
+
+For an expression $e$ and a statement $\alpha= x_1:=e_1;x_2:=e_2;...;x_k:=e_k $, we use $\mathsf{vars(\alpha)}$ to denote the variables to be assigned $\{x_1,x_2,...x_k\}$; and use $e^{\alpha}$ to denote the expression transformed from $e$ by substituting each $x_i$ with $e_i$ simultaneously.
+Similarly, for a formula $f$  and a statement $\alpha= x_1:=e_1;x_2:=e_2;...;x_k:=e_k $, we use $f^{\alpha}$ to denote the formula transformed from $f$ by substituting each $x_i$ with $e_i$.
+Moreover, $f^{\alpha}$ can be regarded as the weakest precondition of formula $f$ w.r.t. statement $\alpha$, and we denote $preCond(f,\alpha)\equiv f^{\alpha}$. Noting that a state transition is caused by an execution of the statement, formally, we define: $s\overset{\alpha}{\twoheadrightarrow } s' \equiv$ $(\forall x \in \mathsf{vars}(\alpha). s'(x)= \mathbb{A}[\alpha|_x,s])$ $\wedge (\forall x \notin \mathsf{vars}(\alpha). s'(x)= s(x))$ .
+
+A $rule$ $r$ is a pair $<g,\alpha>$, where $g$ is a formula and is called the $guard$ of rule $r$, and $\alpha$ is a statement and is called the $action$ of rule $r$.
+ For convenience, we denote a rule with the guard $g$ and the statement $\alpha$ as $g \vartriangleright \alpha$, $\mathsf{act}(g \vartriangleright \alpha)\equiv \alpha$ and $\mathsf{guard}(g \vartriangleright \alpha)\equiv g$. If the guard $g$ is satisfied at state $s$, then $\alpha$ can be executed, thus a new state $s'$ is derived. We call the rule $g \vartriangleright \alpha$ is triggered at $s$, and transitioned into $s'$. Formally we define: $s\overset{r}{\rightarrow } s' \equiv s\models \mathsf{guard}(r) \wedge s\overset{\mathsf{act}(r)}{\twoheadrightarrow } s'$.
+
+A $protocol$ $\mathcal{P}$ is a pair $(I,R)$, where $I$ is a set of $formulas$ and is called the initializing formula  set, and $R$ is a set of rules. %A $state$ is an instantaneous snapshot of its %behavior given by a set of assignments.
+As usual, the reachable state set of protocol  $\mathcal{P}=(I,R)$, denoted as $\mathsf{reachableSet}(\mathcal{P})$, can be defined inductively: (1) a state $s$ is in
+$\mathsf{reachableSet}(\mathcal{P})$ if there exists a formula $f \in I$, and $s \models  f$; (2) a state $s$ is in
+$\mathsf{reachableSet}(\mathcal{P})$ if there exists a  state $s_0$  and a rule $r \in R$ such that $s_0 \in \mathsf{reachableSet}(\mathcal{P})$ and $s_0\overset{r}{\rightarrow } s$.
+
+%Consider a protocol $(inis,rules)$, a natural
+%idea is to inductively define the reachable state set of a
+%parameterized protocol instance and to prove inductively a
+%property, in terms of an invariant $inv$, of the reachable state set.
+%However, it is usually too difficult to directly inductively prove the invariant under study.
+%We usually need to strengthen $inv$ into a stronger form:
+%$inv_1\wedge ...\wedge inv_n \wedge inv$.
+%How to figure out the set of auxiliary invariants ($inv_i$)
+%is always the central task of our tool {\sf paraVerifier}.
+
+A novel feature of our work lies in that three kinds of causal
+relations are exploited, which are essentially special cases of the
+general induction rule.
+
+ Consider a rule $r$, a formula $f$, and a formula set $fs$, three
+ kinds of causal relations are defined as follows:\\
+ \begin{definition}
+We define the following relations: % $\mathsf{invHoldForRule_1}::state \times formula\times rule \Rightarrow bool$, $\mathsf{invHoldForRule_2}::state\times  formula\times rule  \Rightarrow bool$,  $\mathsf{invHoldForRule_3}::state \times formula\times rule \times rule set\Rightarrow bool$, and $\mathsf{invHoldForRule_3}::state \times formula\times rule \times rule set\Rightarrow bool$.
+\begin{enumerate}
+\item $\mathsf{invHoldForRule_1} (s,f,r) \equiv $$s \models \mathsf{pre}(r) \longrightarrow s \models \mathsf{preCond}(f ,\mathsf{act}(r))$;%\footnote{Here  $\longrightarrow$ and $\longleftrightarrow$ are HOL connectives.  }
+\item $\mathsf{invHoldForRule_2}(s,f,r) \equiv  $$s \models f \longleftrightarrow s \models \mathsf{preCond}( f,(\mathsf{act}( r))$;
+\item $\mathsf{invHoldForRule_3}(s,f,r,fs) \equiv$  $\exists f' \in fs$ s.t.
+$s \models ( f' \land (\mathsf{pre}(r))  \longrightarrow s \models \mathsf{preCond}(f ,\mathsf{act}(r))$;
+\item $\mathsf{invHoldForRule}(s,f,r, fs) \equiv$   $s \models\mathsf{invHoldForRule_1}(s,f,r) \vee s\models\mathsf{invHoldForRule_2}(s,f,r) \vee s\models \mathsf{invHoldForRule_3}(s,f,r,fs)$.
+%\item $\mathsf{invHoldForRule}~ f~ r ~fs \equiv (\mathsf{invHoldForRule_1} ~f
+%  ~r) \lor (\mathsf{invHoldForRule_2} ~f ~r) \lor (\mathsf{invHoldForRule_3}~ f~ r~fs)$.
+\end{enumerate}
+\end{definition}
+
+A consistency relation $\mathsf{consistent}( invs,ini, rs)$,
+ which holds between a protocol $(inis,rs)$ and
+a set of invariants $invs=\{inv_1,\ldots, inv_n\}$,  is defined as
+follows:
+\begin{definition}
+we define a relation  $consistent( invs,ini, rs)$   if the following conditions hold:
+\begin{enumerate}
+\item for all formulas $inv\in invs$ and $ini\in inis$ and all states $s$,
+$s \models ini$ implies $s \models inv$;
+\item for all formulas $inv\in invs$ and rules  $r \in rs$ and all states $s$,  $\mathsf{invHoldForRule}(s, inv, r, invs   )$
+\end{enumerate}
+\end{definition}
+
+Suppose that the consistency relation
+$\mathsf{consistent}( invs, inis, rs)$ holds, for any $inv \in invs$,
+$inv$ holds for any reachable state $s$ such that $s  \in
+\mathsf{reachableSet}( ini, rs)$. A so-called
+consistency lemma formalizes the essence of the aforementioned causal relation.
+
+\begin{lemma}\label{consistentLemma}%[(consistency lemma)]
+ If $P=(ini,rs)$, $\mathsf{consistent}( invs, ini, rs)$, and $s  \in \mathsf{reachableSet}(P)$, %  $\isasymrbrakk\Longrightarrow$
+ then   for all $inv$ s.t. $inv \in invs$, $s \models inv $.
+\end{lemma}
+
+The consistency lemma plays a key role in our framework.  One one
+side, it is heuristics to construct a consistency relation that
+guides the tool  to find auxiliary invariants. On the
+other side, the consistency lemma gives a general guiding principle
+to prove invariants of a cache coherence protocol. Especially the
+consistency lemma eliminates the need of directly using the
+induction proof method. It allows us to focus on  the causal
+relationship between transition rules of the protocol and
+invariants. It allows us to divide the proof of the invariants to a
+series of subproofs to verify whether one of the relations
+$\mathsf{invHoldForRule_{1-3}}$ hold
+  for  a rule  and an invariant. This strategy of dividing and
+  conqueing is also the key point to make the series of sub-proofs
+  to be automated because the proof patterns for the  subproofs  are similar
+  and modular. To sump up, the tool   will
+  automatically generates a proof that applies the the consistency
+  lemma to prove the correctness of the protocol.
+
+\begin{figure}[!ht]\label{fig:arch}
+% \centering %
+ %\vspace{-2cm}
+\includegraphics[width=1.0\textwidth]{arch.pdf}
+%\vspace{-2cm}
+ \caption{The general architecture of {\sf paraVerifier}}
+
+\end{figure}
+
+A general architecture of our parameterized
+verification is proposed in {\sf paraVerifier}  is illustrated in Fig.~\ref{fig:arch}. A small
+cache coherence protocol instance {\tt prot.m}, is compiled into an internal form {\sf prot.ml} by murphi2Ocaml, then fed into the
+\texttt{invFinder}. The task of part \texttt{invFinder} is to find
+all the necessary ground auxiliary invariants with the help of a server, which integrates NuSMV and Murphi model checkers with Z3 SMT-solver. The two model-checkers are used to choose candidate invariants from oracles of one or two  reference
+protocol instances. The Z3 SMT-solver is used to check some tautology formulas. This step solves the   problem of finding auxiliary invariants.
+ A cached table {\tt prot.cache} is worked out  to store the set of ground invariants and
+ causal relations, which will be  used by {\tt proofGen} to
+create an Isabelle proof   script which models and verifies the
+protocol in a parameterized form. In this step, ground invariants
+will be generalized into a parameterized form, and accordingly
+ground causal relations will be adopted to create parameterized
+proof commands which essentially proves the existence of the
+parameterized causal relations. This solves the   problem of proof generation.  At last the Isabelle proof script is fed into   Isabelle to check the correctness of the protocol.
+
+\section{Informal Account of FLASH Protocol}
+Here we directly adopt the material in \cite{Park2000} to informally introduce FLASH protocol.
+FLASH protocols is a directory-based one which supports a large number of distributed processing nodes. Each cache line-sized block in memory is associated with directory header which keeps information about the line. Each memory address has a home node. Each cache line-sized block in memory is associated
+with a directory header which keeps information about the line. For a memory line, the
+node on which that piece of memory is physically located is called the home; the other
+nodes are called remote. The home maintains all the information about memory lines in
+its main memory in the corresponding directory headers.
+The system consists of a set of nodes, each of which contains a processor, caches, and
+a portion of the global memory. The distributed nodes communicate using asynchronous
+messages through a point-to-point network. The state of a cached copy is in either invalid,
+shared (readable), or exclusive (readable and writable). There are typical kinds of transaction flows as follows:
+
+\begin{description}
+\item[READ-Transaction]
+If a read miss occurs in a processor where state of cache is invalid, the corresponding node sends out a GET request to the
+home (this step is not necessary if the requesting processor is in the home). Receiving the
+GET request, the home consults the directory corresponding to the memory line to decide
+what action the home should take. If the line is pending, meaning that another request
+is already being processed, the home sends a NAK (negative acknowledgment) to the
+requesting node. If the directory indicates there is a dirty copy in a remote node, then the
+home forwards the GET to that node. Otherwise, the home grants the request by sending
+a PUT to the requesting node and updates the directory properly. When the requesting
+node receives a PUT reply, which returns the requested memory line, the processor sets
+its cache state to shared and proceeds to read.
+
+\item[WRITE-Transaction]
+For a write miss, the corresponding node sends out a GETX request to the home.
+Receiving the GETX request, the home consults the directory. If the line is pending,
+the home sends a NAK to the requesting node. If the directory indicates there is a dirty
+copy in a third node, then the home forwards the GETX to that node. If the directory
+indicates there are shared copies of the memory line in other nodes, the home sends
+INVs (invalidations) to those nodes. At this point, the protocol depends on which of two
+modes the multiprocessor is running in: EAGER or DELAYED. In EAGER mode, the home
+grants the request by sending a PUTX to the requesting node; in DELAYED mode, this
+grant is deferred until all the invalidation acknowledgments are received by the home. If
+there are no shared copies, the home sends a PUTX to the requesting node and updates
+the directory properly. When the requesting node receives a PUTX reply which returns
+an exclusive copy of the requested memory line, the processor sets its cache state to
+exclusive and proceeds to write.
+\end{description}
+
+
+
+During the read miss transaction, an operation called a sharing write-back is necessary
+in the following ¡°three hop¡± case. This occurs when a remote processor in node R1
+needs a shared copy of a memory line, an exclusive copy of which is in another remote
+node R2. When the GET request from R1 arrives at the home H, the home consults the
+directory to find that the line is dirty in R2. Then H forwards the GET to R2 with the shared copy of a memory line, an exclusive copy of which is in another remote
+node R2. When the GET request from R1 arrives at the home H, the home consults the
+directory to find that the line is dirty in R2. Then H forwards the GET to R2 with the source of the message faked as R1 instead of H. When R2 receives the forwarded GET,
+the processor sets its copy to shared state and issues a PUT to R1. Unfortunately, the
+directory in H does not have R1 on its sharer list yet and the main memory does not have
+an updated copy when the cached line is in the shared state. The solution is for R2 to
+issue an SWB (sharing write-back) conveying the dirty data to H with the source faked
+as R1. When H receives this message, it writes the data back to main memory and puts
+R1 on the sharer list. Figure 1 shows the processing of a read miss in the protocol.
+When a remote node receives an INV, it invalidates its copy and then sends an
+acknowledgment to the home. There is a subtle case with an invalidation. A processor
+which is waiting for a PUT reply may get an INV before it gets the shared copy of the
+memory line, which is to be invalidated if the PUT reply is delayed. In such a case, the
+requested line is marked as invalidated, and the PUT reply is ignored when it arrives.
+A valid cache line may be replaced to accommodate other memory lines. A shared
+copy is replaced by issuing a replacement hint to the home, which removes the remote
+from its sharers list. An exclusive copy is written back to main memory by a WB (writeback)
+request to the home. Receiving the WB, the home updates the line in main memory
+and the directory properly.
+
+%
+\begin{description}
+\item[(1)]  In most previous papers on FLASH, only informal accounts as shown above are discussed. It is still not very clear to most readers, especially to the novel who are not very familiar with FALSH. Its is very desirable for people to have some flow-charts each of  which is a series of rules executed to complete a READ/WRITE transaction. From such a flow, how rules are executed in some special causal order to finish a transaction? How do transactions of different nodes are synchronized with some mechanism to guarantee  the consistency property?
+
+\item[(2)] It is preferable to combine steps in a flow with auxiliary inductive invariants. From this we can make it clear that how key state variables in the directory of FLASH guarantee the synchronization between different nodes. Formally, auxiliary inductive invariants will show    the synchronization mechanism in logical formulas.
+ \end{description}
+
+
+
+
+%=========================================
+\section{FORMAL DESCRIPTION of FLASH in MURPHI}
+%=========================================
+Here we adopt a version of FLASH similar to that in \cite{cubeicBeyond}, which is adapted from the version in \cite{Chou2004}. Behaviours of the Home node is not identical to those of the other nodes, while behaviors of
+ a non-Home node is identical to that of the other non-Home node. Therefore state variable $a$ on non-Home nodes are stored in array-variables. Some parameterized variable $a[i]$ records some state on $a$ of node $i$. Home is not an explicitly index to reference a node in our model. State of
+ the Home node on $a$ is recorded as global  (or non-parameterized variable) $Homea$. %Index variable $v$ to represent some index of a node is only for non-Home nodes. We explicitly introduce an extra variable $Homev$ to identify the case when the node index should be $Home$.
+ Being consistent with the above philosphy, our FLASH in MURPHI is changed accordingly. For instance, we compare the original version in \cite{Chou2004}, which is shown in (a), with our version, which is shown in (b):
+
+\begin{multicols}{2}
+\begin{specification}\\
+ UNI\_MSG : record\\
+\twoSpaces    Cmd : UNI\_CMD;\\
+\twoSpaces     Proc : NODE;\\
+\twoSpaces     Data : DATA;\\
+  end;\\
+
+ DIR\_STATE : record\\
+\twoSpaces     Pending : boolean;\\
+\twoSpaces     Local : boolean;\\
+\twoSpaces     Dirty : boolean;\\
+\twoSpaces     HeadVld : boolean;\\
+\twoSpaces     HeadPtr : NODE;\\
+\twoSpaces     ShrVld : boolean;\\
+\twoSpaces     ShrSet : array [NODE] of boolean;\\
+\twoSpaces     InvSet : array [NODE] of boolean;\\
+  end;  \\
+
+  ruleset src : NODE do\\
+rule "PI\_Remote\_Get"\\
+  src != Home \&\\
+  Sta.Proc[src].ProcCmd = NODE\_None \&\\
+  Sta.Proc[src].CacheState = CACHE\_I\\
+==>\\
+
+begin\\
+\twoSpaces    Sta.Proc[src].ProcCmd := NODE\_Get;\\
+\twoSpaces    Sta.UniMsg[src].Cmd := UNI\_Get;\\
+\twoSpaces    Sta.UniMsg[src].Proc := Home;\\\\
+endrule;
+endruleset;\\
+\end{specification}\\
+\twoSpaces \twoSpaces \twoSpaces \center(a)
+\columnbreak
+
+\begin{specification}\\
+UNI\_MSG : record\\
+\twoSpaces     Cmd : UNI\_CMD;\\
+\twoSpaces    Proc : NODE;\\
+\twoSpaces     HomeProc : boolean;\\
+\twoSpaces     Data : DATA;\\
+  end;\\
+
+
+  DIR\_STATE : record\\
+\twoSpaces     Pending : boolean;\\
+\twoSpaces     Local : boolean;\\
+\twoSpaces     Dirty : boolean;\\
+\twoSpaces     HeadVld : boolean;\\
+\twoSpaces     HeadPtr : NODE;\\
+\twoSpaces     HomeHeadPtr : boolean;\\
+\twoSpaces     ShrVld : boolean;\\
+\twoSpaces     ShrSet : array [NODE] of boolean;\\
+\twoSpaces     HomeShrSet : boolean;\\
+\twoSpaces     InvSet : array [NODE] of boolean;\\
+\twoSpaces     HomeInvSet : boolean;\\
+  end;\\
+
+  ruleset src : NODE do\\
+rule "PI\_Remote\_Get"\\
+\twoSpaces   Sta.Proc[src].ProcCmd = NODE\_None \&\\
+\twoSpaces   Sta.Proc[src].CacheState = CACHE\_I\\
+==>\\
+begin
+\twoSpaces   Sta.Proc[src].ProcCmd := NODE\_Get;\\
+\twoSpaces   Sta.UniMsg[src].Cmd := UNI\_Get;\\
+\twoSpaces   Sta.UniMsg[src].HomeProc := true;\\
+endrule; endruleset;\\
+\end{specification}\\
+\twoSpaces \twoSpaces \twoSpaces \center(b)
+\end{multicols}
+
+
+%The above is the version in \cite{}, while our version is as follows:
+
+
+
+  In our version, we add a field $HomeProc$. If $HomeProc$ is true, then this is according to the case $Proc=Home$ in the original version, else     the case where $Proc$ is a non-Home node. $HomeHeadPtr$ is added similiarly in our model.  $HomeShrSet$  and     $HomeInvSet$ are added in our model to model $ShrSet[Home]$ and $InvSet[Home]$ to be true in the original version. We use the assignment $Sta.UniMsg[src].HomeProc := true$ to implicitly model the fact that Sta.UniMsg[src].Proc is the Home node.
+
+There are three properties under verification.
+
+\begin{specification}\\
+invariant "CacheStateProp"\\
+  forall p : NODE do forall q : NODE do     p != q ->\\
+    !(Sta.Proc[p].CacheState = CACHE\_E \& Sta.Proc[q].CacheState = CACHE\_E)\\
+  end end;\\
+
+invariant "CacheStatePropHome"\\
+  forall p : NODE do\\
+    !(Sta.Proc[p].CacheState = CACHE\_E \& Sta.HomeProc.CacheState = CACHE\_E)\\
+  end;\\
+
+invariant "MemDataProp"\\
+  !((Sta.Dir.Dirty = FALSE) \& (!(Sta.MemData = Sta.CurrData)));\\
+\end{specification}\\
+
+The former two are mutual-exlusion properties on control signals. The latter are consistency properties on data.
+
+%=========================================
+\section{Searching Auxiliary Invariants and causal relations}\label{sec:causal lines}
+%=========================================
+Initially, {\sf paraVerifier} sets the auxilary invariant set to be {\tt \{!(Sta.Proc[1].CacheState = CACHE\_E \& Sta.Proc[2].CacheState = CACHE\_E),
+!(Sta.Proc[1].CacheState = CACHE\_E \& Sta.HomeProc.CacheState = CACHE\_E), !((Sta.Dir.Dirty = FALSE) \& (!(Sta.MemData = Sta.CurrData)))\}}.
+
+We also need tell  the tool two protocol instances. One is with size 2 but without data paths (i.e., the variables such as Sta.MemData and Sta.CurrData can be omitted), and the second is with size 2 but with data paths.
+The reachable state set of the former can be enumerated by SMV, but that of the latter cann't be. {\sf paraVerifier} need the two instances to verify a candidate formula which is guessed by heuristics. If all the variables occurring in the candidate formula is  in the former instance, then {\sf paraVerifier} will query the   reachable state set to verify the formula; otherwise {\sf paraVerifier} will call MURPHI to verify the formula. In the second kind of checking, a time limit will beset, if MURPHI can check the falsity of the formula within the limit, then the candidate will be dropped; otherwise the candidate will be put it into the auxiliary invariant set.
+
+After searching, the set of auxiliary invariants contains 162 formulas. This is  fully AUTOMATICAL work done by {\sf paraVerifier}.  Here we select and analyze all the invariants on Sta.Dir.Pending, which help us to understand the function of the control variable.
+
+\begin{specification}\\
+1!((Sta.HomeUniMsg.Cmd = uni\_get) \& (Sta.Dir.Pending = FALSE))\\
+2!((Sta.HomeUniMsg.Cmd = uni\_getx) \& (!(Sta.Dir.Pending = TRUE)))\\
+3!((Sta.HomeUniMsg.Cmd = uni\_put) \& (!(Sta.Dir.Pending = TRUE)))\\
+4!((Sta.HomeUniMsg.Cmd = uni\_putx) \& (!(Sta.Dir.Pending = TRUE)))\\
+5!((Sta.UniMsg[1].Cmd = uni\_get) \& (Sta.UniMsg[1].HomeProc = FALSE) \& (Sta.Dir.Pending = FALSE))\\
+6!((Sta.UniMsg[1].Cmd = uni\_getx) \& (Sta.UniMsg[1].HomeProc = FALSE) \&(!(Sta.Dir.Pending = TRUE)) )\\
+7!((Sta.Dir.InvSet[1] = TRUE)  \& (Sta.UniMsg[2].Cmd = uni\_putx)\& (Sta.Dir.Pending = FALSE))\\
+8!((Sta.ShWbMsg.Cmd = shwb\_shwb) \& (!(Sta.Dir.Pending = TRUE)))\\
+9!!((Sta.ShWbMsg.Cmd = shwb\_fack) \& (Sta.Dir.Pending = FALSE))\\
+10!((Sta.NakcMsg.Cmd = nakc\_nakc) \& (Sta.Dir.Pending = FALSE))\\
+11!((Sta.Dir.InvSet[1] = TRUE) \& (Sta.Dir.Dirty = TRUE) \& (Sta.Dir.Pending = FALSE))\\
+12!((Sta.Dir.InvSet[1] = TRUE)  \& (Sta.Dir.HeadVld = FALSE)\& (Sta.Dir.Pending = FALSE))\\
+13!((Sta.Dir.InvSet[1] = TRUE)  \& (Sta.Proc[2].CacheState = cache\_e)\& (Sta.Dir.Pending = FALSE))\\
+14!((Sta.Dir.InvSet[1] = TRUE) \& (Sta.WbMsg.Cmd = wb\_wb) \& (Sta.Dir.Pending = FALSE))\\
+15!((Sta.HomeProc.CacheState = cache\_s) \& (Sta.Dir.Pending = TRUE))\\
+\end{specification}\\
+From these invariants, we can know when the control state variable Sta.Dir.Pending is set or not.
+\begin{itemize}
+ \item Invariant 1 means that the Home node is fetching a data from some node to read, thus {\tt (Sta.HomeUniMsg.Cmd = uni\_get)}, so the pending flag is  TRUE to block another new READ-WRITE requests.
+ \item Invariants 2-4 can be analyzed similarly.
+ \item In invariant 5, {\tt (Sta.UniMsg[1].Cmd = uni\_get) \& (Sta.UniMsg[1].HomeProc = FALSE)} means that node 1 has request a shared copy and been granted to fetch the copy from some node, thus Sta.UniMsg[1].HomeProc = FALSE, the pending flag is set TRUE to block another new READ-WRITE requests.
+  \item    Invariant 6 has a similar meaning while the request is for WRITE operation.
+
+  \item    Invariant 7 specifies that node 2 performs a write-request, thus {\tt Sta.UniMsg[2].Cmd = uni\_putx}, and the data is shared by node 1, then the shared copy in node 1 is invalidated, thus (Sta.Dir.InvSet[1] = TRUE), at this time,  the pending flag is set TRUE to block another new READ-WRITE requests.
+
+  \item   Invariants 8 and 9 says that this flag is set during sharing write-back procedure. Invariants 10  that this flag is set during the nakc procedure when  Sta.NakcMsg.Cmd = NAKC\_Nakc.
+
+   \item     Invariants 11-13 that the flag is set during the invalidating procedure to an old shared-copy store in node 1. The invalidating procedure is a sub-procedure  of a WRITE request from any other node. In 13, {\tt Sta.Proc[2].CacheState = cache\_e} shows that the WRITE request is from node 2, and CacheState of node 2 changes to exclusive even before node 1 has not been invalidated. From this, we can see that the version we verify is an eager-mode.
+
+   \item       Invarian 14 that Sta.Dir.Pending is set during a write-back procedure.
+
+  \item  The last one says that if there is a  local shared-copy in the Home node, Sta.Dir.Pending is FALSE because the   requests can be processed at once, thus the system need not be pended.
+\end{itemize}
+Not only auxiliary invariants are searched, but also causal relations between   invariants and  rules are searched.
+For instance, we select a fragment to show as follows:\\
+
+\begin{specification}\\
+ruleset dst : NODE do\\
+rule "NI\_Remote\_PutX"\\
+  Sta.UniMsg[dst].Cmd = UNI\_PutX \&\\
+  Sta.Proc[dst].ProcCmd = NODE\_GetX\\
+==>\\
+begin\\
+  Sta.UniMsg[dst].Cmd := UNI\_None;\\
+  Sta.Proc[dst].ProcCmd := NODE\_None;\\
+  Sta.Proc[dst].InvMarked := false;\\
+  Sta.Proc[dst].CacheState := CACHE\_E;\\
+  Sta.Proc[dst].CacheData := Sta.UniMsg[dst].Data;\\
+endrule;\\
+endruleset;\\
+rule: n\_NI\_Remote\_PutX[1]; inv: !((Sta.Proc[2].CacheState = cache\_e) \& (Sta.Proc[1].CacheState = cache\_e)); g: TRUE; \\
+rel: invHoldForRule3-inv4:!((Sta.Proc[2].CacheState = cache\_e) \& (Sta.UniMsg[1].Cmd = uni\_putx))\\
+rule: n\_NI\_Remote\_PutX[2]; inv: !((Sta.Proc[2].CacheState = cache\_e) \& (Sta.Proc[1].CacheState = cache\_e)); g: TRUE; \\
+rel: 3invHoldForRule3-inv4:!((Sta.Proc[1].CacheState = cache\_e) \& (Sta.UniMsg[2].Cmd = uni\_putx))\\
+rule: n\_NI\_Remote\_PutX[3]; inv: !((Sta.Proc[2].CacheState = cache\_e) \& (Sta.Proc[1].CacheState = cache\_e)); g: TRUE;\\
+ rel: invHoldForRule2\\
+\end{specification}\\
+
+where {\tt n\_NI\_Remote\_PutX[i]} is the rule instance by instantiating {\tt NI\_Remote\_PutX} with actual parameter i$\in$\{1,2,3\}.
+\begin{itemize}
+\item Line 1 specifies that if a state $s$ satisfies the guard of the rule, and the formula {\tt inv4 2 1=!((Sta.Proc[2].CacheState = cache\_e) \& (Sta.UniMsg[1].Cmd = uni\_putx)}), and $s'$ is the post state after the execution of the rule, then the invariant {\tt !((Sta.Proc[2].CacheState = cache\_e) \& (Sta.Proc[1].CacheState = cache\_e))} holds at state $s'$. Reader can verify this easily. This expresses the intuition behind the causal relation invHoldForRule3. Line 2 can be analyzed similarly.
+ \item Line 3 that {\tt n\_NI\_Remote\_PutX[3]} has nothing to do with all the variables in the invariant formula, thus $s$ satisfies the formula if and only the post state s'  $s$ satisfies the formula. This expresses the intuition behind the causal relation invHoldForRule2.
+\end{itemize}
+
+%There are ? lines in the causal relation table.
+
+
+
+%=========================================
+\section{Generating a Parameterized Proof Script}
+%=========================================
+There are concrete invariants and causal relations, where each  index is a concrete one such as 1 and 2, etc. {\tt proofGen} generalizes these into a N-parameterized form, where each index is symbolic such as $i1$ and $i2$ and $N$ is also symbolic. An Isabelle proof script is automatically generated by {\tt proofGen}, where an N-prameterized instance of FLASH is modelled   and the properties are formally proved. in detail, the proof script is divided into   parts as follows:
+\begin{description}
+\item[1] Definitions of formally parameterized invariant formulas, which are generalized from concrete invariants. There are 161 such invariants. An actual N-parameterized invariant can be obtained by instantiating a formal invariant formula with symbolic indexes. All   actual invariant formulas in the N-parameterized are defined by a set invariants N;
+
+\item[2] Definitions of formally parameterized rules,  which can be directly transformed from the  Murphi rules of FLASH. There are ? rules.  Actual parameterized rules can be defined similarly. All actual invariant formulas in the N-parameterized are defined by a set rules N;
+
+\item[3]  Definitions of specification of the initial state, which can be directly transformed from the {\tt startstate} part of Murphi's code;
+
+\item[4] A lemma  such as {\tt ruleName\_Vs\_invName} on a causal relation of a rule and a parameterized invariant, which is proved by a formal proof automatically generated by {\tt proofGen}. There are ? such lemmas , which is the product of the numbers of rules and invariants.
+
+
+\item[5]  A  Lemma  such as {\tt rules\_invName} on causal relation for  all rule and an invariant,  which is proved by a formal proof automatically generated by {\tt proofGen}. There are 161 such lemmas , which is the same as the numbers of  invariants.
+
+
+\item[6] A lemma {\tt rules\_invs} on a causal relation for all rules and all invariants, which is proved by a formal proof automatically generated by {\tt proofGen}.
+
+\item[7] A Lemma such as {\tt iniImply\_inv\_i} on a fact that an invariant  hold at the initial state defined by the specification of the initial state. There are 161 such lemmas, each of which can be proved by an {\tt auto} command.
+
+\item[8] A lemma {\tt on\_inits} proves that for all invariants they hold at the initial state of the protocol.
+
+\item[9] Main theorem  proving that any invariant formula  hods at any reachable state of the  N-parameterized FLASH protocol instance.
+\end{description}
+
+The Hierachy of the lemmas is illustrated as Fig. \ref{}. $A \rightarrow B$ means that the proof of lemma $A$ needs applying lemma $B$.
+
+
+\begin{specification}\\
+definition inv1::"nat $\Rightarrow$ nat $\Rightarrow$ formula" where [simp]:\\
+"inv1 \pInv0 \pInv1 $\equiv$\\
+(neg (andForm (eqn (IVar (Field (Para (Field (Ident ''Sta'') ''Proc'') \pInv1) ''CacheState''))\\
+ (Const CACHE\_E)) (eqn (IVar (Field (Para (Field (Ident ''Sta'') ''Proc'') \pInv0) ''CacheState'')) (Const CACHE\_E))))"\\
+definition invariants::"nat $\Rightarrow$ formula set" where [simp]:\\
+"invariants N $\equiv$ \{f.\\
+($\exists$ pInv0 pInv1. pInv0$\le$N$\wedge$pInv1$\le$N$\wedge$pInv0~=pInv1$\wedge$f=inv1  pInv0 pInv1) $\vee$\\
+($\exists$ pInv0. pInv0 $\le$N$\wedge$f=inv2  pInv0) $\vee$\\
+(f=inv3  ) $\vee$ ......\\
+($\exists$ pInv0. pInv0$\le$N$\wedge$f=inv162  pInv0)\\
+\}"\\
+\end{specification}\\
+\begin{specification}\\
+lemma n\_NI\_Remote\_PutXVsinv1:\\
+assumes a1: "($\exists$ dst. dst$\le$N$\wedge$r=n\_NI\_Remote\_PutX  dst)" and\\\
+a2: "($\exists$ pInv0 pInv1. pInv0$\le$N$\wedge$pInv1$\le$N$\wedge$pInv0~=pInv1$\wedge$f=inv1  pInv0 pInv1)"\\
+shows "invHoldForRule' s f r (invariants N)" (is "?P1 s $\vee$ ?P2 s $\vee$ ?P3 s")\\
+proof -\\
+from a1 obtain dst where a1:"dst$\le$N$\wedge$r=n\_NI\_Remote\_PutX  dst" apply fastforce done\\
+from a2 obtain pInv0 pInv1 where a2:"pInv0$\le$N$\wedge$pInv1$\le$N$\wedge$pInv0~=pInv1$\wedge$f=inv1  pInv0 pInv1" \\
+\twoSpaces apply fastforce done\\
+have "(dst=pInv0)$\vee$(dst=pInv1)$\vee$(dst~=pInv0$\wedge$dst~=pInv1)" apply (cut\_tac a1 a2, auto) done\\
+moreover \{\\
+  assume b1: "(dst=pInv0)"\\
+  have "?P3 s"\\
+  apply (cut\_tac a1 a2 b1, simp, rule\_tac x="(neg (andForm (eqn (IVar (Field (Para (Field (Ident \\
+  ''Sta'') ''Proc'') pInv1) ''CacheState'')) (Const CACHE\_E))\\
+  (eqn (IVar (Field (Para (Field (Ident ''Sta'') ''UniMsg'') pInv0) ''Cmd'')) (Const UNI\_PutX  ))))"\\ in exI, auto) done\\
+  then have "invHoldForRule' s f r (invariants N)" by auto
+\}\\
+moreover \{\\
+  assume b1: "(dst=pInv1)"\\
+  have "?P3 s"\\
+  apply (cut\_tac a1 a2 b1, simp, rule\_tac x="(neg (andForm (eqn (IVar (Field (Para (Field (Ident\\
+   ''Sta'') ''Proc'') pInv0) ''CacheState''))    (Const CACHE\_E)) \\
+   (eqn (IVar (Field (Para (Field (Ident ''Sta'') ''UniMsg'') pInv1) ''Cmd'')) (Const UNI\_PutX))))" \\
+   in exI, auto) done\\
+  then have "invHoldForRule' s f r (invariants N)" by auto
+\}\\
+moreover \{\\
+  assume b1: "(dst~=pInv0$\wedge$dst~=pInv1)"\\
+  have "?P2 s"\\
+  proof(cut\_tac a1 a2 b1, auto) qed\\
+  then have "invHoldForRule' s f r (invariants N)" by auto
+\}\\
+ultimately show "invHoldForRule' s f r (invariants N)" by auto\\
+qed\\
+\end{specification}\\
+In order to understand the above proof, we can relate the proof with the three causal lines in Sect \ref{sec:causal lines}?.  If we regard the three lines  as a three test points of the causal relation between the parameterized rule {\tt  n\_NI\_Remote\_PutXVsinv1} and invariant {\tt inv1}, the proof is a natural generalization of the three tests. For any actual invariant parameters $i1$ and $i2$, any actual rule parameter $ir$ which satisfy the assumption of the lemma, the causal relation between  must be symmtric to the concrete relations listed in the three lines. Therefore each proof is an abstraction of a kind of concrete causal relations.
+%=========================================
+\section{Typical Flow Chart}
+%=========================================
+FLASH has ? rules, each of which can be scheduled and executed if its guard are satifisfied. However, these transactions can be categoried into several groups. In a group, rules are organized by some partial order to implement a READ/WRITE transaction. In a transaction, there should be a commit step,
+
+
+Formally, a transaction flow is a structure, which can be formalized by pair $<R, \sqsubseteq>$, where $R$ is a set of rules and  $\sqsubseteq $ is a partial order over $R$. $r_1 \sqsubseteq r_2 \equiv \exists s_0~s~g. s_0 \not \models g \land s \models g \land s_0\overset{r}{\rightarrow } s\land g \in decompose(guard(r_2))$. A formula $f$ in conjunction form can be composed into a set of sub-formulas $f_i$, denoted as $decompose(f)$, such that each $f_i$ is not of a conjunction form and $f$ is semantically equivalent to $f_1 \land f_2 \land ... \land f_N$. Intuitively $r_1 \sqsubseteq r_2$ means that the triggering of $r_2$ needs the completion of $r_1$. The bottom of the  $\sqsubseteq $ usually is the starting rule of a transaction, and the top the last rule of the transaction.
+%=========================================
+\section{Conclusion}
+%=========================================
+Our case studies on cache coherence protocols are typical examples
+to illustrate the guiding principle of {\sf paraVerifier}. The
+ consistency lemma based on the induction approach, is the
+core of our work, which gives the heuristics to guide the tool
+ to search invariants. Instead of ``invisible invariants" in previous work
+ (see e.g,~\cite{Pnueli2001}, our invariants are visible,
+ which can be further refined to precisely
+ analyze the correctness of the protocol both in theoretical and practical aspects.
+
+\bibliographystyle{splncsnat}
+\bibliography{gste,cache,refer,lvyi}
+\end{document}

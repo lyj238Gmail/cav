@@ -1,0 +1,722 @@
+\documentclass{llncs}
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%   PACKAGES   %%%%
+%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{makeidx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{latexsym}
+\usepackage{url}
+\usepackage{color}
+\usepackage{isabelle}
+\usepackage{isabellesym}
+\usepackage{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%For Isabelle code
+\newlength{\fminilength}
+\newsavebox{\fminibox}
+\newenvironment{fmini}[1][\linewidth]
+  {\setlength{\fminilength}{#1\fboxsep-2\fboxrule}%
+   \vspace{2ex}\noindent\begin{lrbox}{\fminibox}\begin{minipage}{\fminilength}%
+   \mbox{ }\hfill\vspace{-2.5ex}}%
+  {\end{minipage}\end{lrbox}\vspace{1ex}\hspace{0ex}%
+   \framebox{\usebox{\fminibox}}}
+
+\newenvironment{specification}
+{\noindent\scriptsize
+\tt\begin{fmini}\begin{tabbing}X\=X12345\=XXXX\=XXXX\=XXXX\=XXXX\=XXXX
+\=\+\kill} {\end{tabbing}\normalfont\end{fmini}}
+\def \twoSpaces {\ \ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for comments
+\newcommand\JP[1]{\textcolor{magenta}{JP: #1}}
+\newcommand\lyj[1]{\textcolor{green}{lyj: #1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Additional math operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[colorlinks,
+            linkcolor=black,
+            anchorcolor=black,
+            citecolor=blue,
+            urlcolor=black,
+            bookmarks=true
+            ]{hyperref}
+
+\input{tcilatex}
+
+%=========================================
+\begin{document}
+
+\title{ {\sf paraVerifier=Invariant Finder + Formal Proof Generator}}
+\titlerunning{paraVerifier: An Invariant Finder and proof generator}
+\author{~}
+\authorrunning{~}
+\institute{~}
+
+\maketitle
+
+%-------------------------------------------------------------------------
+\begin{abstract}
+%-------------------------------------------------------------------------
+Parameterized verification of parameterized protocols like cache coherence protocols is important
+but hard.   Our tool {\sf paraVerifier} handles this hard problem in
+a unified framework: (1) it  discovers auxiliary invariants and the
+corresponding causal information between invariants and rules from a
+small reference instance of the verified protocol; (2) the above
+invariants and information  can be generalized into parameterized
+form to construct a formally parameterized proof in a theorem prover
+(e.g., Isabelle). The principle underlying the generalization is the
+symmetry mapping. Our method is successfully applied to some typical
+benchmarks including some snoopy-based and directory-based. A novel
+feature of our method lies in that the last verification result of a
+protocol is provided by a formally readable proof in a theorem
+prover like Isabelle.
+
+%-------------------------------------------------------------------------
+\end{abstract}
+%-------------------------------------------------------------------------
+
+%=========================================
+Verification of parameterized concurrent systems is interesting in
+the area of formal methods, mainly due to the practical importance
+of such systems. Parameterized systems exist in many important
+application areas: cache coherence protocols, security systems, and
+network communication protocols, \emph{etc}. In this work, we will
+focus on cache coherence protocols, which plays a key role in modern
+computer architecture. They require complex algorithms that must
+deal with asynchrony, unpredictable message delays, and multiple
+communication paths between many clients. Therefore, the highest
+possible assurance for the correctness of these complex
+parameterized systems should be guaranteed by formal reasoning
+techniques.
+
+The real challenge posed by parameterized verification is that the
+desired properties should hold in any instance of the parameterized
+system, not just for a single protocol instance. Model checking is
+automatical but able to verify just an instance of the parameterized
+ system. The correctness of the reference instance  does
+not formally suffice to conclude the correctness for all instances.
+Due to the extreme importance of many parameterized system, it is
+preferable to have a proof that the correctness holds for any
+instance.
+
+Some advanced techniques such as compositional and abstraction model
+checking are proposed to handle this chanllenge. However, auxiliary
+invariants, which is usually provided by  human basing on his
+insight to the verification cases, are needed to make these
+techniques work. How to find a sufficient and necessary invariants
+is the core in the field of parameterized verification.
+Besides, the theory foundation of these techniques and their
+soundness are only discussed in a paper proof style. For instance,
+the theory contains the apparent circularity in reasoning and
+applying the auxialiary invariants, and is based on the classical
+notion of a so-called simulation proofs. Frankly speaking, the
+theory itself is not easy to be understood, and  needs to be
+checked mechanically due to its soundness of should be
+guaranteed without conditions.
+
+%which are either used for inductive verification or abstraction
+%model construction. Therefore, how to find ans use these auxiliary
+%invariants is the central problem in the research field of
+%parameterized verification.
+
+The aim of tool {\sf paraVerifier} is to solve the parameterized
+verification of cache coherence protocols in a unified way. {\sf
+paraVerifier} are composed of two parts:  a finder {\tt invFinder}
+and a proof generator {\tt proofGen}. In order to verify the that an
+invariant $inv$ holds for any parameterizd instance of a protocol.
+Firstly,  from a reference model of a protocol with a fixed number
+of clients, {\tt invFinder} tries to search
+interesting auxialiary invariants and causal relations which is
+capable of proving $inv$. Next, {tt proofGen}
+ uses the output of {\tt invFinder} in the first stage, and
+ construct a a completely parameterized
+formal proof which can
+be checked automatically in a theorem prover(e.g., Isabelle).
+
+The originality of our work lies the following aspects:
+\begin{itemize}
+\item Our work is based on a simple but elegant theory. Three kinds of causal
+relations between rules and invariants are introduced, which are
+essentially special cases of the general induction rule. Then a
+so-called consistency lemma is proposed, which is the cornerstone in
+our framework. One one side, it is heuristics inspired by trying to
+construct the consistency relation that guides the tool {\sf
+invFinder} to find auxiliary invariants. On the other side, the
+consistency lemma gives a general guiding principle to prove
+invariants  in the parameterized model of a cache coherence
+protocol. Especially, the theory foundation itself is  verified as a
+formal theory in Isabelle, therfore the theoretical foundation is
+the most rigourous.
+
+\item Our verification products are a list of interesting invariants
+and a formally readable proof script. Our invariants are visible,
+ which can characteize the semantical features of the protocol, and aid people to
+   precisely
+    understand the design of the protocol.
+  Furthermore, the formal proof script not  only models the protocol
+rigorously and specifies its properties without any ambiguity, but also
+proves them mechaniclaly in the theorem prover. Therefore, it helps us to achieve the highest possible
+assurance for formal reasoning of the protocol.
+
+\item Our work is both automatical and scalable. After the protocol is modelled in {\sf paraVerifier}, auxialiary invariants
+ are searched automatically,  the formal proof script in Isabelle is also  automatically generated by {\tt proofGen} , and   checked by Isabelle without human guidance. Thus the most automatical degree is preserved. Furthermore our tool can handle some hard examples from industry like Flash protocols, German2004 protocols, and Godson-t protocols.
+\end{itemize}
+
+To the best of our knowledge, {\sf paraVerifier} is the first work
+that generates automatically formal proofs in a theorem prover for
+verification of cache coherence protocols. Besides, we also generate a new
+proof for original flash protocol without adding new auxiliary
+variables. This proof is different from those of Park et al \cite{}
+because  they introduce the aggressioned Flash protocol model, which
+is in fact an abstract transaction model of Flash,   need prove
+the correspondence between the abstract model and the original Flash
+model, and then prove the correctness of the protocol in the abstract
+model, and subsequently derive the correctness of protocol in the
+original model by the correspondence. New   auxiliary state variables
+like {\tt fwdSrc} are   introduced  for verification. Deep human insight for Flash is needed for both the construction of the aggressioned model  and  introducing new state variables.  Later research on Flash must also rely on these auxiliary
+variables for verification. Our work need fewer human's aid in the verifcation of Flash.
+
+
+
+%=========================================
+%\section{The Design Principle of {\sf paraVerifier}}
+%=========================================
+
+\section{Preliminaries}
+Consider a set of state variables $V$, $e$, $f$ and $S$ are an
+expression, a formula, and a statement over the set of state
+variables $V$. $mathsf{andList}~fs$  is an abbreviation of
+$fs_1\wedge...\wedge fs_n$, where $n$ is the length of $fs$.
+Variables are divided into two categories: array variables or
+non-array (global) variables. A state of a protocol $s$ is an
+instantaneous snapshot of its behaviour given by a mapping from
+variables $V$ to natural numbers.
+
+
+
+
+\paragraph*{Semantics of expressions and formulas}  We write
+$\mathsf{expEval}~e~s$ ($\mathsf{formEval}~f~s$) to denote the
+evaluation of the expression $e$ (formula $f$) at the state $s$. %\lyj{$\mathsf{formEval}~f~s$)}
+
+\paragraph*{Precondition} Consider a parallel assignment $S=\{x_i:=e_i | i>0\}$,
+we define $\mathsf{preCond}~S~f=f[x_i:=e_i]$, which substitutes each
+occurrence of $x_i$ by $e_i$.
+
+
+\paragraph*{Protocols} A protocol is formalized by a pair
+$(ini,rules)$, where
+%
+\begin{itemize}
+\item $ini $ is an  initialization predicate;
+
+\item $rules$ is a set of transition rules, each of which is defined as
+  $g \vartriangleright  S$, where $g$ is a predicate, and $S$ is a
+  parallel assignment to distinct  variables $v_i$ with expressions
+  $e_i$. We write $\mathsf{pre}~r=g$, and $\mathsf{act}~r=g$ if $r=g \vartriangleright
+  S$.
+\end{itemize}
+
+\paragraph*{Parameterized protocols} A parameterized protocol is formalized by a pair
+$(pini,prules)$, where $pini$, and each $prule$ in $prules$ are
+functions from natural numbers to an actual predicate and  rule.
+Usually the number of parameters of a parameterized rule is one. An
+instance of a parameterized protocol, which is called the
+N-parameterized model, is obtained by instantiating $prule$ with
+parameters $i$ such that $i \le N$, where $N$ is an arbitrary
+natural number. %Obviously, if $j \le N$ and $i \ne j$, then
+%$prule~j$ also exists in the rules of the instance. We can see
+%$prule~j$ is the symmetric mirror of $prule~i$ by a permutation
+%$[i\mapsto j]$.
+
+
+\paragraph*{Symmetry and generalization} Here symmetry is defined with respect to
+a permutation on the set of natural numbers $\{i. i \le N\}$.We can
+define symmetry transformation to a variable w.r.t. a permutation
+$\tau$, $symApp~\tau~f~a[i]=a[\tau~i]$; accordingly we can lift the
+symmetry transformation to a formula, statement, and rule. Formally
+our work  relies on three kinds of predicates to define actual rules
+(formulas) from a formal definition of a parameterized rule
+(formula): $\mathsf{ex1P}~ N~ P \equiv \exists i. (i \le N \wedge P~
+i)$, $\mathsf{ex2P}~ N~ P \equiv \exists i~j. (i \le N \wedge j \le
+N \wedge i\ne j \wedge P~ i~j)$, and $\mathsf{ex3P}~ N~ P \equiv
+\exists i~j~k. (i \le N \wedge j \le N \wedge k \le N\wedge i\ne j
+\wedge i\ne k \wedge j\ne k \wedge P~ i~j~k)$. For instance, let
+$prule~i$ is a formal parameterized rule, then the set $\{r.
+\mathsf{ex1P}~ N~ \lambda i. prule ~i\}$ is all the actual rules of
+the N-paramterized model, each of which are symmetric to  any one of
+the others. Namely, the set is the equivalence class of all the
+parameterized rules which are symmetric to $prule~1$, thus we can
+view the set is an generalization of $prule~1$ in the sense of
+symmetry. In this work, symmetry is inherent property of
+parameterized cache coherence protocol, which we will fully exploit
+in this work.
+
+\paragraph*{Reachable state sets} As usual, the reachable state set
+$\mathsf{reachableSet}~ ini ~rules$ of the protocol $(ini,rules)$
+can be inductively defined as usual: (1) a state $s$ is in
+$\mathsf{reachableSet}~ini~ rules$ if
+ $\mathsf{formEval}~ini~s$; (2) a result state $s'$, which is reached by triggering and
+ executing a rule $r$ from a state $s$, is also in
+ $\mathsf{reachableSet}~ini~ rules$ if  $s$ already is in
+ $\mathsf{reachableSet}~ini~ rules$ and $r $ $\in$  $rules$.
+
+\paragraph*{Invariants} In this work, invariants are formulas in a unform: $\neg\mathsf{andList}~atoms$.
+Each $atoms_i$ is of the form such that
+$cache[1]=\mathsf{exclusive}$. An invariant is required to be
+evaluated as true in any one of the reachable state set.
+
+Let $\mathsf{I}$, $\mathsf{T}$, $\mathsf{C}$,  $\mathsf{E}$,
+$\mathsf{true}$, and $\mathsf{false}$ are different  constants. $n$
+is a parameterized variable, $x$ a global variable. Below we use
+abbreviations:
+$\mathsf{forallForm}~N~pf\equiv\mathsf{andList}~[pf~0,...,pf~N]$.
+
+\begin{specification}
+ pini  N $\equiv$
+   x=true $\wedge$ (forallForm N ($\lambda$ i. n[i]=I))\\
+
+    try i $\equiv$ n[i] = I $\vartriangleright$ n[i] := T; \\
+
+    crit i $\equiv$ n[i] = T\& x = true $\vartriangleright$  n[i] := C; x := false;  ;\\
+
+%
+   exit i $\equiv$ n[i] = C $\vartriangleright$ n[i] := E; \\
+
+
+   idle  i $\equiv$  n[i] = E $\vartriangleright$ n[i] := I;  x := true;
+  \\% \\
+   prules N $\equiv$ \{r. ex1P N ($\lambda$ i. r=crit   i)~$\vee$~ex1P N ($\lambda$ i. r=exit
+i)  $\vee$\\
+ ex1P N ($\lambda$ i. r=idle i)~$\vee$ ex1P N ($\lambda$ i.r=try i)\}\\
+%\\
+
+mutualInv i j $\equiv$
+  $\neg$ (n[i]= C $\wedge$ n[j]= C)\\
+
+
+
+\end{specification}
+
+Let $N \ge 3$, $(prules~N, pini~N)$ is a parameterized protocol
+instance, now we want to prove that mutual exclusion property
+$mutualInv~1~2$ holds at any one of the reachable state set of the
+protocol.
+
+
+\section{Consistency Lemma}
+A novel feature of our work lies in that three kinds of causal
+relations are exploited, which are essentially special cases of the
+general induction rule.
+
+ Consider a rule $r$, a formula $f$, and a formula set $fs$, three
+ kinds of causal relations are defined as follows:
+
+\begin{definition}  Relation
+$\mathsf{invHoldForRule_1} ~f ~r$ if    $ \mathsf{pre}~ r
+\longrightarrow \mathsf{preCond}~ f ~(\mathsf{act}~ r)$ ;
+$\mathsf{invHoldForRule_2}~ f~ r$ if $f = \mathsf{preCond}~ f
+(\mathsf{act}~ r)$; $\mathsf{invHoldForRule_3}~ f~ r ~fs$ if there
+exits a formula $f'$ in $fs$ such that
+  $(f' \wedge (\mathsf{pre}~ r)) \longrightarrow \mathsf{preCond} ~f ~(\mathsf{act}
+  ~r)$; $\mathsf{invHoldForRule}~ f~ r ~fs$ holds if $\mathsf{invHoldForRule_1} ~f
+  ~r$, or $\mathsf{invHoldForRule_2} ~f ~r$, or $\mathsf{invHoldForRule_3}~ f~ r
+  ~fs$ holds.
+\end{definition}
+
+ We can view the relation $\mathsf{invHoldForRule}~ f
+r ~fs$ in two ways. Firstly it defines some causality relation
+between $inv$, $r$, and $invs$.  $\mathsf{invHoldForRule}_1~f~ r$
+  means that after rule $r$ is executed,
+ $f$ will be true immediately;   $\mathsf{invHoldForRule}_2~f~ r$ specifies that
+ $\mathsf{preCond}~S~f=f$, intuitively this means that none of state variables in $f$ is
+ changed, and the execution of statement $S$ does not affect the
+ evaluation of $f$.
+ $\mathsf{invHoldForRule}_3~f~ r~invs$ states
+  that  there exists another invariant $f' \in invs$ such that
+  the conjunction of the guard of $r$ and $f'$ implies the precondition  $\mathsf{preCond}~S~f$.
+Intuitively, $\mathsf{invHoldForRule} ~f ~r ~fs$ defines a causal
+relation, which can guaranttee that if each of formula in $fs$ holds
+before the execution of the rule $r$, then  $f$ also holds after the
+execution of the rule $r$ f. Secondly the relation
+$\mathsf{invHoldForRule} ~f ~r ~fs$ can also be regarded as a
+special kind of inductive proof rules, which can be applied to prove
+each formula in $fs$ holds at each inductive protocol rule cases.
+
+
+\begin{definition}
+A consistency relation $\mathsf{consistent}~ invs ~ini~ rs$,
+ which holds between a protocol $(inis,rs)$ and
+a set of invariants $invs=\{inv_1,\ldots, inv_n\}$,  is defined as
+follows:
+%
+\begin{itemize}
+\item For any invariant $inv \in invs$,
+initializing predicate $ini \in ini$, and state $s$, if $ini$ is
+evaluated true at state $s$, then $inv$ is also evaluated true at
+state $s$.
+
+\item For any invariant $inv \in invs$, $r$ in the rule set
+$rs$, either one of the following five types of relation holds,
+i.e., $\mathsf{invHoldForRule_{1-3}}~inv~ r$.
+
+\end{itemize}
+\end{definition}
+
+
+For instance,
+
+\begin{specification}
+invOnX$_1$ ~i $\equiv$ $\neg$(x=true $\wedge$ n[i]=C)   \ \ \
+
+invOnX$_2$ ~i $\equiv \neg$ (x=true$\wedge$ n[i]=E)  \\
+
+
+aux$_1$ ~i~j $\equiv \neg$ ( n[i]=C$\wedge$n[i]=E)   \ \ \
+
+aux$_2$ ~i~j $\equiv \neg$  ( n[i]=E$\wedge$n[i]=C)\\
+
+  pinvs N$\equiv$ \{f. ex2P N ($\lambda$ i j.  f = invonX1 i j) $\vee$ex2P N ($\lambda$ i j.  f = invOnX2 i j)   \\
+$\vee$ex1P N ($\lambda$ i.  f= mutualInv i j)    $\vee$ex2P N ($\lambda$ i j.  f =  aux1 i j) \\
+$\vee$ex2P N ($\lambda$ i j.  f =  aux2 i j) \}.
+
+\end{specification}
+
+We have  $\mathsf{invHoldForRule_1 }~(\mathsf{invOnX_1} ~1)~
+(\mathsf{crit}~1)$, $\mathsf{invHoldForRule2 }~(\mathsf{mutual_1}
+~1~2)~ (\mathsf{try}~3)$,
+ and $\mathsf{invHoldForRule_3 }~(\mathsf{mutual_1} ~1~2)~ (\mathsf{crit}~1)$.
+ The last holds because
+ $\mathsf{invOnX_1} ~2 \in invs$, $\mathsf{preCond}~(\mathsf{act}~(\mathsf{crit}~1))~
+ (\mathsf{mutual_1} ~1~2)=\neg (\mathsf{C}=\mathsf{C}\wedge n[2]=\mathsf{C})$,
+ and $ x=true \wedge \mathsf{invOnX_1}~2 \longrightarrow \mathsf{preCond}~
+ (\mathsf{act}~(\mathsf{crit}~1))~~(\mathsf{mutual_1}
+ ~1~2)$. It is not diffcult to verify
+$\mathsf{consistent}~ (\mathsf{pinvs}~ N) ~(\mathsf{pini}~N)~
+(\mathsf{prules}~N)$ also holds.
+
+
+
+Now we can formally prove the essence of the aforementioned
+causality. Suppose that the consistency relation
+$\mathsf{consistent}~ invs ~inis~ rs$ holds, for any $inv \in invs$,
+$inv$ holds for any reachable state $s$ such that $s  \in
+\mathsf{reachableSet}~ ini~ rs$. This is formalized by a so-called
+consistency lemma.
+
+\begin{lemma}\label{consistentLemma}[(consistency lemma)]
+  $\isasymlbrakk \mathsf{consistent}~ invs ~ini~ rs$; $s  \in \mathsf{reachableSet}~ ini~ rs$
+  $\isasymrbrakk\Longrightarrow$ $\forall inv. inv \in invs \longrightarrow
+\mathsf{formEval}~ inv ~s$.
+\end{lemma}
+
+
+%It is the cornerstone in our framework. \JP{No framework is
+%mentioned before.} It is \JP{heuristics????} inspired by the
+%consistency relation that guides the tool {\sf paraVerifier} to find
+%the strengthened invariants, which are used to prove the original
+%invariant. The tool \texttt{paraVerifier} works in an iteratively
+%semi-proving and semi-searching workflow. In an iterating step, it
+%tries to prove some consistent relation exists between an invariant
+%and a rule, and automatically generates a new auxiliary invariant if
+%there is no such an invariant in the current invariant set, and
+%records the corresponding consistency information. This workflow is
+%not finished until no new counter example is created.
+%\JP{`counter-example' comes from nowhere!}
+
+\section{An overview of problem formulation and our solution to
+parameterized verification} Note that almost no invariants but one
+$\mathsf{mutualInv}$ in the aforementioned formula set
+$\mathsf{pinvs}~ N$ is given initially,  the remaining formulas such
+as $aux_i(i>1)$ are needed to find. Only after figuring out all the
+auxiriary invariant formula set $\mathsf{pinvs}~ N$ such as
+$\mathsf{consistent}~ \mathsf{pinvs}~ N ~(pini~N)~ (prules~N)$, can
+we  adopt the consistency lemma to prove all the invariant formulas
+in $\mathsf{pinvs}~ N$, which includes the initially given invariant
+ $\mathsf{mutualInv}$.
+
+The general architecture of  our solution  to parameterized
+verification is illustrated in Fig.~\ref{fig:arch} (a). A small
+cache coherence protocol instance {\tt a.fl}, is fed into the
+\texttt{invFinder}. The task of tool \texttt{invFinder} is to find
+all the necessary ground auxiliary invariants from the reference
+protocol instance.
+ A table {\tt a.tbl} is worked out  to store the set of ground invariants and
+ causal relations, which will be  used by {\tt proofGen} to
+create an Isabelle proof   script which models and verifies the
+protocol in a parameterized form. In this step, ground invariants
+will be generalized into a parameterized form, and accordingly
+ground causal relations will be adopted to create parameterized
+proof commands which essentially proves the existence of the
+parameterized causal relations. At last the Isabelle proof script is
+fed into   Isabelle to check the correctness of the protocol.
+
+
+The consistency lemma is the cornerstone in our framework.  One one
+side, it is heuristics to construct a consistency relation that
+guides the tool {\sf invFinder} to find auxiliary invariants. On the
+other side, the consistency lemma gives a general guiding principle
+to prove invariants of a cache coherence protocol. Especially the
+consistency lemma eliminates the need of directly using the
+induction proof method. It allows us to focus on  the causal
+relationship between transition rules of the protocol and
+invariants. It allows us to divide the proof of the invariants to a
+series of subproofs to verify whether one of the relations
+$\mathsf{invHoldForRule_{1-3}}$ hold
+  for  a rule  and an invariant. This strategy of dividing and
+  conqueing is also the key point to make the series of sub-proofs
+  to be automated because the proof patterns for the  subproofs  are similar
+  and modular. To sump up, the tool \texttt{proofGen} will
+  automatically generates a proof that applies the the consistency
+  lemma to prove the correctness of the protocol.
+
+
+ \begin{figure}[!ht]
+% \centering %
+ \vspace{-0.8cm}
+\includegraphics[width=1.0\textwidth]{invFinderArchClipA.pdf}
+%\vspace{-0.5cm}
+ \caption{The architecture of {\sf paraVerifier}}
+\label{fig:arch}
+\end{figure}
+ \vspace{1cm}
+
+
+\section{An illustrating example}
+In this section, we use the verification of {\tt mutual}   to illustrate how to use the tool. 
+We only need write a protocol model in our modelling language, the core of which is showned as below:
+
+\begin{specification}
+1\twoSpaces   pini  N $\equiv$
+   x=true $\wedge$ (forallForm N ($\lambda$ i. n[i]=I))\\
+
+2\twoSpaces    try i $\equiv$ n[i] = I $\vartriangleright$ n[i] := T; \\
+
+3\twoSpaces    crit i $\equiv$ n[i] = T\& x = true $\vartriangleright$  n[i] := C; x := false;  ;\\
+
+4\twoSpaces   exit i $\equiv$ n[i] = C $\vartriangleright$ n[i] := E; \\
+
+
+5\twoSpaces   idle  i $\equiv$  n[i] = E $\vartriangleright$ n[i] := I;  x := true;\\% \\
+  
+6\twoSpaces   prules  = [(``crit", crit), (``exit", exit), ("idle",idle),("try",try)]\\
+%\\
+
+7\twoSpaces mutualInv i j $\equiv$
+  $\neg$ (n[i]= C $\wedge$ n[j]= C)\\
+
+8\twoSpaces  search prules 3 [mutualInv 1 2] "mutual" \\
+
+9\twoSpaces  createIsabelleModel pini "mutual" \\
+
+\end{specification}
+
+Line 1 defines an form to specify the initial state; lines 2-5specifies four rules; line 6 defines the set of all the rules and names them;
+ line 7 defines the mutual exclusion property; line 8 is a command to tell {\sf invFinder} to search auxiliary invariants from a the reference instance with 3 nodes,   the starting invariant is {\tt mutualInv 1 2}, and the output results are stored in a file "mutual"; Line 9 is a command to tell {\sf proofGen} 
+  to create a parameterized Isabelle proof script for the protocol.
+  
+ The output of the {\sf invFinder}, which is stored in file "mutual",  is shown in Table
+\ref{label-ground-causal relation}. In the table,  each line records the    index of a normalized   invariant , name of a parameterized rule, the rule
+  parameters to instantiate the rule, a causal relation between
+  the ground invariant and a kind of causal relation which involves the kind and proper formulas
+  $f'$   in need (which are used to construct
+      causal relations $\mathsf{invHoldForRule}_3$.
+
+ \begin{table}[!t]
+\centering \caption{A fragment of output of {\sf invFinder}}\label{label-ground-causal relation} % {\tt
+%simpMutual.tbl}
+\begin{tabular}{|c|c|c|c|c|  }
+\hline
+  rule& ruleParas&inv&causal relation &   f'  \\
+\hline
+  .. & ..&.. &..&.. \\
+
+\hline
+  crit  & [1]& mutualInv$_1$ 1 2& invHoldForRule3 &aux$_1$~2 \\
+\hline
+  crit &[2]& mutualInv$_1$ 1 2& invHoldForRule3 &aux$_1$~1  \\
+\hline
+  crit & [3]& mutualInv$_1$ 1 2 & invHoldForRule2  & \\
+\hline
+  .. & ..&.. &..&.. \\
+\hline
+\end{tabular}
+\end{table}
+
+A skelton of the formal Isabelle proof script generated by {\sf proofGen} 
+includes the definitions of control signals, rules, invariants, initalizing formula,  
+lemmas and their proofs. %The lemmas are devided into three categories: (1) a lemma which specifies and proves  that if a state $s$ satifies %$formEval~(pIni~N)~s$, then
+% $\mathsf{formEval}~(inv~i)~s$ (or  $\mathsf{formEval}~(inv~i~j)~s$); (2) a lemma   that $\mathsf{invHoldForRule}~(rule~iR)~(inv~i_1)$ (or %$\mathsf{invHoldForRule}~(rule~iR)~(inv~i_1~i_2)$; (3) the main lemma that if a state $s \in \mathsf{reachableSet}~{pIni~N)~(prules~N)$, then
+% for all invariants $inv$ such that $inv \in (\mathsf{invariants}~N)$, $\mathsf{formEval}~inv~s$.
+
+\begin{specification}
+1\twoSpaces  
+rules N$\equiv$ \{r. exLessP N ($\lambda$i.  r=crit i)  $\vee$
+exLessP N ($\lambda$i.  r=exit i)  $\vee$
+exLessP N ($\lambda$i.  r=idle i)  $\vee$
+exLessP N ($\lambda$i.  r=try i)  \}\\
+
+
+
+
+2\twoSpaces 
+invariants N$\equiv$ \{f. exTwoLessP N ($\lambda$ i j.  f = inv1 i j)  $\vee$
+exLessP N ($\lambda$ i.  f= inv2 i)  $\vee$
+exTwoLessP N ($\lambda$ i j.  f = inv3 i j)  $\vee$
+exLessP N ($\lambda$ i.  f= inv4 i)  $\vee$
+exTwoLessP N ($\lambda$ i j.  f = inv5 i j)   \}
+
+
+
+3\twoSpaces lemma critVsInv1: 
+    $\isasymlbrakk$   a1:
+iRule1 $\le$ N
+  and  a2:
+iRule2 $\le$ N
+  and
+a3:
+iInv1
+$\le$ N
+  and  a4:
+iRule1~=iRule2
+
+
+    $\isasymrbrakk\Longrightarrow$
+invHoldForRule' (inv1  iInv1 ) crit iRule1
+iRule2 ) (invariants   N)
+  (is
+$\forall$s. ?P1 s$\vee$?P2 s$\vee$?P3 s
+)\\
+
+\twoSpaces lemma main:
+   $\isasymlbrakk$   a1:
+s $\in$ reachableSet { mutualIni  N} (rules N)
+   and
+a2:
+0<N
+
+   $\isasymrbrakk\Longrightarrow$
+$\forall$inv. inv $\in$(invariants N)$\longrightarrow$
+formEval
+inv s\\
+
+\end{specification} 
+Accordingly, {\sf paraVerifier} generates two main output (1) a list of ground invariants and a table of causal relations, which is extracted
+ from the reference instance with 3 nodes by {\sf invFinder}, which is as below:
+ 
+ 
+  (2) an Isabelle proof script which can mechinaclly checked by Isabelle.
+
+ The modelling style is based on , and 
+
+In fact, due to the high automaticy, our tool is
+
+
+%-------------------------------------------------------------------------
+
+
+
+%=========================================
+\section{Verification products}
+%=========================================
+
+After the auxiliary invariants are found,  the formula set $\mathsf{pinvs}~ N$ in Table \ref{} can be used to analyze
+ and verify the design  of the protocol. In fact, they gives a complete
+logical characterization of the semantics of the protocol. It will gives a deep insight of the protocol. These properties are divided into two categories: (1) correspondence between
+control signals; (2)mutual exclusion between control signals. For instance, the intuitive meaning of the invariants is analyzed as follows:
+
+\begin{table}[htbp] \label{Summarization of invariants}
+\centering \caption{Summarization of invariants}
+\begin{tabular}{|c|c| }
+\hline
+invariant &  meaning  \\
+\hline
+$\mathsf{invOnX_1} ~i$& Once some n[i] is set C, the flag x will be set false \\
+\hline
+$\mathsf{invOnX_2} ~i$&  Once some n[i] is set E, the flag x will be set false \\
+\hline
+$\mathsf{mutualInv}~ i ~j$ &  the mutual exclusion between n[i]=C and n[j]=C \\
+\hline
+$\mathsf{aux}_1~ i ~j$ &  the mutual exclusion between n[i]=C and n[j]=E \\
+\hline
+$\mathsf{aux}_2~ i ~j$ &  the mutual exclusion between n[i]=C and n[j]=E \\
+\hline
+\end{tabular}
+\end{table}
+%$\mathsf{invOnX_1} ~i$ specifies that the flag $x$ shows the
+%availability of the critical section. Once some node state variable
+%$n[i]$ is set $C$ or $E$, $x$ will be set $true$. Formulas
+%$\mathsf{mutualInv}~ i ~j$, $\mathsf{aux_1} ~i~j$, and
+%$\mathsf{aux_2} ~i~j$ state the mutual exclusion properties between
+%a node's $\mathsf{C}(\mathsf{E})$ state and another different node's
+%$\mathsf{C}(\mathsf{E})$ state.
+The causal relations listed in Table \ref{} only illustrate why the invariants hold forever at each reachable state set.
+That is to say, for a rule $r$ and an $inv$ descriibed in a line, one of the three causal relation $\mathsf{invHoldForRule}_{1\_3}$ holds, so an invariant holds after the execution the rule $r$. The Isabelle proof-script formally generalize these causal relation into parameterized form and proved the existence of the  causal relations. At last, a main lemma formally specifies that why the invariants hold forever at any reachable state set, and is formally proved by using the consistency lemma. In this sense, the Isabelle script can be seen as  a formal analysis document. The script contains 2243 line, and and costs more than 56
+minutes for Isabelle to check in a 64-bit computing server platform which has a
+160-multicore Intel Xeon CPU with 2.40GHz clock speed.
+
+
+%=========================================
+\section{Experiments}
+%=========================================
+We implement our tool in Forte \cite{Forte}. More experiments are
+done including typical bus-snoopy ones such as MESI and MOESI,
+ directory-based ones such as  Germanish, and  German protocols. The detail experiment codes and data can
+be found in \JP{\cite{LiCache14}}. Each experiment data includes the
+${\sf paraVerifier}$ model, invariant sets found, Isabelle proof
+scripts, and the simulation flow graph of one single node. A table
+summarizes  our experiments below. Among the benchmarks, the German
+protocol   was posted
+ as
+% Among the benchmarks, a case study is done
+%on a directory-based protocol, German protocol, which was posted as
+a challenge to the formal verification community by Steven German in
+2000. German protocol is a moderate case.
+To the best of our knowledge, few people but us give a complete proof to verify
+the mutual exclusion  property of the German protocol
+ in a theorem prover.
+
+ \begin{table}[htbp] \label{Summarization of experiment results}
+\centering \caption{Summarization of results on benchmarks}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+protocol &  ruleNum & invariantNum & time(s) & memory(M) \\
+\hline
+simpMutual& 4& 5 & 5.66 & 10.3 \\
+\hline
+MESI & 4& 3 & 4.66 & 11.5  \\
+\hline
+MOESI &  5& 3 &3.98 & 11.3  \\
+\hline
+ German-ish  & 6& 4 &35.8 & 15.1   \\
+\hline
+German & 13 & 48 & 1222.2 & 16.1   \\
+\hline
+\end{tabular}
+\end{table}
+
+%=========================================
+\section{Conclusion}
+%=========================================
+Our case studies on cache coherence protocols are typical examples
+to illustrate the guiding principle of {\sf paraVerifier}. The
+ consistency lemma based on the induction approach, is the
+core of our work, which gives the heuristics to guide the tool
+ to search invariants. Instead of ``invisible invariants in previous work
+ (see e.g,~\cite{Pnueli2001}, our invariants are visible,
+ which can be further refined to precisely
+ analyze the correctness of the protocol both in theoretical and practical aspects.
+
+\bibliographystyle{splncsnat}
+\bibliography{gste,cache,refer}
+\end{document}
