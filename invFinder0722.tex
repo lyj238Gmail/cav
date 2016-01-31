@@ -1,0 +1,413 @@
+\documentclass{llncs}
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%   PACKAGES   %%%%
+%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{makeidx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{latexsym}
+\usepackage{url}
+\usepackage{color}
+\usepackage{isabelle}
+\usepackage{isabellesym}
+\usepackage{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%For Isabelle code
+\newlength{\fminilength}
+\newsavebox{\fminibox}
+\newenvironment{fmini}[1][\linewidth]
+  {\setlength{\fminilength}{#1\fboxsep-2\fboxrule}%
+   \vspace{2ex}\noindent\begin{lrbox}{\fminibox}\begin{minipage}{\fminilength}%
+   \mbox{ }\hfill\vspace{-2.5ex}}%
+  {\end{minipage}\end{lrbox}\vspace{1ex}\hspace{0ex}%
+   \framebox{\usebox{\fminibox}}}
+
+\newenvironment{specification}
+{\noindent\scriptsize \tt\begin{fmini}\begin{tabbing}X\=X12345\=XXXX\=XXXX\=XXXX\=XXXX\=XXXX
+\=\+\kill} {\end{tabbing}\normalfont\end{fmini}}
+\def \twoSpaces {\ \ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for comments
+\newcommand\JP[1]{\textcolor{magenta}{JP: #1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Additional math operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[colorlinks,
+            linkcolor=black,
+            anchorcolor=black,
+            citecolor=blue,
+            urlcolor=black,
+            bookmarks=true
+            ]{hyperref}
+
+\input{tcilatex}
+
+%=========================================
+\begin{document}
+
+\title{ {\sf InvFinder}: An Invariant Finder for Parameterized Verification of Cache Coherence Protocols}
+\titlerunning{InvFinder: An Invariant Finder}
+\author{~}
+\authorrunning{~}
+\institute{~}
+
+\maketitle
+
+%-------------------------------------------------------------------------
+\begin{abstract}
+%-------------------------------------------------------------------------
+The crux of parameterized verification of cache coherence protocols is the construction of a set of auxiliary invariants.
+ Our tool  {\sf InvFinder}  handles this hard problem
+ and it is inspired by induction heuristics to originate auxiliary invariants from a small reference instance of the verified protocol.
+ The invariants and the corresponding information found by {\sf InvFinder}
+ can be used to construct a formally parameterized proof in a theorem prover (e.g., Isabelle) to prove
+ the correctness of the protocols. At last, a guided simulation flow of a single process can be provided
+to the engineers, which is created with the aid of the auxiliary invariants to unveil intuitively the correctness of the protocol.
+\JP{It is unclear why the guided simulation flow of a single process is a nice feature of the tool.}
+\JP{After reading the paper, this guided simulation is never described.}
+
+%-------------------------------------------------------------------------
+\end{abstract}
+%-------------------------------------------------------------------------
+
+\JP{For a tool paper, HVC only allows 6 pages!!!!!}
+
+%=========================================
+\section{Introduction}
+%=========================================
+Verification of parameterized concurrent systems is
+interesting in the area of formal methods,
+mainly due to the practical importance of such systems.
+Parameterized systems exist in many
+important application areas: cache coherence protocols, security
+systems, and network communication protocols,
+\emph{etc}. In this work, we will focus on cache coherence
+protocols. The challenge posed by
+parameterized verification is that the desired properties should hold in any instance of the parameterized system. The core of parameterized verification is the construction of a set of auxiliary invariants~\cite{Pnueli2001,Chou2004,Pandav2005,cubicle2011},
+which are either for inductive verification or abstraction model construction.
+%Essentially, we believe that parameterized verification should be solved by theorem-proving,
+%as
+\JP{It is unclear what is the initial invariant and what are the correctness proofs.}
+\JP{To make the concepts clear, it will be better to briefly describe the standard
+procedure for parameterized verification.
+Then you can talk about initial invariant, correctness proofs, auxiliary invariants, etc.
+(Such terms are not explained so far in the current paper.)}
+
+The aim of tool {\sf InvFinder} is to find auxiliary invariants from a protocol
+instance with fixed size.
+{\sf InvFinder} can be regarded as both a  prover and a finder.
+\JP{I guess nobody has encountered either semi-prover or semi-finder before.}
+Given an invariant $inv$ in an invariant set $invs$,
+and a rule $r$ in a set of protocol rules $rs$,
+{\sf InvFinder} works in a very simple way:  it tries to prove the
+existence of some kind of casual relations between $r$ and $inv$,
+then it tries to construct a new invariant $inv'$ and adds it into the invariant set $invs$
+if the current proving step is blocked due to the ? of the invariants. At this time, it will analyze the form of rule and
+ invariant, then create new invariants.
+\JP{`fails'? why $inv'$ is an invariant if it fails?}
+This searching procedure stops until no new invariants are created.
+%The originality of {\sf InvFinder} lies in
+% its essence of induction.
+% \JP{What is essence of  induction?} Be
+The orginality of our work lies the following aspects: (1)
+{\sf InvFinder} is guided by heuristics inspired by a so-called principle of consistency lemma,
+ which specifies several kinds of  casual relations which hold between  of a set of invariants with the transition rules the protocol instance; \cite{LPParamterProof} (2)
+ Although the invariants are created from a finite protocol instance, they can be refined to either construct a completely formal proof   in a theorem prover(e.g., Isabelle) or an abstract model which fully models the behavior of a single client. Here we emphasize that either the proof and the abstract model
+  can  account for any parameterized model of the protocol under study. The formal proofs and the abstract model with the interpretation of the invariants can be used as the formal documents of the analysis of the protocols.
+\JP{Give a reference other to a paper or to some new section.}
+
+%=========================================
+\section{The Design Principle of {\sf InvFinder}}
+%=========================================
+Consider a set of state variables $V$,
+$e$, $f$ and $S$ are an expression, a formula, and a statement over
+the set of state variables $V$. A cache coherence protocol is formalized by a pair $(inis,rules)$,
+where
+%
+\begin{itemize}
+\item $inis $ is a set of initialization predicates;
+
+\item $rules$ is a set of transition rules, each of which is defined as
+  $g \vartriangleright  S$, where $g$ is a predicate, and $S$ is a
+  parallel assignment to distinct  variables $v_i$ with expressions
+  $e_i$.
+\end{itemize}
+
+A  state of a protocol $s$ is an instantaneous snapshot of its
+behaviour given by a mapping from variables to their values. We
+write $\mathsf{expEval}~e~s$ ($\mathsf{formEval}~e~s$) to denote the
+evaluation of the expression $e$ (formula $f$) at the state $s$.
+Consider a parallel assignment  $S=\{x_i:=e_i | i>0\}$, we define
+$\mathsf{preCond}~S~f=f[x_i:=e_i]$, which substitutes each occurency
+of $x_i$ by $e_t$. As usual, the reachable state set
+$\mathsf{reachableSet}~ inis ~rules$ of the protocol $(inis,rules)$
+can be inductively defined as usual: (1) a state $s$ is in
+$\mathsf{reachableSet}~inis~ rules$ if
+ there exists a formula $ini$ that is true in state $s$; (2) a result state $s'$, which is reached by triggering and
+ executing a rule $r$ ,is also in
+ $\mathsf{reachableSet}~inis~ rules$ if $s$ already is in
+ $\mathsf{reachableSet}~inis~ rules$ and $r $ $\in$  $rules$.
+
+Consider a protocol $(inis,rules)$, a natural
+idea is to inductively define the reachable state set of a
+parameterized protocol instance and to prove inductively a
+property, in terms of an invariant $inv$, of the reachable state set.
+However, it is usually too difficult to directly inductively prove the invariant under study.
+We usually need to strengthen $inv$ into a stronger form:
+$inv_1\wedge ...\wedge inv_n \wedge inv$.
+How to figure out the set of auxiliary invariants ($inv_i$)
+is always the central task of our tool {\sf InvFinder}.
+
+Being different from previous work, {\sf InvFinder} is centered with
+a so-called consistency relation $\mathsf{consistent}~ invs ~inis~
+rs$,
+ which holds between a protocol $(inis,rs)$ and
+a set of invariants $invs=\{inv_1,..., inv_n\}$. \JP{It is very
+confusing here: our aim is to derive $inv_i$s. But here it seems
+that $inv_i$s are given.} The consistency relation specifies two
+aspects: \JP{What is `it'?}
+%
+\begin{itemize}
+\item For any invariant $inv \in invs$,
+any initializing predicate $ini \in inis$, any
+state $s$, if $ini$ is evaluated true at state $s$, then $inv$ is
+evaluated true at state $s$ as well.
+
+\item For any invariant $inv \in invs$, any $r$ in rule set
+$rs$, either $\mathsf{invHoldForRule1 }~inv~ r$,
+$\mathsf{invHoldForRule2 }~inv~ r$, $\mathsf{invHoldForRule3 }~inv~
+r~invs$, or $\mathsf{invHoldForRule4 }~inv~ r~invs$ holds, or
+$\mathsf{invHoldForRule5}~inv~ r~invs$ holds. Formally, let $r=g
+\vartriangleright  S$, $inv=ant \longrightarrow cons$, where $cons$
+is an atomic formulas such equivalence formulas, and $ant$ is a
+conjunction of atomic formulas. $\mathsf{invHoldForRule1 }~inv~ r$
+means that
+ $\mathsf{preCond}~S~inv=true$; $\mathsf{invHoldForRule2 }~inv~ r$ specifies that  $\mathsf{preCond}~S~inv=inv$; $\mathsf{invHoldForRule3 }~inv~ r~invs$
+  that $\mathsf{preCond}~S~cons=cons$ and there exists a formula $ant'$ such that
+$(\mathsf{pre}~r )\wedge \mathsf{preCond}~S~ant$ implies $ant'$ and
+another invariant $inv'=ant' \longrightarrow cons \in invs$;
+$\mathsf{invHoldForRule4}~inv~ r~invs$ says
+  that $\mathsf{preCond}~S~ant=ant$, and there exists formulas
+  $ant'$ and $ant''$
+such that  $ant'$ implies $ant$, and $(\mathsf{pre}~r )\wedge \neg
+\mathsf{preCond}~S~cons$ implies  $ant''$, and there exists another
+invariant $inv'=ant'' \longrightarrow \neg ant' \in invs$;
+$\mathsf{invHoldForRule5}~inv~ r~invs$ specifies that
+$\mathsf{preCond}~S~inv$ is also an invariant in  $invs$.
+\end{itemize}
+
+Suppose that the consistency relation $\mathsf{consistent}~ invs
+~inis~ rs$ holds,   for any $inv$ such that $inv \in invs$, $inv$
+holds for any reachable state $s$ such that $s  \in
+\mathsf{reachableSet}~ inis~ rs$.
+\begin{theorem}\label{consistentLemma}
+  $\isasymlbrakk \mathsf{consistent}~ invs ~inis~ rs$; $s  \in \mathsf{reachableSet}~ inis~ rs$
+  $\isasymrbrakk\Longrightarrow$ $\forall inv. inv \in invs \longrightarrow
+\mathsf{formEval}~ inv ~s$    \end{theorem}
+
+
+
+The consistency lemma can be proved by induction. Interesting
+readers can refer to \cite{}. \JP{`consistency lemma' is not
+explained and it is unclear why it can be proved by induction.}
+
+%It is the cornerstone in our framework. \JP{No framework is
+%mentioned before.} It is \JP{heuristics????} inspired by the
+%consistency relation that guides the tool {\sf InvFinder} to find
+%the strengthened invariants, which are used to prove the original
+%invariant. The tool \texttt{invFinder} works in an iteratively
+%semi-proving and semi-searching workflow. In an iterating step, it
+%tries to prove some consistent relation exists between an invariant
+%and a rule, and automatically generates a new auxiliary invariant if
+%there is no such an invariant in the current invariant set, and
+%records the corresponding consistency information. This workflow is
+%not finished until no new counter example is created.
+%\JP{`counter-example' comes from nowhere!}
+
+\JP{Basically, I stop here. So far, it is not a tool paper to me.
+For a tool paper, the structure should be as follows:
+(1) intro: the motivation, the problem, and the current approach,
+(2) the tool itself: workflow and design, functionalities, modules, and algorithm (if you have) etc.,
+(3) case studies and results,
+(4) related tools (if any),
+(5) future work and conclusions.}
+
+\section{The Searching Algorithm of the {\sf invFinder}}
+Note that the invariant set $invs$ which satisfies is need to be
+compute. That is to say, usually only one invariant $inv_1$ is
+given, the remaining invariants such as $inv_i(i>1)$ are needed to
+find. It is the task that {\sf invFinder} constructs each one of the
+remaining invariants by checking the causal relation between an
+invariant and a rule instance. The core part of the searching
+algorithm of the {\sf invFinder} is as follows:
+
+\begin{specification}
+1let findInvsFromRule choose chooses chk tautChk isNew paraRule paras inv newInvs invs casRel=\\
+2\twoSpaces     let rule=ruleApp paraRule paras in\\
+3\twoSpaces   val (guard g  S)=rule in\\
+4\twoSpaces   val (implyForm ant cons)=inv in\\
+
+
+5\twoSpaces   let inv'=preCond S inv in\\
+6\twoSpaces   val (implyForm ant' cons')=inv' in\\
+
+
+7\twoSpaces     inv=inv'=>\\
+
+8\twoSpaces         let relItem=(paraRule, paras, inv, invHoldForRule2) in
+         (newInvs, (relItem: casRel))\\
+
+
+
+9\twoSpaces      | tautChk inv'\\
+10\twoSpaces         =>(let relItem=(paraRule, paras, inv, invHoldForRule1) in         (newInvs, (relItem: casRel)   ))\\
+
+
+11\twoSpaces       | cons=cons'=>\\
+
+12\twoSpaces       let newAnt=  choose cons ((andList2Ands (g$\wedge$ant'))     then\\
+
+13\twoSpaces       let inv'= (implyForm newAnt cons) in\\
+
+
+14\twoSpaces       let relItem=(paraRule, paras, inv,  invHoldForRule3 inv'   ) in\\
+
+15\twoSpaces       ((isNew inv' invs)=>           (newInvs@[inv'], relItem : casRel)\\
+16\twoSpaces       |(newInvs,  relItem : casRel))\\
+
+17\twoSpaces     | ant=ant' =>\\
+18\twoSpaces        let antConjs= andList2Ands ant'  then\\
+
+19\twoSpaces        val (newAntant, newCons) = chooses ((map $\neg$ antConjs) (andList2Ands (g$\wedge \neg$cons)) in\\
+20\twoSpaces        let inv'=(implyForm newAntant newCons) in\\
+21\twoSpaces        let relItem=(paraRule, paras, inv,  invHoldForRule4 inv'   ) in\\
+22 \twoSpaces       ((isNew inv' invs)=>         (newInvs@[inv'], relItem : casRel)\\
+23\twoSpaces       |(newInvs,  relItem : casRel))\\
+
+24\twoSpaces   | chk inv'=>\\
+25\twoSpaces      let relItem=(paraRule, paras, inv,  invHoldForRule5 inv'  ) in\\
+26\twoSpaces        ((isNew inv' invs)=>        (newInvs@[inv'], relItem : casRel)\\
+27\twoSpaces        |(newInvs,  relItem : casRel))\\
+28\twoSpaces   | error "no new invariant";\\
+\end{specification}
+
+Provided that there is an oracle $chk$ that checks whether a ground
+formula is an invariant in a given small reference model of the
+protocol.   The above function {\sf findInvsFromRule} tries to find
+new invariants and construct the causal relation between the rule
+instance $r=paraRule~ para$ and
+ the invariant $inv$. The statement { \tt cond => et|ef} is an abbreviation of the if-then-else expression that if $cond$ is true then $et$ else $ef$. Parameters  $newInvs$, $invs$, and  $casRel$ are new invariants,  $invariants$, and all the causal relations constructed up to now. The returned result is updated invariant sets, and causal relations.
+ \begin{description}
+ \item[(1)] After computing the pre-condition {\tt inv'=preCond~ S ~inv} in line 5, then  {\sf invFinder} do case analysis on $inv'$: if {\tt inv=inv'}, then no change made to $inv$ by statement $S$, the new causal relation item marked with tag {\tt invHoldForRule2} is recorded between $r$ and $inv$, but there is no new invariants to be added;
+  \item[(2)]    Secondly, if {\tt tautChk inv'} is true, where {\tt tautChk} is a tautlogy checker for the formula $inv'$ which is implemented
+  by an SMT solver, then  the new causal relation item marked with tag {\tt invHoldForRule1} is recorded between $r$ and $inv$,  there is no new invariants to be added too;
+
+ \item[(3)]   Thirdly, if  {\tt cons=cons'}, then the function {\tt choose} in line 12 chooses the weakest precondition $newAnt$ from the conjunctals of
+ $g \wedge \neg  ant'$. {\tt andList2Ands} destructs a conjunction into a list of atomic formulas, which are equivalence formulas or negation of equivalence formulas, an   invariant $inv'=newAnt \longrightarrow cons$, which is checked to hold at any state of the finite reference protocol model,  is generated, and function {\tt isNew} is used to check whether the invariant is new. If thus, the invariant is  added into $newInvs$, and the new causal relation item marked with tag {\tt invHoldForRule3 inv'} will be added into the cuasal relation.
+     Here Here we must point the meaning of the word "new" is modulo to the symmetry relation. The intuitive meaning of the symmetry relation is that $\mathsf{mutualInv}~1~2$ is equivalent to $\mathsf{mutualInv}~2~1$. Namely, $\mathsf{mutualInv}~1~2$  is only one representive of the formula set $\{f. \exists i~j \le 3.f=i\neq j \wedge cache[i]=exclusive\longrightarrow cache[j]=invalid \}$.
+
+  \item[(4)]    Fourthly, if if  {\tt ant=ant'}, then the function {\tt chooses} in line 19 chooses the weakest precondition $newAnt$ from the conjunctals of
+   $g \wedge \neg  cons'$, and proper  $newCons$ from the negation of all the conjunctals of $ant$, namely, it holds that $newCons \longrightarrow \neg ant$,
+   and the invariant  $inv'=newAnt \longrightarrow newCons$, which is checked to  at any state of the finite reference protocol model,  is also generated.
+   If the invariant $newAnt \longrightarrow newCons$ is new, then it will be added into $newInvs$ if thus.
+   A new causal relation item marked with tag {\tt invHoldForRule4 inv'} will be added into the causal
+   relation. Recall that $ant$ may be a conjunction of atomic
+   formulas, one of which being falsified means that $ant$ will be
+   falsified.
+
+    \item[(5)] Otherwise, $inv'$ will be checked whether it is an invariant holding at each state of the finite reference model. If thus, it
+    will be checked whether it is new. $newInv$ will be updated
+    accordingly. At last, a causal item marked with {\tt invHoldForRule5
+    inv'} will be added into $casRel$.
+ \end{description}
+
+The main body of \texttt{invFinder}   iteratively call the function
+{\sf findInvsFromRule}  by instantiating each   parameterized rule
+with different actual parameters of the finite reference protocol
+model. This procedure is not finished until no a new invariant is
+created.
+%=========================================
+\section{Applications of Auxiliary Invariant Sets}
+%=========================================
+ After the auxiliary invariants are found, they can be fed into other
+tools for further purposes. In our work, the auxiliary invariants
+are passed to a tool called $\mathsf{proofGen}$ to automatically
+generate parameterized Isabelle proof script for the protocol under
+study. In essence, the generation of Isabelle proof script is a
+generalization from a ground proof for a finite reference protocol
+instance (if the search of auxiliary invariants is regarded as a
+semi-proof) to a parameterized proof for a general parameterized
+protocol instance in a theorem prover. The aforementioned
+consistency lemma is the corner stone of both the proofs. Firstly,
+we need generalize the ground invariants to the general
+parameterized invariants. For instance,
+ A technique of parameter mapping plays a key role in our proof generation in order to
+generate these proofs automatically. The essence of this technique
+is mapping a symbolic proof in parameterized form to a sample proof
+in the ground form. The proof pattern to prove that some causal
+relation holds between a general rule and an general invariant must
+be summarized and formulated a formal proof template.
+\texttt{proofGen} will select proper proof method among
+$\mathsf{invHoldForRule1}$-$\mathsf{invHoldForRule5}$ to generate
+proof commands according to the mapped proof cases in the reference
+protocol model and the corresponding causal information passed from
+\texttt{invFinder}.  A detail proof for a rule instance and an
+invariant instance can be created by instantiating the proof
+templates with some parameters with the aid of \texttt{proofGen}.
+Isabelle provides a feature {\sf locale} to formalize typical proof
+templates, and {\sf interpretation} to formalize proof template
+instantiations. Interesting readers can refer to \cite{} ro read the
+detailed proofs.
+
+Although a parameterized proof in Isabelle gives the highest
+assurances to the mathematicians, such a proof script may be hard to
+be understood for engineer. A simulation flow graph of a single
+client's $i$ activity can be generated to illustrate intuitively the
+correctness of the protocol with the aid of auxiliary invariants. In
+essence, such a simulation graph is an abstraction of all the
+protocol instance in the view of a client. A state of the abstracted
+state space reserves all the values of local variables of the client
+$i$ and almost the global variables. Auxiliary invariants are used
+to decide whether a rule involving clients except $i$ depending on
+partial state of client $i$ and global variables. Interesting
+readers can refer to \cite{} ro read the simulation flow of a client
+1. In this graph, we can observe clearly how cache[i] are set true
+and the effect  of other's client's activities to client [i]. With
+the aid of auxiliary invariants, we can observe how the mutual
+invariants are kept.
+
+
+%=========================================
+\section{Experiments}
+%=========================================
+We implement our tool in Forte \cite{Forte}. More experiments are
+done including simple mutual exclusion, German-ish, and  protocols.
+The detail experiment codes and data can be found in \cite{}.
+\JP{Here, give a table to summarise the results,
+e.g., the size of the protocol, the number of invariants found,
+the time/memory cost, etc.}
+
+%=========================================
+\section{Conclusion}
+%=========================================
+Our case studies on cache coherence protocols are typical examples
+to illustrate the guiding principle of {\sf invFinder}. The
+ consistency lemma based on the induction approach, is the
+core of our work, which gives the heuristics to guide the tool
+ to search invariants. Instead of ``invisible invariants" in previous work
+ (see e.g,~\cite{Pnueli2001}, our invariants are visible,
+ which can be further refined to precisely
+ analyze the correctness of the protocol both in theoretical and practical aspects.
+
+\bibliographystyle{splncsnat}
+\bibliography{gste,cache,refer}
+\end{document}

@@ -1,0 +1,2280 @@
+\documentclass{llncs}
+\usepackage{makeidx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{latexsym}
+\usepackage{url}
+\usepackage{color}
+\usepackage{isabelle}
+
+\usepackage{isabellesym}
+\usepackage{theorem}
+
+%%%%%%%%%%%% For Isabelle code
+\newlength{\fminilength}
+\newsavebox{\fminibox}
+\newenvironment{fmini}[1][\linewidth]
+  {\setlength{\fminilength}{#1\fboxsep-2\fboxrule}%
+   \vspace{2ex}\noindent\begin{lrbox}{\fminibox}\begin{minipage}{\fminilength}%
+   \mbox{ }\hfill\vspace{-2.5ex}}%
+  {\end{minipage}\end{lrbox}\vspace{1ex}\hspace{0ex}%
+   \framebox{\usebox{\fminibox}}}
+
+\newenvironment{specification}
+{\noindent\footnotesize \tt\begin{fmini}\begin{tabbing}X\=X12345\=XXXX\=XXXX\=XXXX\=XXXX\=XXXX
+\=\+\kill} {\end{tabbing}\normalfont\end{fmini}}
+%%%%%%%%%%%% For Isabelle code
+
+\input{tcilatex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for comments
+\newcommand\JP[1]{\textcolor{magenta}{JP: #1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for hyper-ref
+\usepackage[colorlinks,
+            linkcolor=black,
+            anchorcolor=black,
+            citecolor=blue,
+            urlcolor=black,
+            bookmarks=true
+            ]{hyperref}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%=========================================
+\begin{document}
+\title{A Novel Approach to  Parameterized Proofs for Cache Coherence Protocols}
+
+\author{Yongjian Li\inst{1} \and Jun Pang\inst{2}}
+\institute{
+Laboratory for Computer Science \\
+Institute of Software,
+Chinese Academy of Sciences
+\and
+Interdisciplinary Centre for Security, Reliability and Trust\\
+University of Luxembourg
+}
+
+%=========================================
+
+\maketitle
+
+%-------------------------------------------------------------------------
+\begin{abstract}
+ The challenge posed by
+parameterized verification of cache coherence protocols is that  safety properties, represented
+in terms of invariants, of such protocols should hold for any
+protocol instances, which is difficult to handle by only exploring
+model-checking techniques. In this paper, we propose a novel
+approach for parameterized verification by first proposing a general inductive model to formalize
+the semantics of a cache coherence protocol. We then propose a
+consistency lemma to prove a set of invariants for a protocol. The
+importance of this lemma lies in that it divides the proof of the
+invariants into a large number of subproofs, which mainly verify the
+existence of typical casual relations between a protocol rule and an
+invariant. This  decomposing strategy is  the key to automatically
+generate the large number of sub-proofs with the help of theorem provers
+because the proof patterns for the subgoals
+are usually similar and modular. We proceed with showing how to automatically
+generate a parameterized proof for the invariants w.r.t. a protocol
+by generalizing the causal information which can be derived from a
+small finite protocol instance. Finally, the application of our
+approach is demonstrated on several typical benchmarks.
+\end{abstract}
+%-------------------------------------------------------------------------
+
+%=========================================
+\section{Introduction}
+%=========================================
+Verification of parameterized concurrent systems are
+both interesting and challenging in the field of formal methods,
+mainly due to the practical importance of such systems.
+Parameterized systems like cache coherence
+protocols play a key role in modern parallel or distributed
+computer systems. They require complex algorithms that must deal with
+asynchrony, unpredictable message delays, and multiple communication
+paths between many nodes.
+Therefore, the highest possible assurance for the
+correctness of these complex parameterized systems should be
+guaranteed by formal reasoning technique.
+
+Formally speaking, let $P$ be a parameterized system and
+ $P(N)$ denote its instance with the cardinality $N$.  $P(N)$ usually
+consists of a small number (may be none) of heterogeneous processes,
+together with a set of homogeneous processes $\{ P_i\, |\, 0 \le i \le N \}$.
+When $N$ is small, verification of $P(N)$ w.r.t.\ some
+invariants can be solved by applying model-checking techniques.
+Due to high concurrency, a system with
+only 4-5 nodes running, for example, a cache coherence protocol may have a huge number of
+possible executions. In practice, such systems normally consist of hundred of nodes.
+Moreover, we need to prove that the invariants hold in any
+instance of the parameterized system. The challenge posed by
+parameterized verification is that the correctness of a
+system, limited to a fixed (very small) number of instances,
+does not logically imply the correctness of the system of
+arbitrary sizes.
+
+%-------------------------------------------------------------------------
+\medskip
+\noindent{\bf Related work.}
+%-------------------------------------------------------------------------
+There have been a lot of research papers in the field of  parameterized verification.
+Among them, the work~\cite{Pandav2005} is closely related to ours,
+where a method combining inductive invariant
+checking with a heuristic-based method for discovering invariants
+was reported for parameterized verification of safety properties.
+The heuristics are created by manual syntactic analysis of the
+counterexamples generated during inductive invariant checking. These
+heuristics are then manually used to construct and refine
+invariants.
+%
+Parameter abstraction and guard strengthening are proposed in~\cite{Chou2004}.
+An abstract model of a parameterized protocol
+is constructed iteratively.
+Normally the initial abstract system does not satisfy an
+invariant. Nevertheless it is still submitted to a model
+checker for verification. When a counterexample is produced, one needs to
+carefully analyze it and comes up with an auxiliary invariant,
+then uses it to strengthen the guards of some transition
+rules of the abstract node. The `strengthened' system is then
+subject to model checking again. This process stops until the
+refined abstract system eventually satisfies the original invariant
+as well as all the auxiliary invariants supplied by the
+user. However, this method's soundness is only argued in an
+informal way.
+%To the best of our knowledge, no one has
+%formally proved its correctness in a theorem prover.
+This situation may be not ideal because its application domain for cache
+coherence protocols  which demands the highest assurance for
+correctness.
+%
+The `invisible invariants' method proposed in~\cite{Arons2001}
+is an automatic technique for parameterized verification. In this
+method, auxiliary invariants are computed for a finite system
+instance to aid inductive invariant checking. Combining parameter
+abstraction and guard strengthening with the idea of computing
+invariants in a finite instance, Lv~et al.~\cite{Lv2007} use a small instance of a
+parameterized protocol as a `reference model' to compute candidate
+invariants. References to a specific
+node in these candidate invariants are then abstracted away, and the
+resulting formulas are used to strengthen guards of the transition
+rules in the abstract node. Both works~\cite{Arons2001,Lv2007} attempt to automatically
+find invariants. However, the invariants computed is
+\emph{invisible} as they are represented, e.g., in
+BDDs, which are difficult to understand.
+%
+Recently, Cubicle is developed for verifying safety properties
+of parameterized systems~\cite{cubicle2011}. It model checks a
+property by a symbolic backward reachability analysis on  states
+represented by specific simple formulas, called cubes. Auxiliary
+invariants in ground form can be inferred if the property holds,
+otherwise a counter-example is represented as a trace. However, the
+above invariants are insufficient to be used to derive a formal
+proof in a theorem prover.
+
+To the best of our knowledge, there does not exist a generic
+mechanical theory formalized in a theorem prover to model
+parameterized cache coherence protocols and prove their invariants.
+ Besides, it is difficult to obtain auxiliary invariants in a proper form to
+ give a rigorous proof. Usually auxiliary invariants are derived from a finite small
+ reference protocol model, which is ground formula, not a parameterized formula.
+ At last, we need not only 
+ invariants, but also a kind of causal relation between invariants and rules,
+ which can be used to prove the invariants inductively.
+
+%-------------------------------------------------------------------------
+\medskip
+\noindent{\bf Contributions.}
+%-------------------------------------------------------------------------
+We aim to bridge the gap in this field by studying parameterized
+verification of cache coherence protocols in a theorem prover.
+%
+The main contribution of this paper is twofold. The first is to
+the development a theoretical result to give a general model to formalize
+parameterized cache coherence protocols and a general
+proof principle to prove their invariants. The second is to
+an empirical approach to automate our modeling and proof methods in
+Isabelle.
+%We briefly discuss the novelties of our work below:
+%%
+%\begin{itemize}
+%\item We introduce an inductive definition for reachable states of a parameterized
+%cache coherence protocol, which consists of a set of parameterized transition rules
+%and initializing predicates. %This gives an accurate and formal
+%%definition for the operational semantics of protocol execution. It
+%%not only provides us a constructive derivation of a reachable state,
+%%but also introduces an effective and rigorous technique of rule
+%%induction to prove properties of the reachable state set.
+%Here, the parameterized transition rules and initializing predicates are
+%specified in a general modeling language, which is protocol
+%independent.
+%
+%%\item In particular, we originate key proof techniques to prove an
+%%invariant as shown in Fig.
+%%\ref{mutualExclusionProt}. %%formally prove important invariants of the protocols.
+%%One key proof technique $f$  is $\emph{invariant Strengthening}$. In
+%%order to prove an invariant $f$, we need strengthen $f$ with a list
+%%of auxially invariants such as $f_1$, ..., $f_n$.  Usually $f$
+%%cannot be directly proved by induction, but $f \wedge f_1 ... \wedge
+%%f_n$ can be done. In the view of induction proof method, with a list
+%%of strengthened invariants, we can use a more powerful induction
+%%hypothesis to prove the strengthened conclusion when we do the
+%%induction proof step.
+%
+%\item Secondly, we originate a key technique which is the consistency lemma to
+%prove that all the invariants hold for the parameterized system under consideration.
+%The core of our consistency lemma is to
+%prove that a consistent property holds between the set of all the
+%invariants and all the rules.
+%The consistency lemma itself is proved by
+% induction for a general protocol model.
+%Thus it eliminates the need of directly using the induction proof
+%method again in ground case studies. It allows for focusing on  the
+%causal relationship between transition rules of a protocol and its
+%invariants, and it also allows for dividing the proof of the
+%invariants to a series of subproofs to verify whether one of five
+%kinds of casual relations holds for  a rule  and an invariant.
+%  This strategy of `divide and
+%  conquer' is the crux to make the series of sub-proofs
+%  to be automatically generated because the proof patterns for the  subproofs  are similar
+%  and modular. The consistency relationship
+%  also shows the strong heuristics to
+%automatically generate auxiliary invariants to prove the main
+%invariant. Being different from previous studies, auxiliary
+%invariants, which are automatically generated, are now visible to
+%us. Namely, not only they have intuitive meanings, but also help us
+%to understand the correspondence relation among all the invariants
+%and rules.
+%%It is the the correspondence among the invariants that can tell us the
+%%mechanism of the protocol to guarantee the invariants step by step.
+%
+%\item Thirdly, we show key techniques which   automatically generate a
+%parameterized proof for the invariants w.r.t. a protocol provided
+%that we  have derived some necessary causal information from a small
+%finite protocol instance. Notice that the former is parameterized,
+%which usually contain an arbitrary parameter N, while the latter is
+%ground. Key techniques include parameter mapping, mapping a
+%parameterized proof on a case on some parameters on rule and
+%invariant parameters to a ground causal relation, and modular and
+%automatical way to implement  the mechanical parameterized proof in
+%the theorem prover Isabelle. Isabelle's mechanism of {\sf locale}
+%and {\sf interpretation} provide strong support for us to implement
+% the proof generation.
+%%\item Being different from  the automatical  methods of checking
+%%invariants of parameterized system, our method focuses on the aiding
+%%of the people to understand  the correctness of protocol design by
+%%finding auxially invariants. In our points of proof view, the
+%%auxialy should be visible to the designers of the protocol. Namely,
+%%not only need we find these auxiarly invariants, but also need
+%%understand the correspondence relation among them. The
+%%correspondence among the invariants can tell us how the mechanism of
+%%the protocol to guarantee the invariants step by step. There are two
+%%categories of invariants we need: correspondence properties, and
+%%mutual exclusion
+%%properties. We will explain this in detail in later discussion. %Combination of
+%
+%%\item In our model, a parameterized rule is just a function from a
+%%list of parameters to a rule. In Murphi language, a ruleset, which
+%%is shown in Table ?, defines a parameterized rule. In our model, a
+%%list 1..n is just the list of parameters. A cache protocol usually
+%%consists a set of parameterized rules, and one or two parameter set.
+%%Usually a set of rules are crated by instantiating the parameterized
+%%rule to construct a protocol system.
+%
+%%\item We define symmetry of a protocol in our formal model, and relate it to the symmetry between
+%%invariants. We prove the close correspondence between the two kinds
+%%of symmetry. This result induces a  symmetric reduction methodology.
+%%A protocol is symmetric if there is permutation between two rules of
+%%the system. Correspondingly symmetry exist among state space of the
+%%system, and symmetry reduction can be applied to verify the
+%%symmetric invariants. For instance, in order to prove the invariant
+%%$\forall i ~j.~  (i!=j) -> (n[i]=C ->!n[j]=C$, by symmetry
+%%reduction, we only need prove $(n[1]=C ->!n[2]=C$. Symmetry
+%%reduction can greatly alleviate the burden of our proof obligation.
+%\end{itemize}
+%
+%Among the three contributions, the former two establish the
+%theoretical foundation of our approach, and the third opens the way
+%to automatically mechanize our approach.
+
+%=========================================
+\section{A simple cache coherence protocol}
+\label{sec:informalAccounting}
+%=========================================
+
+Murphi is a high-level description language for
+finite-state asynchronous concurrent systems. It adopts a guarded assignment style to model systems. Cache coherence protocols can naturally
+ be modeled in such a style. %because they are finite-state in essence asynchronous concurrent systems.
+ %In this part,  we use a
+%Murphi-like language to give an informal accounting of cache
+%coherence protocols. .
+Below, we use an example
+to illustrate how to use Murphi to model a cache coherence protocol.
+
+%\begin{table}
+\vspace{2mm}
+\begin{specification}
+NODE : 100;\\
+\>VAR x : boolean;\ \
+ state : enum \{I, T, C, E\};\\
+\>  n : array [NODE] of state; \\
+  StartState Init \\
+\>  x := true; \\
+\>  for i : NODE do n[i] := I; \\
+  \> endfor; end;\\ \\
+  ruleset i : NODE do\\
+    rule try n[i] = I ==> n[i] := T;
+ end;\\
+%  ruleset i : NODE do\\
+    rule crit n[i] = T\& x = true ==>  n[i] := C; x := false; end;\\
+
+%  ruleset i : NODE do\\
+ rule exit  n[i] = C ==>  n[i] := E;
+   end;\\
+%   ruleset i : NODE do\\
+   rule idle   n[i] = E ==> n[i] := I;  x := true;
+end; \\ \\
+Invariant Mutual Exclusion \\
+\>forall i : NODE do forall j : NODE do\\
+\> (i!=j) -> (n[i]=C ->! n[j]=C) \\
+\> endforall end;
+\end{specification}
+%\caption{A simple mutual exclusion protocol}
+%\end{table}\label{mutualExclusionProt}
+
+ A Murphi description consists of declarations of constants, types,
+global variables; a collection of transition rules; a description of
+the initial states; and a set of invariants.
+Usually the rules and invariants are specified in a parameter form.
+Semantically, a parameterized rule (or invariant) can be
+considered as syntactic sugar for creating a copy of its component
+rules (or invariants) for every value of the parameter.
+Each transition rule is given in the form of a guarded command, which
+consists of a condition (a Boolean expression on the global
+variables) and an action (a statement that can modify the values of
+the variables). By the Murphi semantics, there is an implicit
+scheduler who selects a rule to execute whose guard condition is
+satisfied. After a rule is triggered and action is done, the state
+of the protocol is changed, then new transitions may be enabled. The
+scheduling procedure is repeated forever.
+%
+Note that the above Murphi code only verifies the protocol with a
+fixed  size $100$, while we aim to verify that the invariants hold  for any
+positive natural number that the parameter ${\it NODE}$ is set.
+
+%=========================================
+\section{A General Model for Cache Coherence Protocols}
+%=========================================
+
+%-------------------------------------------------------------------------
+\subsection{Protocol syntax}
+%-------------------------------------------------------------------------
+To formally capture cache coherence protocols,
+such as the one discussed in Section~\ref{sec:informalAccounting},
+we first need to define the variables used in protocols.
+There are two kinds of variables, global and
+parameterized (local) variables.
+%
+%\vspace{2mm}
+%\begin{specification}
+%datatype varType=Global  string | Para string nat\\
+%\\
+%datatype expType= IVar varType   |  Const nat |
+%           iteForm
+%formula  expType  expType\\
+%\\
+%and  formula = eqn expType expType|\\
+%                andForm  formula formula |
+%                 neg formula|
+%                   orForm formula formula |
+%                implyForm formula formula\\
+%\\
+%type\_synonym assignType=  varType $\times$   expType
+% datatype statement= assign assignType      |\\
+% ~~                 parallel assignType  statement
+%
+%\end{specification}
+%
+For instance, $\mathsf{Global}~ x$ and $\mathsf{Para}~ n ~i$ are used to
+formalize the global variable $x$ and the local variable $n[i]$ in
+the Murphi program listed in Section~\ref{sec:informalAccounting}.
+%
+%Expressions and formulas are coupled together to define.
+An expression can be simple, which is either a
+variable or a constant, or a symbolic one which is an \emph{ite}
+expression. In our model, a value of a variable is
+ just a natural number.  A boolean variable is encoded as 0 or 1.
+ A value is obtained from either reading a variable or being assigned directly by a natural
+ number. The simplest formula is equivalence between expressions. Negation,
+conjunction, disjunction, and implication formulas can also be
+defined. A guard condition in Murphi is formalized by a formula.
+% Expressions are simple as well, because operations to data are just copying or invalidating
+% in cache coherence protocols.
+%Thus   complex arithmetical operations are not so far needed.
+ An assignment is just a pair of variable and expression. A statement is
+a lists of assignments, but these assignments are executed in
+parallel, \emph{not} in a sequential order. Though our modelling language
+is simple but it is suitable to describe cache coherence protocols.
+With the formalization of formula and statement, it is natural to
+define a protocol rule. A guard and
+ statement of a rule are also defined for convenience.
+
+ \vspace{2mm}
+ \begin{specification}
+datatype rule =  guard formula  statement\\
+primrec pre::rule $\Rightarrow$ formula where pre (guard f a)=f\\
+primrec act::rule $\Rightarrow$statement where act  (guard f a)=a
+\end{specification}
+
+Now we can formalize the example protocol {\tt simpMutual} as follows:
+
+\vspace{2mm}
+\begin{specification}
+definition try::nat $\Rightarrow$ rule where\\
+    try i $\equiv$
+         let g=eqn (IVar (Para n i))(Const I) in \\
+         ~~let Sent=assign ((Para n i),(Const T)) in\\
+~             guard g Sent \\
+\\
+definition  crit::nat $\Rightarrow$ rule where\\
+     crit  i $\equiv$
+          let g1= eqn (IVar (Para  n i)) (Const T) in\\
+           let g2=  eqn (IVar (Global  x )) (Const TRUE) in\\
+          let a=   ((Para  n i), (Const C)) in\\
+         let Sent2= assign  ((Global  x ), (Const FALSE)) in\\
+ ~         guard (andForm g1 g2) (parallel a  Sent2)\\
+\\
+ definition  exit::nat $\Rightarrow$ rule where\\
+      exit  i $\equiv$
+       let g= eqn (IVar (Para  n i)) (Const C) in \\
+       let Sent=assign ((Para  n i), (Const E)) in\\
+~             guard g Sent
+\end{specification}
+
+\begin{specification}
+definition idle::nat $\Rightarrow$ rule where\\
+     idle  i $\equiv$
+       let g= eqn (IVar (Para  n i)) (Const E) in\\
+         let a=   ((para  n i), (Const I)) in\\
+         let Sent2= assign  ((Global  x), (Const TRUE)) in
+         guard g (Parallel a Sent2)\\
+\\
+definition mutualIni::nat$\Rightarrow$formula where\\
+ mutualIni  N $\equiv$
+  andForm (eqn (IVar (Global x)) (Const TRUE))\\
+ (forallForm [0..<N] (\%x.eqn (IVar (para n x))(Const I)))\\
+\\
+definition exLessP:
+nat $\Rightarrow$ (nat $\Rightarrow$ bool) $\Rightarrow$bool\\
+
+ where exLessP N P $\equiv$ $\exists$i. (i$\le$N $\wedge$ P i)\\
+\\
+ definition rules::nat $\Rightarrow$ rule set where \\
+ rules N $\equiv$ \{r. exLessP N (\% i. r=crit   i)~$\vee$~exLessP N (\% i. r=exit
+i)  $\vee$\\
+ exLessP N (\%i. r=idle i)~$\vee$ exLessP N (\%i.r=try i)\}\\
+\\
+definition mutualInv::nat $\Rightarrow$ nat $\Rightarrow$
+$\Rightarrow$rule where\\
+ mutualInv i j $\equiv$
+  let ant=eqn (IVar (Para  n i)) (Const C)  in\\
+  let cons= neg (eqn (IVar (Para  n j)) (Const C)) in
+~       (implyForm ant cons)  s
+\end{specification}
+
+In the above formalization, we first define the constants and
+parameterized rules $\mathsf{ try }$,
+$\mathsf{ crit }$, $\mathsf{ exit }$, and
+$\mathsf{ idle }$. Initialization of the
+protocol is defined as a predicate $\mathsf{ mutualIni}$.
+The predicate $\mathsf{exLessP}~ N ~P$
+says that there exists a natural number that is less than   $N$ and the property $P~i$ holds.
+$\mathsf{rules}~N$ just defines the set of all transition rules. The mutual exclusion property is defined as
+  $\mathsf{mutualInv}$.
+
+%-------------------------------------------------------------------------
+\subsection{Protocol semantics}
+%-------------------------------------------------------------------------
+A  protocol state is an instantaneous snapshot of its
+behavior given by an assignment of  values to variables.
+Formal semantics of expressions and formulas are then formalized routinely.
+
+\vspace{2mm}
+ \begin{specification}
+ type\_synonym state= varType $\Rightarrow$ nat\\
+primrec expEval :: expType $\Rightarrow$ state $\Rightarrow$
+nat  and \\
+
+ formEval :: formula $\Rightarrow$ state $\Rightarrow$bool
+where\\
+expEval  (IVar ie) s =  ( s ie) |\\
+ expEval  (Const i) s =i\\
+ expEval  (iteForm f e1 e2) s=
+   ( if (formEval f s) then     (expEval e1 s)\\
+   else (expEval e2 s))  |\\
+ formEval (eqn e1 e2) s
+ = ((expEval e1 s) = (expEval e1 s)) |\\
+formEval ( andForm f1 f2) s=   (formEval f1 s) $\wedge$ (formEval f2
+s)|\\
+ formEval (neg f1 ) s=  $\neg$(formEval f1 s)|\\
+  formEval (orForm f1 f2) s= (formEval f1 s) $\vee$  (formEval f2 s)|\\
+formEval (implyForm f1 f2) s=\\
+ (formEval f1 s) $\longrightarrow$
+(formEval f2 s)
+\end{specification}
+
+A state transition from a state to another sate, which is caused by
+an execution of a statement, is
+ defined as follows:
+
+\vspace{2mm}
+ \begin{specification}
+ primrec trans:: statement $\Rightarrow$ state $\Rightarrow$state
+ where\\
+trans (assign pair) s =  s ((fst pair):= expEval  (snd pair) s)
+|\\
+trans (parallel  (pair) sent2) s =  (trans sent2 s) \\
+~~~~~~((fst pair):=expEval  (snd pair) s)
+\end{specification}
+
+Here we emphasize that the assignments are executed in parallel.
+Therefore, we always assign an
+evaluation of an expression in a state to the corresponding variable.
+%
+The reachable sate set of a protocol, which is described by a set of
+initiate formulas and a set of rules, can be formalized inductively
+as follows:
+
+\vspace{2mm}
+\begin{specification}
+
+inductive\_set reachableSet:: \\formula set$\Rightarrow$ rule set
+$\Rightarrow$state set\\
+  for  inis::formula set  and rules::rule set   where\\
+
+initState:  $\isasymlbrakk$formEval  ini s; ini $\in$
+inis$\isasymrbrakk$\\
+$\Longrightarrow$ (s$\in$ (reachableSet inis
+rules)) |~\\
+oneStep:     $\isasymlbrakk$s $\in$  reachableSet inis rules ;
+               r $\in$   rules ; formEval (pre r) s$\isasymrbrakk$\\
+               $\Longrightarrow$  trans  (act r) s  $\in$  reachableSet inis
+               rules
+\end{specification}
+%
+
+\noindent
+ The rule $\mathsf{initState}$ says that a state $s$ is in
+$\mathsf{reachableSet}~inis~ rules$ if
+ there exists a formula $ini$ that is true in state $s$. Next rule $\mathsf{oneStep}$ says that
+$\mathsf{ trans}~  (\mathsf{act}~ r )~ s $ is also in
+ $\mathsf{reachableSet}~inis~ rules$ if $s$ already is in
+ $\mathsf{reachableSet}~inis~ rules$ and $r $ $\in$  $rules$.
+%
+For the {\tt simpMutual} protocol, we prove the following
+lemma:
+\begin{lemma}
+  $\isasymlbrakk
+  s \in \mathsf{reachableSet}~ \{\mathsf{mutualIni}~  N\} ~(\mathsf{rules} ~N)$; $0<N$
+  $\isasymrbrakk \Longrightarrow i\neq j\wedge i\leq N \wedge j \leq N\longrightarrow
+   \mathsf{formEval}~ (\mathsf{mutualInv}~i~j)~ s $
+\end{lemma}
+%
+It says that the invariant  `$\mathsf{mutualInv}~i~j$' (mutual exclusion property) holds for any $s$ in
+$\mathsf{reachableSet}~ \{\mathsf{mutualIni}~  N\} ~(\mathsf{rules}~N)$ if $i
+\neq j$, $i\leq N$, and $j \leq N$.
+
+%=========================================
+\section{The Consistency Lemma}
+%=========================================
+There are two key points in our proof strategy for
+proving invariants of cache coherence protocols:  \emph{invariant
+strengthening} and the \emph{consistency} lemma.
+In this section, we focus on the consistency lemma,
+as invariant strengthening is already well studied in the literature.
+
+In order to prove an invariant $inv$, given in the form of an implication, we usually need to figure out a
+list of auxiliary invariants such as $inv_1, \ldots, inv_n$. Instead of just
+proving the single invariant $inv$, we need to prove all invariants
+ $inv' \in \{inv, inv_1 ... , inv_n\}$ holds. In fact,
+strengthening an invariant with a set of auxiliary invariant is
+naturally developed in our application of induction proof method because we
+can use a more powerful induction hypothesis to prove the
+strengthened conclusion when we perform an induction proof step. %How to
+%figure out the set of auxiliary invariants is always a central topic
+%%in the field of parameterized verification. We will briefly discuss our invariant finder
+%which is also guided the heuristics hinted by consistency lemma in later section.
+
+Secondly, we originate a novel proof method for the proof of
+invariance for cache coherence protocols. This method is based
+on the following consistency lemma.
+Before giving the lemma, we need a set of preliminary definitions.
+Let ${\it asgn}\!=\![(v_1,e_1),\ldots,(v_n,e_n)]$ be an assignment to variables
+$x_i$ by expressions $e_i$. $\mathsf{substExp}~asgn~e$ ($\mathsf{substForm}~asgn~f$)
+denotes the expression $e$ (formula $f$) in which the occurrence of variable
+$x_i$ is replaced by $e_i$. A statement $S$ can be transformed into an assignment to some variables $x_i$,
+which is formalized by $\mathsf{statement2Assigns}~ S$. $\mathsf{preCond}~f~S$
+is defined by $\mathsf{substForm}~ f~ (\mathsf{statement2Assigns} ~S)$.
+After executing statement $S$, $f$ holds if $\mathsf{preCond}~f~S$ holds before the execution.
+\JP{statement2Assigns is not defined in the code!
+substExpByStatement in the following Isabelle code is not explained on the contrary.}
+
+\vspace{2mm}
+\begin{specification}
+
+primrec substExp::expType$\Rightarrow$assignType
+list$\Rightarrow$expType\\
+
+and substForm ::  formula $\Rightarrow$ assignType list
+$\Rightarrow$ formula
+ where\\
+
+
+substExpVar:
+substExp (IVar v') asgns=(valOf asgns v')
+|\\
+substExpConst:
+substExp (Const i) asgns=Const i\\
+
+substIte: substExp  (iteForm f e1 e2)  asgns= (iteForm (substForm f asgns) \\
+~~~~~~~~~~(substExp e1  asgns) (substExp e2  asgns))|\\
+
+substForm (eqn l r) asgns=(eqn (substExp l asgns) (substExp r
+asgns)) |\\
+
+substForm (andForm f1 f2)  asgns=(andForm (substForm f1 asgns) \\
+~~~~~~~~~~(substForm f2 asgns)) |\\
+
+substForm (neg f1) asgns=(neg (substForm f1 asgns))
+|\\
+
+substForm (orForm f1 f2) asgns=(orForm (substForm f1 asgns) \\
+~~~~~~~~~~(substForm f2 asgns)) |\\
+
+substForm (implyForm f1 f2) asgns=(implyForm (substForm f1 asgns) \\
+~~~~~~~~~~(substForm f2  asgns)) |\\ \\
+
+%substForm chaos asgns=chaos\\\\
+
+definition  substExpByStatement::expType $\Rightarrow$statement
+$\Rightarrow$expType
+   where [simp]:\\
+
+substExpByStatement e S$\equiv$substExp e (statement2Assigns S)\\
+
+definition preCond::formula $\Rightarrow$statement
+$\Rightarrow$formula
+   where [simp]:\\
+
+preCond f S$\equiv$substForm f (statement2Assigns S)
+
+\end{specification}
+
+%\vspace{2mm}
+%\begin{specification}
+%definition statementEnableForm:: rule $\Rightarrow$
+%formula$\Rightarrow$bool
+%\\
+% where statementEnableForm r f$\equiv$
+%$\forall$s. formEval (pre r) s \\
+%$\longrightarrow$ formEval  (preCond f (act r)) s\\
+%definition statementDisableForm::rule$\Rightarrow$formula$\Rightarrow$bool\\
+%where statementDisableForm r f $\equiv$
+ %    $\forall$s. formEval (pre r) s \\
+%$\longrightarrow$ $\neg$ formEval  (preCond f (act r)) s
+%\end{specification}
+
+%Function $\mathsf{statementEnableForm}$ says that the guard of the rule implies
+% the pre-condition of  formula $f$  w.r.t. statement of
+% the rule. This means that $f$ must be valid after statement $S$ is executed.
+%On the other hand,  $\mathsf{statementDisableForm}$ says that   the
+%guard of the rule implies the negation of the pre-condition of
+%formula $f$ w.r.t. statement of the rule. This means that $f$ must
+%be invalid after statement $S$ is executed.
+%For instance,  for the statement $S=\mathsf{assign}~
+%((\mathsf{Para}~  n~ 0), (\mathsf{Const} ~\mathsf{T}))$, formula
+%$f_1= \mathsf{eqn}~ (\mathsf{IVar}~ (\mathsf{Para}~ n 0))
+%(\mathsf{Const}~ \mathsf{T})) $, $f_2= \mathsf{eqn}~ (\mathsf{IVar}~
+%(\mathsf{Para}~ n ~0))\mathsf (\mathsf{Const}~ \mathsf{E}))$, we
+%have $\mathsf{statementEnableForm}~S~f_1$ and
+%$\mathsf{statementDisableForm}~S~f_2$. We also define two functions
+%$\mathsf{varOfForm}~f$ and $\mathsf{varOfSent}~S$ to denote the set
+%of variables used in the formula $f$ and statement $S$.
+
+\begin{specification}
+primrec invHoldForRule1::
+ formula $\Rightarrow$ rule $\Rightarrow$ bool where\\
+invHoldForRule1 (implyForm ant cons) r=%\\
+   $\forall$s. formEval (pre r) s $\longrightarrow $ \\ formEval  (substFormByStatement f (act r))
+   s \\ \\
+
+definition invHoldForRule2:: formula $\Rightarrow$ rule
+$\Rightarrow$ bool  where\\
+ invHoldForRule2 f  r $\equiv$%\\
+(varOfSent (act r)) $\cap$  (varOfForm f)=$\emptyset$ \\ \\
+
+primrec  invHoldForRule3:: formula $\Rightarrow$ rule
+$\Rightarrow$formula set $ \Rightarrow$ bool where\\
+ invHoldForRule3 (implyForm ant cons) r fs
+=(varOfSent (act r)$\cap$varOfForm cons=$\emptyset$
+)$\wedge$ \\
+   ($\exists$f' ant'.f'$\in$fs$\wedge$
+  logicImply f'(implyForm ant' cons)$\wedge$\\
+  logicImply (andForm (pre r)
+  (preCond ant (act r))  ant')))\\ \\
+
+primrec  invHoldForRule4:: formula $\Rightarrow$ rule
+$\Rightarrow$formula set$\Rightarrow$ bool
+  where\\
+ invHoldForRule4 (implyForm ant cons) r fs
+ =($\exists$f'  ant'  ant''.f'$\in$ fs$\wedge$ \\
+ logicImply f'  (implyForm ant'
+  (neg ant''))$\wedge$((varOfSent (act r))$\cap$ varOfForm ant''=$\emptyset$)$\wedge$\\
+  logicImply ant ant''  $\wedge$
+              (logicImply (andForm  (pre r) \\ (preCond (neg cons) (act r))) ant'))\\ \\
+
+definition invHoldForRule5:: formula $\Rightarrow$ rule
+$\Rightarrow$ formula set  $\Rightarrow$bool
+ where\\
+invHoldForRule5 inv0 r fs $\equiv$
+ ( $\exists$f'.  f' $\in$ fs $\wedge$ logicImply f'  (preCond inv0 (act r)))  \\
+\\
+definition consistent::formula set $\Rightarrow$ formula set
+$\Rightarrow$  rule set $\Rightarrow$bool  where\\
+ consistent invs inis rs $\equiv$
+ $\forall$inv ini s. (inv $\in$ invs
+$\longrightarrow$  ini$\in$ inis$\longrightarrow$ \\ formEval ini s
+$\longrightarrow$  formEval inv s)) $\wedge$\\
+ ($\forall$ inv r.(inv $\in$invs$\longrightarrow$ r $\in$ rs$\longrightarrow$(invHoldForRule1 inv
+ r
+$\vee$invHoldForRule2 inv r  $\vee$ \\ invHoldForRule3 inv r invs
+ $\vee$ invHoldForRule4 inv r invs  $\vee$
+ invHoldForRule5 inv r invs))
+\end{specification}
+
+Let $f=\mathsf{implyForm}~ant ~cons$ for some   $ant$ and $cons$.
+Predicate $\mathsf{invHoldForRule1 }~f~ r$ says that after rule $r$
+is executed, the pre-condition of $f$ \emph{w.r.t.} $\mathsf{act}~r$
+is implied by the guard of $r$. Namely, $f$ must be valid after
+statement $S$ is executed. $\mathsf{invHoldForRule2 }~f~ r$ says
+that all the variables in the statement of the action of rule $r$
+has nothing to do with those in the formula $f$. Intuitively this
+means that the execution of the rule $r$ will have no effect in the
+the evaluation of the formula $f$. $\mathsf{invHoldForRule3}~f~
+r~fs$ says that action of $r$ have nothing to do with $cons$, and
+there exists another invariant $f'$ in the invariant set $fs$ and
+another formula $ant'$ such that  $ \mathsf{logicImply}~ f' ~
+(\mathsf{implyForm}~ ant'~ cons ) $ and $\mathsf{logicImply}~
+(\mathsf{andForm}~(\mathsf{pre}~ r)~(\mathsf{preCond}~ ant~
+(\mathsf{act} ~r))) ~ ant' $.
+$\mathsf{invHoldForRule4}~(\mathsf{implyForm}~ ant~ cons)~ r~fs$
+says that the
+ action of $r$ has
+nothing to do with $ant$, and there exists an invariant $f'$ in
+the invariant set $fs$ and two formulas $ant'$ and $ant''$ such that $
+\mathsf{logicImply}~ f' ~ (\mathsf{implyForm}$~ $ant'~ (\mathsf{neg}
+~ant'') ) $, $\mathsf{logicImply}~ ant~ant'',$   $\mathsf{logicImply}~
+(\mathsf{andForm}~(\mathsf{pre}~ r)~(\mathsf{preCond}$\ $~ (\mathsf{neg}~cons)~ (\mathsf{act} ~r)))~ ant'$.
+ $\mathsf{invHoldForRule5}$~$inv~ r~fs$ requires that the pre-condition $ (\mathsf{preCond}~ inv~ (\mathsf{act}~ r) )$
+ is directly implied by an invariant $f$ in $fs$. Intuitively applying rule $\mathsf{invHoldForRule3}$ means
+  that a new antecedent $ant'$ must be found which implies $cons$, $\mathsf{invHoldForRule4}$ that part
+  (or all) of the antecedent of $ant$ is falsified by the negation of the
+  consequent.
+We will also interpret the meaning of these predicates in the following section.
+
+Predicate $\mathsf{consistent}~ invs ~inis~ rs$ specify two aspects:\\
+%\begin{enumerate}
+(1) For any invariant $inv \in invs$, any initializing predicate $ini \in inis$, any
+state $s$, if $ini$ is evaluated true at state $s$, then $inv$ is
+evaluated true at state $s$.
+
+\noindent
+(2) For any invariant $inv \in invs$, any $r$ in rule set
+$rs$, either $\mathsf{invHoldForRule1 }~inv~ r$,
+$\mathsf{invHoldForRule2 }~inv~ r$, $\mathsf{invHoldForRule3 }~inv~
+r~invs$, or $\mathsf{invHoldForRule4 }~inv~ r~invs$, or $\mathsf{invHoldForRule5}~inv~ r~invs$ holds.
+%\end{enumerate}
+
+Theorem \emph{consistency}, which is shown below, % \JP{I don't fine this theorem consistency!}
+ aims to prove that the invariants
+hold for any reachable sate of a  general cache coherence protocol
+which is modeled by a set of initializing formulas $inis$ and a set
+of rules $rs$. Consider a set of invariants $invs$, and a set of
+rules $rs$, and a set of initializing formulas $inis$, our theorem
+\emph{consistency} says that for any invariant $inv\in invs$, $inv$
+is evaluated true at any reachable state $s \in
+\mathsf{reachableSet}~ inis rs$ if the consistency relation
+$\mathsf{consistent}~ invs ~inis~ rs$ is satisfied. %Her we also assume that any invariant $inv$
+%is of form of $\mathsf{implyForm}$ formula.
+
+\begin{theorem}\label{consistentLemma}
+  $\isasymlbrakk \mathsf{consistency}~ invs ~inis~ rs$; $s  \in \mathsf{reachableSet}~ inis~ rs$;
+   $\forall inv. inv \in invs \longrightarrow \mathsf{ofImplyForm}~
+   inv$
+  $\isasymrbrakk\Longrightarrow$ $\forall inv. inv \in invs \longrightarrow
+\mathsf{formEval}~ inv ~s$    \end{theorem}
+
+%The proof of Theorem. \ref{consistentLemma} is rather
+%straightforward by induction. The base of the induction proof is
+%guaranteed by the first part of the definition of
+%$\mathsf{consistent}$. The induction step is guaranteed by the
+%second part of $\mathsf{consistent}$. %Namely, for any invariant $inv
+%\in invs$, any $r$ in rule set $rs$, either $\mathsf{invHoldForRule1
+%}~inv~ r$, $\mathsf{invHoldForRule2 }~inv~ r$,
+%$\mathsf{invHoldForRule3 }~inv~ r~invs$, or $\mathsf{invHoldForRule4
+%}~inv~ r~invs$.
+%By induction hypothesis, we have that for a fixed state $s$,
+%$\mathsf{formEval}~ inv ~s$ for any $inv \in invs$. Consider a rule
+%$r \in rs$, now we need prove that $\mathsf{formEval}~ inv
+%~(\mathsf{trans}~(\mathsf{act}~r)~s)$. There are four cases as
+%follows:
+
+%\begin{description}
+%\item[(1)]If $\mathsf{invHoldForRule1 }~inv~ r$ holds, then we have
+%$\mathsf{formEval}~ inv ~(\mathsf{trans}~(\mathsf{act}~r)~s)$
+%directly;
+
+%\item[(2)] If
+%$\mathsf{invHoldForRule2 }~inv~ r$, and we have $\mathsf{formEval}~
+%inv ~ s$ because the execution of rule $r$ has no
+%effect in the evaluation of $inv$, then we can conclude
+%$\mathsf{formEval}~ inv ~(\mathsf{trans}~(\mathsf{act}~r)~s)$  by
+%the induction hypothesis;
+
+%\item[(3)] If
+%$\mathsf{invHoldForRule3 }~inv~ r$, then we have $\mathsf{formEval}~
+%ant ~(\mathsf{trans}~(\mathsf{act}~r)~s)$ by the definition of
+%$\mathsf{invHoldForRule3 }$. Now we need prove $\mathsf{formEval}~
+%cons ~(\mathsf{trans}~s)$. Because the execution of rule $r$ has no
+%effect in the evaluation of $cons$, and we can conclude
+%$\mathsf{formEval}~ cons ~(\mathsf{trans}~(\mathsf{act}~r)~s)$ if we
+%can show $\mathsf{formEval}~ cons ~s$.  Because there exists an
+%invariant $inv'=\mathsf{implyForm}~ant'~cons'$ and a formula $ant'$
+%such that $inv' \in invs $, (1) $\mathsf{logicImply}~ inv'~
+%(\mathsf{implyForm}~ ant'~ cons ) $, and
+% (2) $  \mathsf{logicImply}~ (\mathsf{pre}~ r) ~ant'$.  By   induction
+%hypothesis, we have $\mathsf{formEval}~ inv'~s$, then by (1), we
+%also have (3) $\mathsf{formEval}~(\mathsf{implyForm}~ ant'~ cons
+%)~s$. Because $\mathsf{formEval} ~(pre~ r)~s$, by (2), we have
+%$\mathsf{formEval}~ant'~s$, by (3), we conclude
+%$\mathsf{formEval}~cons~s$;
+
+%\item[(4)] If
+%$\mathsf{invHoldForRule4 }~inv~ r$, then we have $\neg
+%\mathsf{formEval}~ cons ~(\mathsf{trans}~(\mathsf{act}~r)~s)$ by the
+%definition of $\mathsf{invHoldForRule4 }$. Now we need prove $\neg
+%\mathsf{formEval}~ ant ~(\mathsf{trans}~(\mathsf{act}~r)~s)$.
+%Because the execution of rule $r$ has no effect in the evaluation of
+%$ant$, and we can conclude $\neg \mathsf{formEval}~
+%ant~(\mathsf{trans}~s)$ if we can show $\neg \mathsf{formEval}~ ant
+%~s$. Because there exists an invariant
+%$inv'=\mathsf{implyForm}~ant'~cons'$ and a formula $ant'$ such that
+%$inv' \in invs $, (1) $\mathsf{logicImply}~ inv'~
+%(\mathsf{implyForm}~ ant'~ (\mathsf{neg}~ ant) ) $, and
+% (2) $ \mathsf{logicImply}~ (\mathsf{pre}~ r) ~ant'$.  By   induction
+%hypothesis, we have $\mathsf{formEval}~ inv'~s$, then by (1), we
+%also have (3) $\mathsf{formEval}~(\mathsf{implyForm}~ ant'~
+%(\mathsf{neg}~ ant) ~s$. Because $\mathsf{formEval} ~(\mathsf{pre}~
+%r)~s$, by (2), we have $\mathsf{formEval}~ant'~s$, by (3), we
+%conclude $\mathsf{formEval}~(\mathsf{neg}~ ant)~s$, thus $\neg
+%\mathsf{formEval} ~ ant~s$.
+%
+%\end{description}
+
+Theorem~\ref{consistentLemma} gives a general guiding principle to
+prove invariants of a cache coherence protocol. Especially it
+eliminates the need of directly using the induction proof method
+again in ground case studies. It allows us to focus on  the causal
+relationship between transition  rules of the protocol and
+invariants. Furthermore, it allows for dividing the proof of the
+invariants to a series of subproofs to verify whether one of the
+relations $\mathsf{invHoldForRule1}$-$\mathsf{invHoldForRule5}$
+holds
+  for  a rule  and an invariant.
+All the definitions, lemmas, and proofs in this section are
+implemented in a formal theory \texttt{cache.thy}, which provides a
+mechanized library for  analysis of cache coherence protocols. This
+theory comprises 1243 lines.
+
+This divide and
+  conquer strategy is the key to make the series of sub-proofs
+  to be automated because the proof patterns for the  subproofs  are similar
+  and modular. It is the similarity and modularity that allows us to summarize
+  general proof template and instantiate the template with different interpretations.  %The consistency relationship
+%  also shows the strong hints to
+%%automatically generate auxially invariants to prove the main
+%invariant, such as $\mathsf{mutualInv}~i~j$ in our example, which we will discuss in
+%later sections.
+%\JP{Make sure that discussions will take place.:I only mention that consistency lemma is the key to automate proof}
+
+%The consistency lemma
+%In the following two sections, we firstly demonstrate how to use
+%the consistency lemma as a powerful means to prove a set of
+%invariants for the simple mutual exclusion protocol.
+%\JP{Check what exactly done. I comment it to save space}
+%Second we show an algorithm to automatically find the
+%auxiary invariants from the main invariant.
+
+%=========================================
+\section{Using the consistency lemma to prove invariant sets}
+\label{sec:provingInvSets}
+%=========================================
+This sections shows how to apply the consistency lemma to prove a
+invariant set of the \texttt{simpleMutual} example.
+%$\mathsf{mutualInv}~i~j$, which is shown in Fig.
+%\ref{mutualExclusionProt}.
+Firstly, we need a set of auxiliary invariants, which are shown in
+the following:
+
+\vspace{2mm}
+\begin{specification}
+definition mutualInv1::nat $\Rightarrow$ nat $\Rightarrow$ formula\\
+where mutualInv1 i j $\equiv$\\
+  let ant=eqn (IVar (Para  n i)) (Const E)  in\\
+  let cons= neg (eqn (IVar (Para  n j)) (Const C)) in\\
+      (implyForm ant cons)\\
+\\
+
+definition mutualInv2::nat $\Rightarrow$ nat $\Rightarrow$ formula\\
+where mutualInv2 i j $\equiv$\\
+  let ant=eqn (IVar (Para  n i)) (Const E)  in\\
+  let cons= neg (eqn (IVar (Para  n j)) (Const E)) in\\
+      (implyForm ant cons)\\
+\\
+
+definition invOnX1::nat $\Rightarrow$ formula  \\
+where invOnX1 i\\ $\equiv$
+  let ant= eqn (IVar (Global  x )) (Const TRUE)  in\\
+  let cons= neg  (eqn (IVar (Para  n i)) (Const C))  in\\
+      (implyForm ant cons)\\
+\\
+
+definition invOnX2::nat $\Rightarrow$ formula \\
+  where invOnX2 i
+$\equiv$\\
+  let ant= eqn (IVar (Global  x )) (Const TRUE)   in\\
+  let cons=neg (eqn (IVar (Para  n i)) (Const E))  in\\
+      (implyForm ant cons)
+ \\
+\\
+
+%invs=\{ f.( $\exists$ i j. (f=mutualInv i j $\vee$ f=mutualInv1 i j
+%$\vee$ f=mutualInv2 i j )\\
+%\>  $\wedge$ i$\neq$j $\wedge$ i$\le$ N $\wedge$ j $\le$ N)\}$\cup
+%$\\
+%\>  \{f. $\exists$ i. (f=invOnX1 i$\vee$ f=invOnX2 i) $\wedge$
+%i$\le$
+%  N\}\\
+definition invariants::nat $\Rightarrow$ formula set  where [simp]\\
+invariants N$\equiv$ \{f. exTwoLessP N (\% i j.  f = invonX1 i j)  \\
+$\vee$exTwoLessP N (\% i j.  f = invOnX2 i j)   \\
+$\vee$exLessP N (\% i.  f= mutualInv1 i j)   \\
+$\vee$exTwoLessP N (\% i j.  f =  mutualInv2 i j) \\
+$\vee$exTwoLessP N (\% i j.  f =  mutualInv3 i j) \}
+\end{specification}
+
+%The construction of the auxially invariants is another key point,
+%and we will discuss this topic in the latter section.
+Invariant set $\mathsf{invariants}~N$ is defined as above, where $\mathsf{exTwoLessP}~N~P\equiv \exists  i_1~ i_2. ( i_1\le
+ N  \wedge i_2\le
+ N \wedge~i_1\neq i_2\wedge P~ i_1~ i_2 )$, then
+  we focus on how to apply the consistency lemma to prove these invariants. In the following sections, we use $i_1$, $i_2$, and $iR$ to denote integer indexes.
+
+\begin{lemma} \label{sec:main}
+  $\isasymlbrakk  $
+  $s \in \mathsf{reachableSet}~ \{\mathsf{mutualInis}~N\}~ (\mathsf{rules}~N)$; $0<N$
+  $\isasymrbrakk\Longrightarrow$ $\forall inv. inv \in (\mathsf{invariants}~N) \longrightarrow
+\mathsf{formEval} ~inv ~s$ \end{lemma}
+\begin{proof} Let $inis=\{\mathsf{mutualInis}~N\}$, and $invs=
+\mathsf{invariants}~N$. By Theorem~\ref{consistentLemma}, we need
+to verify that parts (1) and (2) of
+ the relation $\mathsf{consistency}$ hold:\\
+%\begin{description}
+%\item[(1)]
+%(1) For any invariant $inv \in invs$, any initializing predicate
+%$ini \in inis$, any state $s$, if $ini$ is evaluated true at state
+%$s$, then $inv$ is
+%evaluated true at state $s$.\\
+%\item[(2)]
+%(2) For any invariant $inv \in \mathsf{invs}$, any $r$ in rule set
+%$ruleset$, either $\mathsf{invHoldForRule1 }~inv~ r$,
+%$\mathsf{invHoldForRule2 }~inv~ r$, $\mathsf{invHoldForRule3 }~inv~
+%r~\mathsf{invs}$, or $\mathsf{invHoldForRule4 }~inv~
+%r~\mathsf{invs}$ holds.\\
+%\end{description}
+For (1), the proof is rather straightforward.    For instance,
+consider the case where $inv=\mathsf{mutualInv}~ i_1 ~i_2$, we can
+direly conclude that $\mathsf{formEval}~  (\mathsf{eqn
+}~(\mathsf{IVar}~ (\mathsf{Para}~ n~ i_2))$\ $ (\mathsf{Const}~
+\mathsf{I}))~ s$ if $\mathsf{formEval}~(\mathsf{mutualInis}~N)~s$,
+thus $\mathsf{formEval}~inv~s$ holds. The other invariants can be
+proved similarly.
+
+For (2), we show a proof of a typical case where
+$inv=\mathsf{mutualInv}~ i_1 ~i_2$, and $r=\mathsf{ Crit }~iR$,
+where $iR\le N$, $i_1\le N$, $i_2\le N$, and $i_1\neq i_2$. Here we
+abbreviate $ant= \mathsf{eqn}~ (\mathsf{IVar}~ (\mathsf{Para} ~ n
+~i_1))~ (\mathsf{Const}~ C)$,
+ $ cons= \mathsf{neg}~ (\mathsf{eqn}~ (\mathsf{IVar} ~(\mathsf{Para}~  n~ i_2))
+  ~(\mathsf{Const} ~\mathsf{C}))$. Now we consider three cases analysis on $iR$, $i_1$ and $i_2$:\\
+%\begin{description}
+%\item[(2-a)]
+(2-a) $iR=i_1$. We  show   $\mathsf{invHoldForRule3}~ inv~ r~
+\mathsf{invs}$. From $i_1 \neq i_2$, $\mathsf{varOfSent
+}~(\mathsf{act}~ r)=\{\mathsf{Para}~ n~ i_1$, $\mathsf{Gobal}~x\}$
+and $\mathsf{varsOfForm}~cons =\{\mathsf{Para}~ n~ i_2\}$,  we have
+$\mathsf{varOfSent}~ (\mathsf{act}~ r) \cap
+\mathsf{varsOfVar}~(cons)=\emptyset$. Second, let
+$inv'=\mathsf{invOnX1}~ i_2$, $ant'=  (\mathsf{eqn}~ (\mathsf{IVar}~
+(\mathsf{Global}~ x)) ~(\mathsf{\mathsf{Const}}~ \mathsf{TRUE}))$,
+we have that $\mathsf{logicImply}$\ $(\mathsf{invOnX1}~ i_2)
+~(\mathsf{implyForm}~ ant' ~cons)$ because they are the same.
+Second, we show $\mathsf{logicImply}~ (\mathsf{pre}~ r) ~ant'$. This
+is also straightforward because the latter is one of the conjuncts
+of the former.
+Thus $\mathsf{logicImply}~ (\mathsf{andForm}~(\mathsf{pre}~ r)~(\mathsf{preCond}~ ant~ (\mathsf{act} ~r))) ~ ant' $.\\
+(2-b) $iR=i_2$. We  show $\mathsf{invHoldForRule4}~ inv~ r~
+\mathsf{invs}$.  From $i_1 \neq i_2$, $\mathsf{varOfSent}~
+(\mathsf{act} ~r) \cap \mathsf{varsOfForm}~ ant = \emptyset$ because
+$\mathsf{varOfSent}~ (\mathsf{act}~ r)=\{\mathsf{Para}~ n ~i_2$,
+$\mathsf{Gobal}~x\}$ and $\mathsf{varsOfForm}\ ant=$
+$\{\mathsf{Para}~ n~ i_1\}$. Second, let $inv'=\mathsf{invOnX1}~
+i_1$, $ant'=   (\mathsf{eqn}~ (\mathsf{IVar}\  (\mathsf{Global}~
+x))~ (\mathsf{Const}~ \mathsf{TRUE}))$, $ant''=\mathsf{eqn}~
+(\mathsf{IVar} ~(\mathsf{Para}~  n~ iR)~\mathsf{Const}~
+\mathsf{C})$. We can easily show that $\mathsf{logicImply}~
+\mathsf{invOnX1}~ i'~(\mathsf{implyForm}~ $ $ ant'~ (\mathsf{neg}
+~ant''))$ because the former is equivalent to the latter. Second, we
+have $\mathsf{logicImply}~ (\mathsf{pre}~ r) ~( (\mathsf{eqn}~
+(\mathsf{IVar}~ (\mathsf{Global}~ x))~(\mathsf{Const}~
+\mathsf{TRUE}))$. This is also straightforward because the latter is
+one of the conjuncts of the former, thus we can show
+$\mathsf{logicImply}~
+(\mathsf{andForm}~(\mathsf{pre}~ r)~(\mathsf{preCond}$\ $~ (\mathsf{neg}~cons)~ (\mathsf{act} ~r)))~ ant'$.\\
+(2-c) $iR\neq i_1$ and $iR\neq i_2$. We  show
+$\mathsf{invHoldForRule2}~ inv~ r$. The proof is straightforward
+because $\mathsf{varOfSent}~(\mathsf{act}~ r)=\{\mathsf{Para}~ n~
+iR$, $\mathsf{Gobal}~x\}$ $\mathsf{varOfForm}~inv=\{\mathsf{Para}~
+n~ i_1$,
+ $\mathsf{Para}~
+n~ i_2\}$, and they are disjoint.
+ \end{proof}
+
+\begin{remark}
+ Here we analyze the complexity of the proof. For one rule, we need to
+analyze three  cases for each invariant $inv$ in
+$\mathsf{mutualInv}$, $\mathsf{mutualInv1}$, and
+$\mathsf{mutualInv2}$, and two cases for each invariant.
+%in $\mathsf{invOnX1}$ and $\mathsf{invOnX2} $.
+Thus we need in total
+$4\times (3 \times 3 +2\times 2)=52$ cases. Note that the  protocol
+is simple because it has only 4 rules.
+Here we must note that the proof cases are the key measure for
+the complexity of the parameterized verification.  %Let alone a moderate
+%protocol such as German and Flash with about 15~50 cases.
+This complexity illustrates the difficulty of parameterized verification of
+cache coherence protocols. %A moderate case study such
+%as German protocol has about 15 rules.
+If we only rely human intelligence to guide the theorem prover to
+prove them, the proof will be tedious and error-prone. This gives us the motivation
+to develop an automatic technique to generate the needed proofs.
+\end{remark}
+%Our solution is to automate the proof procedure basing on Isabelle's
+%strong support for proof programming.
+
+%Luckily, we notice  that our proof preserves
+%has a neat modular structure. The proof for part (1) can be just
+%finished by Isabelle's automatical command such as $\mathsf{auto}$
+%or $\mathsf{metis}$ because it only involves simple predicate
+%calculation. The proof for part (2) is also quite routine. First we
+%need analyze the cases whether the parameters $i$, $i'$, $j$ are
+%equal. For each case, we select a proper obligation from
+%$\mathsf{invHoldForRule1}-\mathsf{invHoldForRule4}$. The
+% hint to guide the selection is obvious: (1) If the antecedent of
+% the invariant $inv$ is invalid or its consequent is valid after the
+% execution of the statement of the rule $r$, then we choose $\mathsf{invHoldForRule1}$;
+% (2) If the
+% execution of the statement of $r$ has nothing with the invariants,
+% we choose $\mathsf{invHoldForRule2}$; (3) If the antecedent of
+% the invariant $inv$ is valid,  we choose
+% $\mathsf{invHoldForRule3}$, and must find another invariant $inv'$
+% to prove that the consequent of $inv$ also holds. The proof is
+% based on the induction hypothesis and the execution of execution of the statement of $r$ has
+%nothing to do with the consequent; (4) If the consequent of
+% the invariant $inv$ is invalid,  we choose
+% $\mathsf{invHoldForRule4}$, and must find another invariant $inv'$
+% to prove that the antecedent of $inv$ also invalid. The proof is
+% based on the induction hypothesis and the execution of execution of the statement of $r$ has
+%nothing to do with the antecedent.
+
+%\emph{I need help in Isabelle's programming techniques to automate
+%this proof method}?
+
+%=========================================
+\section{Automatic  generation of parameterized proofs}
+%=========================================
+%In order to understand our automatic proof generation, we
+%illustrate the architecture of our solution in Fig.~\ref{fig:arch}.
+%%
+%\begin{center}
+%\begin{figure}[!ht]
+%\centering %\vspace{-0.8cm}
+%\includegraphics[width=0.5\textwidth]{invFinderArchClip.pdf}
+%\caption{Architecture of proof generation} \label{fig:arch}
+%\end{figure}
+%\end{center}
+
+In this section, we solve the problem of the proof generation. In an
+overview, the parameterized proof for a parameterized protocol model
+w.r.t. a parameterized invariants can be derived from a ground proof
+(which is corresponding to a series of causal relation) for a small
+and finite model. This the core idea of proof generation strategy.
+The intuition behind our approach is that a parameterized
+ proof in a parameterized model should share the same
+ proof pattern which is suitable for a ground proof in a
+  small protocol instance. Namely, the two proofs are "similar" in some sense. %The core nevelty of our work is to
+  %generalize the ground proof information to a general proof for
+  %the parameterized model. Isabelle's locale feature provide good
+  %supports  for us to implement the automatically generating
+  %procedures.
+
+%Within our automatic proof generation framework,
+%first a cache coherence protocol instance $P(N)$ (usually $N$ is a small
+%number 3 or 4), is fed into the \texttt{invFinder} and transformed
+%into an internal form. The tool \texttt{invFinder} works in a
+%counterexample guided iterative
+% workflow. It tries to prove the current invariant found up to now,
+%  automatically analyzes the counterexample, and generates a new auxiliary
+%  invariant, and records the corresponding consistency information for proofs. This work is
+%  not
+ % finished until no new counterexample is created. The auxiliary invariants and consistency
+ % information is recorded in a table $P.tbl$,   which is combined with other information in the
+ % $P(N)$, is used to create an Isabelle proof
+ % script $P.thy$ in
+ % the Isabelle framework. Note that $P.thy$ is a parameterized model which is automatically generated from a causal information
+ % of a small protocol instance $P(N)$, which is   stored in $p.tbl$.
+ % Here some \emph{invariant generalizing techniques} and \emph{parameter mapping} information must be adopted.
+ % At last the Isabelle proof script is fed to
+ % Isabelle to check the correctness of the parameterized protocol. %Due to space limitation, how to generate proofs for invariants are discussed here.
+  %For the detail of $\mathsf{invFinder}$, readers refer to
+ % \cite{LiCache13}.
+
+
+\subsection{Ground invariants and ground causal relations}
+As we have mentioned, our parameterized proof generation depends on
+ground invariants and causal relations derived from a finite and
+small protocol instance.  Obviously, the generation is closely
+related with an auxiliary invariants finder, which finds
+in the finite model for all the above.  %not only all the auxiliary invariants to
+%prove the main invariant, but also the above kinds of causal
+%relation between the invariants and the rules. Note that all the
+%invariants and the causal relations are in ground form.
+In fact, we have implemented a tool \texttt{invFinder} to do such a
+task. Due to space limitation, we do not discuss in detail how
+\texttt{invFinder} works. Interesting readers can refer to
+\cite{LiCache13}. Here we only show the output of the tool which can
+be used for parameterized  proof generation, as shown in Table
+\ref{label-ground-causal relation}.
+  %For the detail of $\mathsf{invFinder}$, readers refer to
+ % \cite{LiCache13}.Due to page limit, we just give
+%a brief overview of our \texttt{invFinder}. %The invariant finder try to generate
+%auxiliary invariants from the first invariant, and record key
+%information to create proofs in the next step.
+%There are  three aspects to be emphasized in its design. The first is to rely
+%heuristics to guess new auxiliary invariant when we try to use the
+%consistency lemma to verify the causal relation between a rule
+%instance and an invariant in a protocol instance
+%(such a protocol instance is often called a reference protocol model),
+%which has been discovered up to now. The
+%second one is to use the reference protocol model to briefly verify our
+%conjecture. The third one is to use the symmetry property of the
+%(parameterized) protocol to generalize our invariants found in the reference protocol
+%model.
+
+%In this paper, we focus on how to automatically generate the parameterized proof
+%from the causal information generated from
+% \texttt{invFinder}. Therefore, we  only give a fragment of the {\tt simpMutual.tbl}
+%for our running example.
+
+%Here we  only have a glimpse over the output of \texttt{invFinder},
+%which is shown in Table \ref{comparison of results}.
+Each line
+records the
+   index of an parameterized invariant, its parameter, name of a parameterized rule, the rule
+  parameters to instantiate the rule, a causal relation between
+  the ground invariant and a kind of causal relation which involves the kind and proper formulas
+  $f'$, $ant'$, and $ant''$  in need (which are used to construct
+  one of
+   causal relations $\mathsf{invHoldForRule}3$-$\mathsf{invHoldForRule}5$. The index
+  will be useful to name the invariant in the generation of the
+  definitions of the invariants, and reference of the invariant in
+  the formal proof in Isabelle. The ground invariant and rule can be obtained by
+  an
+  application of the invariant parameters to the parameterized invariant and rule respectively.
+  %The ground rule can be seen as the
+  %application of the parameters to the parameter rule.
+
+
+%for our running example.
+%A table, which records not only all the involved invariants, but
+%also the causal relation between each rule instance and some
+%invariant instance, which is computed from the reference protocol
+%model. Here the \texttt{invFinder} will automatically name the
+%invariants according to some order. For example,
+%$\mathsf{mutualEx}$, $\mathsf{invOnX}$ will be named as
+%$\mathsf{inv5}$, $\mathsf{inv2}$, respectively. The names
+%``$mutualEx$" in previous section are only used for better
+%understanding, an integer index is used to retrieve a lemma for
+%mechanical proof. $ant'=\mathsf{eqn}~(\mathsf{IVar}
+%~(\mathsf{Global} ~``x"))~(\mathsf{Const}~True)$ is a formula, which
+%is needed to construct the causal relation
+%$\mathsf{invHoldForRule3}$. Interesting readers can refer
+%to~\cite{LiCache13} for details.
+
+\begin{table}[htbp]
+\centering \caption{A fragment of the ground causal relation} % {\tt
+%simpMutual.tbl}
+\begin{tabular}{|c|c|c|c|c|c|c|c| }
+\hline
+{\tt inVum} &invParas& rule& ruleParas&causal relation &   f' & ant' & ant''\\
+\hline
+.. & .. & ..&.. &..&..&..& \\
+\hline
+5 &[1,2] & crit  & 1& invHoldForRule3 &f1' &ant1'&\\
+\hline
+5 &[1,2]& crit & 2& invHoldForRule4 &f2' & ant2'&ant2''\\
+\hline
+5 &[1,2]& crit & 3& invHoldForRule2 & & &\\
+\hline
+.. & .. & ..&.. &..&..&.. &\\
+\hline
+\end{tabular}
+\end{table}\label{label-ground-causal relation}
+where $\mathtt{f1'}=\mathsf{invOnX}~2$,
+$\mathtt{f2'}=\mathsf{invOnX}~1$,
+$\mathtt{ant1'}=\mathtt{ant2'}=\mathsf{eqn}~(\mathsf{IVar} ~
+ (\mathsf{Global} ~x))~(\mathsf{Const}~True)$, $ant2''= \mathsf{eqn}~
+ (\mathsf{IVar}~ ( \mathsf{Para}~ n~ i1) )  ~(\mathsf{Const} ~C)$.
+
+Each line in Table \ref{label-ground-causal relation} is
+corresponding to the causal
+  relation  which   holds between the ground invariant and the
+  rule. For instance, the first line says that the causal relation
+  $\mathsf{invHoldForRule3}~(\mathsf{inv5} ~ 1~2)~(\mathsf{crit}~1)~cinvs$ holds,
+   where $cinvs$ is all the ground invariants included in the table,  $\mathtt{f1'}$ and
+   $\mathtt{ant1'}$ provide necessary information to construct the
+   $\mathsf{invHoldForRule3}$ relation. Note that the generated invariants are ground
+   formulas and the
+causal relations are also between  ground terms and  ground rules.
+It cannot be directly used as proofs because we need a parameterized
+proof in a parameterized model
+ of a protocol with parameter $N$ because $N$ is symbolic, not a ground value such as 3 or
+ 4.
+%For instance, for the protocol $\mathsf{mutualEx}$, we try to find
+%the new invariants by starting from the first invariant
+%$\mathsf{mutualInv}$. We use the invariant instance
+%$\mathsf{mutualInv}~1~2$, and verify the causal relation between
+%this invariant instance and instances of all parameterized rules.
+%For each parameterized rule $pRule$, we only need three rule
+%instances with parameter 1, 2, or 3. Here the causal relation
+%between $\mathsf{mutualInv}~1~2$ with $pRule~1$ represents causal
+%relation between $\mathsf{mutualInv}~i_1~iInv2$ with
+%$pRule~iRule$ when $i_1=iRule$; that between
+%$\mathsf{mutualInv}~1~2$ with $pRule~2$ represents that  between
+%$\mathsf{mutualInv}~i_1~iInv2$ with $pRule~iRule$ when
+%$iInv2=iRule$; that between $\mathsf{mutualInv}~1~2$ with
+%$pRule~3$ represents that  between
+%$\mathsf{mutualInv}~i_1~iInv2$ with $pRule~iRule$ when nether
+%$i_1=iRule$ nor $iInv2=iRule$.
+
+%For instance, when the rule is $Try$, the tool checks that
+%$\mathsf{invHoldForRule1}~(Try~1)$\ \ $(\mathsf{mutualInv}~1~2)$
+%holds because the antecedent of the invariant is false after the
+%triggering of the rule $\mathsf{Try}~1$,
+%$\mathsf{invHoldForRule1}~(Try~2)~(\mathsf{mutualInv}~1~2)$ holds
+%because the consequent of the invariant is false after the
+%triggering of the rule $\mathsf{Try}~2$, and
+%$\mathsf{invHoldForRule2}~(Try~3)~(\mathsf{mutualInv}~1~2)$ holds
+%because nether the state variable $n~1$ in the antecedent nor $n~2$
+%in the consequent is changed.
+
+%When the rule is $Crit$,  the tool checks that the antecedent of
+%$(\mathsf{mutualInv}~1~2)$ is enabled after the executing of
+%$Crit~1$, and the value of the state variable $n~2$ does not change,
+%there fore tool will try to find a condition $ant'$ such that
+%$\mathsf{implyForm}~ant'~cons$ is also an invariant. There are two
+%possible formulas to choose to be $ant'$, $\mathsf{eqn}~
+%(\mathsf{IVar}~ (\mathsf{Para} ~ n ~1))~(\mathsf{Const}~ T)$ or
+%$\mathsf{eqn}~ (\mathsf{IVar}~ (\mathsf{Global} ~ x ))$\ $
+%(\mathsf{Const}~ TRUE)$, now we can use the reachable set of the
+%small protocol instance with $NODE=3$ to check which one should be
+%$ant'$. The answer is that $ant'$ should be the latter. Then we
+%record the information that $\mathsf{invHoldForRule3}$ relation
+%holds between $Crit~1$ and $(\mathsf{mutualInv}~1~2)$. Furthermore
+%new invariant $\mathsf{implyForm}~ant'~cons$ are added, and will be
+%used to find new invariants.
+
+%The invariant generation procedure will not stop until no new
+%invariants can not be created again. Here we must point the meaning
+%of the word "new" is modulo to the symmetry relation. The intuitive
+%meaning of the symmetry relation is that $\mathsf{mutualInv}~1~2$ is
+%equivalent to $\mathsf{mutualInv}~2~1$, and $\mathsf{invOnX1}~1$  is
+%equivalent to $\mathsf{invOnX1}~1$. If the invariant
+%$\mathsf{invOnX1}~1$ is generated, then any formula $f$ satisfying
+%$\mathsf{exLessP}~N~(\%i.f=\mathsf{invOnX1}~i)$ can be an invariant.
+%$\forall i ~j.~  (i!=j) -> (n[i]=C ->!n[j]=C$, by symmetry
+%reduction, we only need prove $(n[1]=C ->!n[2]=C$. Symmetry
+
+%5Our solution to the aforementioned problem in section
+%\ref{sec:provingInvSets} is to automatically generate the proof
+%procedure basing on Isabelle's locale structure with the help of our
+%external invariant finder. Isabelle's locale structure provide a
+%strong support for modular proofs for software verification.
+%Typically a locale is a parameterized theory which can be repeatedly
+% instantiated (or interpreted) in different contexts. Modularity and reuse are the substantial ideal behind locale.
+
+
+
+%As we mentioned above, we need consider two parts of proofs by   applying
+%the consistency lemma  to verify the invariants $invs$.
+%
+%\begin{description}
+%\item[(1)] For any invariant $inv \in \mathsf{invs}$, any initializing predicate $ini \in \mathsf{inis}$, any
+%state $s$, if $ini$ is evaluated true at state $s$, then $inv$ is
+%evaluated true at state $s$.
+%\item[(2)]  For any invariant $inv \in \mathsf{invs}$, any $r$ in rule set
+%$ruleset$, either $\mathsf{invHoldForRule1 }~inv~ r$,
+%$\mathsf{invHoldForRule2 }~inv~ r$, $\mathsf{invHoldForRule3 }~inv~
+%r~\mathsf{invs}$, or $\mathsf{invHoldForRule4 }~inv~
+%r~\mathsf{invs}$ holds.
+%\end{description}
+%
+%Normally, the proofs in both (1) and (2) preserve neatly
+%%modular structures. In the next two subsections, we show our proof
+%generation strategy to automatically generate them from the information collected by
+% \texttt{invFinder}.
+
+%-------------------------------------------------------------------------
+%\subsection{Generating proofs for proving invariants holding at the initial state}
+%-------------------------------------------------------------------------
+%For an invariant $inv=\mathsf{implyForm}~ant~cons$, we only need to
+%prove that either $ant$ is evaluated as false or $cons$ is evaluated
+%true at an initial state $s$ in order to prove $\mathsf{formEval}
+%~inv~s$. Such proof obligations can be automatically solved by
+%Isabelle's $\mathsf{auto}$ command. Thus an $\mathsf{auto}$ command
+%is  generated for such a proof.
+
+%Thus we design some kinds of
+% locales to generalize the proof structure of the sub proof tasks in
+ %(1) by the number of parameters of the invariants and the proof method choice of choosing
+ %to  prove $\mathsf{neg}~(\mathsf{antof}~inv)$  or $\mathsf{consOf}~inv$.
+
+%According to the parameters of the invariants, and the proof method
+%whether the antecedent of the invariant is proved to be false or the
+%consequent of the invariant is proved to be true, we design some
+%kinds of locales to implement  these kinds of proof patterns.
+
+%For instance, we design a locale $\mathsf{iniImplyOneInvInExTwoLessPByEnableCons}$  to prove that an invariant
+%$invariant$ with two parameters (e.g. $\mathsf{mutualEx1}$ has two parameters)   holds at the initial state which satisfies the initial
+%predicate $ini$ by proving the consequent  of $invariant$ to be true
+%according to the predicate $iniSpecOfAVar$ which is a
+%specification of some state variable in the initial state. Here
+%$invariant$, $ini$, and $specOfStateVariable$ are the parameters of
+%the locale.
+
+
+
+%If we can prove an invariant instance $invariantInst$ holds at the
+%initial predicate instance $iniInst$ by following the proof pattern
+%which is the same as the locale $\mathsf{iniImplyOneInvInExTwoLessPByEnableCons}$, a
+%$\mathsf{interpretation}$ to the above locale is created by instantiating the
+%formal parameters with the actual ones.
+
+%For example, an interpretation $\mathsf{iniImply\_Inv1}$ is created to prove that the invariant
+%$\mathsf{inv1}$ holds at the initial state by a specification formula  $\mathsf{iniStateSpecOfn}$, which is
+%   simply defined as $\mathsf{iniStateSpecOfn}~  i \equiv  \mathsf{eqn}~ (\mathsf{IVar}~  (\mathsf{Para} ~ n~  i))~  ( \mathsf{Const}~  \mathsf{I} )
+%$. In order to prove the obligation imposed by the interpretation, we also need a lemma $\mathsf{lemmaOnIni\_iniStateSpecOfn}$ which simply
+%states that  $\mathsf{formEval}~\mathsf{iniStateSpecOfn}~ s$ if $\mathsf{formEval}~ini~ s$ and $ini $ is a formula to specify the initial state of the protocol.
+
+%-------------------------------------------------------------------------
+\subsection{Automatical generation of Isabelle proof }
+%-------------------------------------------------------------------------
+
+Strictly speaking, a formal model in a theorem prover like Isabelle
+includes the definitions of constants and rules and invariants,
+lemmas, and proofs. %in order to verify the cache coherence protocols.
+The most difficult of all is the generation of proofs
+which require high intelligence to inspect the protocol under study,
+while the others are routine and straightforward. First we recall
+our paper proof. The consistency lemma is our main weapon to prove,
+which requires proving two parts of obligations.
+
+\begin{description}
+\item[(1)] For any invariant $inv \in \mathsf{invs}$, any initializing predicate
+$ini \in \mathsf{inis}$, any
+state $s$, if $ini$ is evaluated true at state $s$, then $inv$ is
+evaluated true at state $s$.
+\item[(2)]  For any invariant $inv \in \mathsf{invs}$, any $r$ in rule set
+$ruleset$, one of the causal relations  $\mathsf{invHoldForRule1-5}$
+holds.
+\end{description}
+%
+Proof of Part (1) is quite simple. For an invariant
+$inv=\mathsf{implyForm}~ant~cons$ in $invs$, we only need to prove
+that either $ant$ is evaluated as false or $cons$ is evaluated true
+at an initial state $s$ in order to prove $\mathsf{formEval}
+~inv~s$. Such a proof  can be automatically solved by Isabelle's
+$\mathsf{auto}$ command.
+
+Proof of Part (2) is quite difficult because firstly we must do case
+analysis on the form of rule $r$, invariant $inv$ on which we choose
+proper proof commands. For instance, fixing  $r=paraRule~iR$ and
+$inv=inv_i ~i_1~i_2$ provided that the parameter numbers of $r$ and
+$inv_i$ is 2 respectively, we still need to do case analysis on the
+parameters $iR$, $i_1$ and $i_2$  in order to prove an lemma. There
+are three cases: (a) $iR=i_1$, (b) $iR = i_2$, and (c) $iR \neq i_1$
+and $iR \neq i_2$. If we can prove some kind of causal relation
+holds between $inv$ and $r$ in all cases, then   finish the proof.
+But the   causal relation, which  we choose, depends on the actual
+instantiation of $paraRule$ and $inv$. Here we note two points in
+our proof for an rule with only one parameter and an invariant with
+two parameters: (i) we always follow a proof pattern where we do
+case analysis on on the parameters $iR$, $i_1$ and $i_2$, and then
+prove the  cases respectively; (ii) we need tell the generator which
+causal relation should be chosen when the actual instantiation of
+the $paraRule$ and $inv$ is given. (i) is independent in the actual
+rules and invariants, but (2) is not so.
+
+%Here the  generator generates a series of lemmas $\mathsf{Lemmas}$,
+%each of the lemmas proves that some kind of causal relation holds
+%between $paraRule~iR$ and $inv_i ~i_1$, and will be used directly to
+%prove each proof obligation of Part (2). The number of lemmas in
+%$\mathsf{Lemmas}$ is $M \times N$ if the number of parameterized rules
+%and invariants are M and N respectively.
+
+
+For instance, let $r_1=\mathsf{idle}~iR$ and $r_2=\mathsf{crit}
+~iR$, $inv_5=\mathsf{mutualEx}~i_1~i_2$ and
+$inv_3=\mathsf{mutualEx1}~i_1~i_2$, two lemmas {\sf idle\_inv3} and
+{\sf crit\_inv5} will be generated. The general proof strategy in
+lemma { \sf idle\_inv3} to prove some causal relation hold between
+$r_1$ and $inv_5$ is the same as that in $\mathsf{crit\_inv5}$
+between $r_2$ and $inv_5$, three cases are split into:  (a)
+$iR=i_1$, (b) $iR = i_2$, and (c) $iR \neq i_1$ and $iR \neq i_2$.
+However the causal relation which we choose to prove in case (a) in
+lemma {\sf idle\_inv3}
+ is different from that in case (a) in lemma {\sf crit\_inv5}.
+ The former should proves the existence of $\mathsf{invHoldForRule1}$, and the
+latter $\mathsf{invHoldForRule3}$. Thus we need some kind of
+information to tell the generator which kind of the causal relation
+should be chosen, and which proof commands should be used
+accordingly.
+
+In order to make our proof modular and hierachy, we design our
+theory in two levels in order to roves that some kind of causal
+relation holds between a combination of  a parameterized rule and a
+parameterized invariant, which is shown in Fig. . In the first
+level, a general lemma is proved at an abstract level, relative to a
+set of assumptions. The proof strategy at this level formalizes the
+general strategy outlined in (i). At the second level, we
+instantiate the abstract lemma with actual rules and invariants, and
+obtain a series of actual lemmas. The proofs at this level depends
+on the actual rule and invariant themselves. Isabelle's feature of
+$\mathsf{locale}/\mathsf{interpretation}$ can support our proof
+generation strategy well.
+
+%Locales enable to prove theorems abstractly, relative to sets of
+%assumptions. These theorems can then be used in other contexts where
+%the assumptions themselves, or instances of the assumptions, are
+%theorems. This form of the- orem reuse is called interpretation.
+%Locales generalise interpretation from theorems to conclusions,
+%enabling the reuse of definitions and other con- structs that are
+%not part of the specifications of the locales.
+
+%the generator generates a series of lemmas $\mathsf{Lemmas}$, each
+%of the which proves that some kind of causal relation holds between
+%a combination of  a parameterized rule and a parameterized
+%invariant, and will be used as a rule directly to prove each proof
+%obligation of Part (2).
+\subsection{Locale to formalize a general lemma}
+ Typically a locale
+is a parameterized theory which can be repeatedly
+ instantiated (or interpreted) in different contexts. Here a kind of locale
+ is created according to the number of the number of rule and invariant.  In this case study for {\sf simpMutual},
+ only two
+ kinds of locales {\sf pRule1VspInv1} and {\sf pRule1VspInv2} ( 1 and 2 here indicates the
+ number of parameters of rule and invariant respectively) are needed,
+ the former is  for a lemma pattern for a rule and an invariant both with one parameter,
+ and the latter
+ is for a lemma pattern for a rule with one parameter and an invariant both with two
+ parameters. For instance, the latter {\sf pRule1VspInv2} is shown as below:
+
+ %A locale formalizes  a  lemma pattern (or parameterized lemma)
+% which is proved by a general proof pattern by case analysis on the parameters of rule and the
+ %invariant.
+
+
+
+\vspace{2mm}
+\begin{specification}
+locale pRule1VspInv2=\\
+
+  fixes pRule ::
+nat $\Rightarrow$ rule   and pInv:: nat $\Rightarrow$
+nat$\Rightarrow$formula   and iR::nat  and i1::nat  \\
+
+  and i2::nat  and N::nat\\
+  \\
+ assumes a:  $\exists$ant0 cons0. pInv i1 i2=implyForm ant0 cons0
+
+
+~ and\\  b: i1 $\neq$ i2$\longrightarrow$ iR $\le$  N
+$\longrightarrow$ i1 $\le$  N$\longrightarrow$ i2 $\le$
+ N$\longrightarrow$ iR = i1 $\longrightarrow$  invHoldForRule
+(pInv i1 i2)\\ (pRule iR)  (invariants   N)
+  and\\
+\\
+c: i1 $\neq$ i2$\longrightarrow$ iR $\le$
+ N $\longrightarrow$
+i1 $\le$
+ N$\longrightarrow$
+i2 $\le$
+ N$\longrightarrow$
+iR = i2
+ $\longrightarrow$  invHoldForRule
+ (pInv i1 i2)\\ (pRule iR) (invariants
+  N)
+  and \\
+\\
+
+  d:
+i1 $\neq$ i2$\longrightarrow$ iR $\le$
+ N \\
+ $\longrightarrow$
+i1 $\le$
+ N$\longrightarrow$
+i2 $\le$
+ N$\longrightarrow$
+iR $\neq$ i1 $\longrightarrow$ iR $\neq$ i2 $\longrightarrow$
+invHoldForRule
+ (pInv i1 i2) \\ (pRule iR)   (invariants
+  N)\\
+\\
+
+
+begin \\
+theorem verify:
+
+ assumes a1:iR $\le$
+ N
+  and a2:
+ i1 $\le$
+ N
+ and a3:
+i2 $\le$
+ N
+
+  and a4:
+i1 $\neq$ i2\\
+
+  shows
+invHoldForRule (pInv i1 i2) (pRule iR)  (invariants N)
+  (is
+?P pInv i1 i2 pRule iR  invs)\\
+
+  proof -\\
+
+
+
+   have d2:
+iR=i1 $\vee$ iR=i2 $\vee$  ((iR $\neq$ i1) $\wedge$ (iR$\neq$i2))
+~  by auto\\\\
+
+   moreover  $\{$assume e1: iR=i1
+     have
+?P pInv i1 i2 pRule iR  invs
+~       by (metis  a2 a3 a4 b e1)   $\}$\\\\
+
+
+   moreover  $\{$assume e1: iR = i2
+  have
+?P pInv i1 i2 pRule iR  invs
+~       by (metis  a2 a3 a4 c e1)   $\}$\\\\
+
+
+   moreover   $\{$assume e1: iR$\neq$i1 $\wedge$ iR$\neq$i2
+
+     have ?P pInv i1 i2 pRule iR  invs\\
+
+ ~      by (metis  a1 a2 a3 a4 d e1)   $\}$\\\\
+
+
+   ultimately show
+?P pInv i1 i2 pRule iR  invs
+
+
+ ~    by blast\\
+
+ qed end
+
+
+\end{specification}
+
+%A kind of $\mathsf{locale}$ is used here to formalize the general
+%parameterized proof pattern to prove $paraRule~iR$ and $inv ~i_1$
+% where  $paraRule~iR~ inv ~i_1$ are all the formal parameters of locale.
+
+%In  locale $\mathsf{pRule1VspInv1}$, the assumptions $\mathsf{a}$,
+%$\mathsf{b}$,    and $\mathsf{d}$ give obligations when we
+%instantiate  this locale with some interpretation. Among them,
+%$\mathsf{a}$ requires that the invariant under study must be of
+%implication form, $\mathsf{b}$ analyzes the case when $iR=i1$, and
+%$\mathsf{c}$ analyzes the case when $iR = i2$, and $\mathsf{d}$
+%analyzes the case when $iR \neq i1 \wedge R \neq i2$. In all cases,
+%the causal relation $\mathsf{invHoldForRule }$ should hold. Here
+%$\mathsf{invHoldForRule }$ is the abbreviation of the disjunction of
+%five causal relations
+% $\mathsf{invHoldForRule1 }$-$\mathsf{invHoldForRule5}$.
+
+
+In  locale $\mathsf{pRule1VspInv2}$, formal parameters include
+parameter rule $pRule$ and invariant $pInv$, natural numbers $iR$,
+$i1$ and $i2$  which represents the parameter which are applied to
+$pRule$, and $pInv$ respectively, natural number $N$ which is the
+configuration of cache coherence protocol model. There are four
+assumptions $\mathsf{a}$, $\mathsf{b}$,  $\mathsf{c}$, and
+$\mathsf{d}$. Assumption $\mathsf{a}$ says that the invariant $pInv$
+must be of $\mathsf{ImplyForm}$ form; $\mathsf{b}$ that some causal
+relation hold if $iR= i1$, $i1 \le N$, $i2 \le N$, and $iR \le N$;
+$\mathsf{c}$ that some causal relation hold if $iR = i2$;
+$\mathsf{d}$ that some causal relation hold if neither $iR = i1$ nor
+$iR = i2$. With the four assumptions, we have a general theorem {\sf
+verify}, this lemma says that if $iR$ and $i1$ and $i2$ are
+all  less than or equal to $N$, then $\mathsf{invHoldForRule}~ (pInv
+~i1~i2 )~ (pRule~ iR)$. In fact   the general proof in this locale
+is the general pattern mentioned in (i), which prove a general
+theorem  $\mathsf{verify}$.
+
+\subsection{Interpretation of a locale to obtain an actual theorem}
+Note that $pRule$ and $pInv$ are both formally symbolic parameters
+in this locale, any instantiation of $\mathsf{pRule1VspInv2}$ by
+substituting $pRule$ and $pInv$  with actual parameters such   as
+$idle$ and $inv_5$ will be an actual lemma. In Isabelle, a mechanism
+called {\sf Interpretation}, as shown below, is provided to support
+such an instantiation.
+%For instance,
+
+\vspace{2mm}
+\begin{specification}
+
+
+interpretation crit$\_$inv5:pRule1VspInv2\\
+
+
+ Crit::nat $\Rightarrow$ rule
+
+inv5::nat $\Rightarrow$ nat$\Rightarrow$formula
+
+iR::nat
+
+i1::nat
+
+i2::nat\\
+
+
+proof(unfold pRule1VspInv2$\_$def)\\
+%
+  show
+($\exists$ant0 cons0. inv5 i1 i2 = implyForm ant0 cons0)
+$\wedge$\\
+     (i1 $\neq$ i2$\longrightarrow$
+iR $\le$
+ N $\longrightarrow$
+      i1 $\le$
+ N $\longrightarrow$
+      i2 $\le$
+ N $\longrightarrow$
+      iR = i1 $\longrightarrow$
+ invHoldForRule (inv5 i1 i2) \\(crit iR) (invariants N))
+ $\wedge$\\
+    (i1 $\neq$ i2$\longrightarrow$
+iR $\le$
+ N $\longrightarrow$
+     i1 $\le$
+ N $\longrightarrow$
+     i2 $\le$
+ N $\longrightarrow$
+ iR = i2 \\$\longrightarrow$
+ invHoldForRule (inv5  i1 i2) (crit iR) (invariants N))
+ $\wedge$
+    (i1 $\neq$ i2$\longrightarrow$iR $\le$
+ N  $\longrightarrow$
+     i1 \\ $\le$
+ N $\longrightarrow$
+     i2 $\le$
+ N $\longrightarrow$
+     iR $\neq$ i1 $\longrightarrow$
+     iR $\neq$ i2 $\longrightarrow$
+ invHoldForRule (inv5 i1 i2) (crit iR) \\(invariants
+ N))    (is
+?P1 $\wedge$ ?P2 $\wedge$ ?P3 $\wedge$ ?P4 )\\
+
+ proof -\\
+    have b1:?P1
+      by auto\\\\
+
+
+%
+    have b2:?P2
+  (is ?ANT1 $\longrightarrow$
+ ?ANT2 $\longrightarrow$
+ ?ANT3 $\longrightarrow$
+  ?ANT4$\longrightarrow$
+ ?ANT5 $\longrightarrow$\\
+ ?P21 $\vee$ ?P22 $\vee$ ?P23 $\vee$ ?P24 $\vee$ ?P25)  \\
+ proof(rule impI)+\\
+assume c1: ?ANT1
+ and c2:
+?ANT2
+ and c3:
+?ANT3
+ and c4:
+?ANT4
+and c5:?ANT5\\
+
+
+      from c1 c2 c3 c4 c5
+
+      have
+?P23\\
+
+
+
+~        apply( -,cut$\_$tac c3, simp)\\
+
+~        apply(rule$\_$tac x=implyForm (eqn (IVar (Global
+x))(Const True))\\
+    (neg (eqn (IVar (Para n i2))  (Const C)))  in exI)\\
+
+~        apply(rule conjI,cut$\_$tac c1 c2,unfold  exLessP$\_$def, simp)\\
+
+~        apply(rule$\_$tac x=(eqn (IVar (Global x))  ( Const True ))
+ in exI)\\
+
+ ~      by(unfold logicImply$\_$def, auto)\\
+
+ %      done\\
+
+      then show ?P21 $\vee$ ?P22 $\vee$ ?P23 $\vee$ ?P24 $\vee$ ?P25
+~        by blast\\
+
+    qed\\\\
+
+
+
+
+    have b3:?P3  (is ?ANT1 $\longrightarrow$
+ ?ANT2 $\longrightarrow$
+ ?ANT3 $\longrightarrow$
+  ?ANT4$\longrightarrow$\\
+ ?ANT5 $\longrightarrow$
+ ?P21 $\vee$ ?P22 $\vee$ ?P23 $\vee$ ?P24 $\vee$ ?P25
+)\\
+
+    proof(rule impI)+\\
+
+      assume c1:
+?ANT1
+ and c2:
+?ANT2
+ and c3:
+?ANT3
+ and c4:
+?ANT4\\
+ and c5:
+?ANT5\\
+
+
+      from c1 c2 c3 c4 c5
+
+
+      have
+?P24\\
+
+
+
+~        apply(-,cut$\_$tac c3,simp)\\
+
+~        apply(rule$\_$tac x=implyForm (eqn (IVar ( Global x) )
+ (Const True))\\    (neg (eqn ( IVar (Para n i1))  (Const C)))
+ in exI)\\
+
+~        apply(rule conjI,cut$\_$tac c1 c2,unfold  exLessP$\_$def, simp)\\
+
+~        apply(rule$\_$tac x=eqn (IVar (Global x))  (Const true) in exI)\\
+
+~        apply(rule$\_$tac x=eqn (IVar ( Para n i1) )  (Const C))  in exI)\\
+
+~        by(unfold logicImply$\_$def, auto)\\
+
+%        done\\
+
+      then show
+?P21 $\vee$ ?P22 $\vee$ ?P23 $\vee$ ?P24 $\vee$ ?P25 \\
+        by blast\\
+
+    qed\\\\
+
+
+
+
+    have b4:
+?P4
+  (is
+?ANT1 $\longrightarrow$
+ ?ANT2 $\longrightarrow$
+ ?ANT3 $\longrightarrow$
+  ?ANT4 $\longrightarrow$
+ ?ANT5$\longrightarrow$\\
+  ?ANT6 $\longrightarrow$
+?P21 $\vee$ ?P22 $\vee$ ?P23 $\vee$ ?P24 $\vee$ ?P25 )\\
+
+    proof(rule impI)+\\
+
+      assume c1:
+?ANT1
+ and c2:
+?ANT2
+ and c3:
+?ANT3
+ and c4:
+?ANT4\\
+ and c5:
+?ANT5
+ and c6:
+?ANT6\\
+
+
+      from c1 c2 c3 c4 c5 c6     have ?P22\\
+%
+%
+ ~ by(-,auto simp  add :invHoldForRule2$\_$def
+  varsOfVar$\_$def)\\
+%
+%
+%
+  then show
+?P21 $\vee$ ?P22 $\vee$ ?P23 $\vee$ ?P24 $\vee$ ?P25 \\
+ ~       by blast\\
+%
+  qed\\\\
+%
+%
+%
+  with b1 b2 b3 b4 show
+?P1 $\wedge$ ?P2 $\wedge$  ?P3 $\wedge$  ?P4\\
+%
+~      by blast\\
+   qed\\
+%
+ qed\\
+%
+%
+%
+%
+\end{specification}
+
+
+%interpretation
+
+%When we give a proof for causal relation between an actual
+%  rule and invariant, we need to instantiate the proof template by passing   actual rule and
+%  invariant under study, and gives the detail proof commands to
+ % solve the proof goals in each proof cases. In Isabelle, such
+ % instantiating mechanism is implemented by an
+%  $\mathsf{interpretation}$.
+%  For instance, in order to prove the causal relation between an invariant
+%$\mathsf{mutualEx}$ and a parameterized rule $Crit$ in the
+%\texttt{simpleMutual} example,
+In interpretation  {\sf crit\_inv5}, we instantiate the locale
+$\mathsf{pRule1VspInv2}$ with actual parameters $\mathsf{crit}$ and
+$\mathsf{inv5}$ to formulate the proof
+ of the existence of the causal relation between an invariant
+$\mathsf{inv5}$ and   rule $\mathsf{crit}$. Isabelle will create an
+actual theorem $\mathsf{crit\_inv5}$, and generate four proof
+obligations,
+ which are corresponding to the assumptions in locale $\mathsf{pRule1VspInv2}$. That is to say, only can we solve these obligations, the theorem {\sf crit\_inv5.verify} is proved, and then
+ can be used as a theorem.  Note that the proof in an {\sf interpretation} such as $\mathsf{crit\_inv5}$
+ depends on the actual rule and invariant parameters, and proofs in interpretation $\mathsf{crit\_inv5}$ is
+ different from that in $\mathsf{crit\_inv1}$. How does the generator create proper proof commands according to
+ the actual rule and invariants?
+
+Our solution to such a proof generation  in {\sf interpretation}
+relies on the generalization of  the ground causal information in
+Table \ref{label-ground-causal relation}. The intuition behind the
+proof generation can be illustrated  as below by finding the
+correspondence of a parameterized proof and a ground proof, which is
+shown as below.
+
+
+Consider   the rule $r=\mathsf{crit}~iR$, the invariant
+$inv=\mathsf{mutualEx}~i_1~i_2$. In our parameterized proof of the
+conclusion $\mathsf{invHoldForRule}~inv~ r~invs$,   we need to
+consider three cases by case analysis on $iR$, $i_1$, and $i_2$:
+\begin{description}
+\item [(a-1)] $iR=i_1$, let $f'=\mathsf{invOnX1}~i_2$, $ant'=\mathsf{eqn}~(\mathsf{IVar} ~
+ (\mathsf{Global} ~x))~(\mathsf{Const}~True)$,  $cons=\mathsf{neg} ~(\mathsf{eqn} ~(\mathsf{IVar}
+ ~ (\mathsf{Para} ~ n ~i_2)) (\mathsf{Const}~ C))$, we have $\mathsf{invHoldForRule3}~inv~ r~invs$
+  because
+ $f'\in invs$, $\mathsf{logicImply}~ f' ~(\mathsf{implyForm}~ ant'
+ ~cons)$, and $\mathsf{logicImply}~(\mathsf{pre}~r)~ant'$;
+\item [(a-2)] $iR=i_2$, let $f'=\mathsf{invOnX1}~i_1$, $ant'=\mathsf{eqn}~(\mathsf{IVar} ~
+ (\mathsf{Global} ~x))~(\mathsf{Const}~True)$, $ant''= \mathsf{eqn} ~(\mathsf{IVar}
+ ~ (\mathsf{Para} ~ n ~i_1)) (\mathsf{Const}~ C)$,  %$cons=\mathsf{neg} ~(\mathsf{eqn} ~(\mathsf{IVar}
+ %~ (\mathsf{Para} ~ n ~i_1)) (\mathsf{Const}~ C))$,
+ we have $\mathsf{invHoldForRule4}~inv~ r~invs$
+ because  $f'\in invs$, $\mathsf{logicImply}~ f' ~ (\mathsf{implyForm}$\ $ ~ant'~
+ ~ (\mathsf{neg}~ ant''))$, %$\mathsf{logicImply}~ ant~ ant''  $,
+ and $
+              \mathsf{logicImply}~  (\mathsf{pre}~ r)  ~ ant'$;
+\item [(a-3)] $iR \neq i_1$ and $iR \neq i_2$, we have $\mathsf{invHoldForRule2}~inv~ r~invs$
+because
+none of variables in $inv$ changes after the execution.
+\end{description}
+
+Let's compare the above proof with the lines on rule {\sf crit} and
+{\sf inv5} in Table. \ref{label-ground-causal relation}. In essence,
+we can regard such three lines as a ground proof of the conclusion
+$\mathsf{invHoldForRule}~cinv~ cr~invs$ where
+$cr=\mathsf{crit}~ciR$, $cinv=inv5~1~2$, and $ciR \in \{1,2,3\}$ in
+a ground model with size 3, which is shown as below.
+\begin{description}
+\item [(b-1)]$ciR=1$, let $cf'=\mathsf{invOnX1}~2$, $cant'=\mathsf{eqn}~(\mathsf{IVar} ~
+ (\mathsf{Global} ~x))~(\mathsf{Const}~True)$,  $ccons=\mathsf{neg} ~(\mathsf{eqn} ~(\mathsf{IVar}
+ ~ (\mathsf{Para} ~ n ~2)) (\mathsf{Const}~ C))$, we have $\mathsf{invHoldForRule3}~cinv~ cr~cinvs$
+  because
+ $cf'\in cinvs$, $\mathsf{logicImply}~ cf' ~(\mathsf{implyForm}~ cant'
+ ~ccons)$, and $\mathsf{logicImply}~(\mathsf{pre}~cr)~cant'$; %we have $\mathsf{invHoldForRule3}~cinv~cr~invs$ because
+%$\mathsf{invOnX}~2\in invs$, and $\mathsf{eqn}~(\mathsf{IVar}
+%~(\mathsf{Global} ~x))~(\mathsf{Const}~True)$ is the guard of the
+%rule $cr$.
+\item [(b-2)] $ciR=2$, let $cf'=\mathsf{invOnX1}~1$, $cant'=\mathsf{eqn}~(\mathsf{IVar} ~
+ (\mathsf{Global} ~x))~(\mathsf{Const}~True)$, $cant''= \mathsf{eqn} ~(\mathsf{IVar}
+ ~ (\mathsf{Para} ~ n ~1)) (\mathsf{Const}~ C)$,  %$cons=\mathsf{neg} ~(\mathsf{eqn} ~(\mathsf{IVar}
+ %~ (\mathsf{Para} ~ n ~i_1)) (\mathsf{Const}~ C))$,
+ we have $\mathsf{invHoldForRule4}~cinv~ cr~cinvs$
+ because  $cf'\in cinvs$, $\mathsf{logicImply}~ cf' ~ (\mathsf{implyForm}$\ $ ~cant'~
+ ~ (\mathsf{neg}~ cant''))$, %$\mathsf{logicImply}~ ant~ ant''  $,
+ and $
+              \mathsf{logicImply}~  (\mathsf{pre}~ cr)  ~ cant'$;
+%$\mathsf{invHoldForRule4}~cinv~ cr ~invs$ because $\mathsf{invOnX}~1
+%\in ginvs$  and $\mathsf{eqn}~(\mathsf{IVar} ~(\mathsf{Global}
+%~x))~(\mathsf{Const}~True)$ is the guard of the rule $cr$.
+\item [(b-3)] $ciR=3$, $\mathsf{invHoldForRule2}~cinv~ cr~invs$ because
+none of variables in $cinv$ changes after the execution.
+
+\end{description}
+
+Now let us show the correspondence between (a-1) and (b-1).
+\begin{description}
+\item [(1)]There are   parameter  mappings from the ground model  to
+the parameterized model. It maps  parameter $ciR$ in the ground rule
+$cr$ into $iR$ in the parameterized rule $r$, $1$ and $2$ in the
+ground invariant $cinv$ into $i_1$ and $i_2$ in the parameterized
+invariant $inv$.
+
+\item [(2)]The proof methods are the same in order to show
+$\mathsf{invHoldForRule}~inv~r~invs$  and
+$\mathsf{invHoldForRule}~cinv~cr~invs$. Both select the kind
+$\mathsf{invHoldForRule3}$ to show among the five kinds of causal
+relations.
+
+\end{description}
+
+
+It is the correspondence which our generator fully takes advantage
+of to generate the proof commands according to the ground causal
+information stored in lines as shown in Table
+\ref{label-ground-causal relation}. Generally speaking, it will
+select proper kind of causal relations to show, and provide proper
+parameterized invariants, and proof commands according to the lines.
+In order to show $\mathsf{invHoldForRule1}$ or
+$\mathsf{invHoldForRule2}$, an automatical proof command
+$\mathtt{auto}$ command is enough; to show
+$\mathsf{invHoldForRule3}$,   proper $f'$ and $ant'$ should be
+provided because the definition of $\mathsf{invHoldForRule3}$
+requires providing the existence of the two formulas, and two {\sf
+exI} rules are applied  to construct the existence accordingly; to
+show $\mathsf{invHoldForRule4}$, proper $f'$, $ant'$ and  $ant''$
+should be provided because the definition of
+$\mathsf{invHoldForRule4}$ requires providing the existence of the
+three formulas, and three {\sf exI} rules are applied accordingly;
+to show $\mathsf{invHoldForRule5}$,   proper $f'$   should be
+provided because the definition of $\mathsf{invHoldForRule5}$
+requires providing the existence of the   formula, and one {\sf exI}
+rules are applied  to construct the existence accordingly.
+Parameters mappings are needed in order to generalize the rules and
+invariants by replacing the ground actual parameter $ciR$ in a
+ground rule, $1$ and $2$ in the invariant with formal parameters
+$iR$, $i1$, and $i2$ respectively.
+
+For instance, in order to show $\mathsf{b2}$ in {\sf crit\_inv5},
+according to the line on $\mathsf{ crit}~1$ in Table
+\ref{label-ground-causal relation}, we
+ choose  the third one {\sf ?P23} to prove  which is the third disjunctive choice
+ meaning $\mathsf{invHoldForRule3}$ causal relation,
+ $\mathsf{implyForm}~ (\mathsf{eqn }~(\mathsf{IVar}~ ( \mathsf{Global}~ x) )$ ~ $(\mathsf{Const}~ True))
+ ~(\mathsf{neg}~
+\mathsf{(eqn}~ ( \mathsf{IVar}~ (\mathsf{Para} ~n~ i1)) ~
+(\mathsf{Const}~ C)))$  and $(\mathsf{eqn }~(\mathsf{IVar}~ (
+\mathsf{Global}~ x) )$ are provided as $f'$ and $ant'$ respectively.
+Parameter mapping $[1 \mapsto i1]$ is needed to create the former by
+replacing 1 in $f1'$ with $i1$.
+
+
+\subsection{Summariazation of all the locales and interpretations}
+ %match command can make proof generation easy and modular.  %The generation of    The use of pattern match command is to make proof generation easy and modular.
+Being accord with the two parts of proofs by using the consistency
+lemma, two kinds of lemmas are prepared by using the {\sf
+locale/interpretation} mechanism in the case study of {\sf
+simpMutual}.
+
+
+\begin{description}
+\item[(1)]Locale {\sf pInv1HoldAtInitSt} ({\sf pInv2HoldAtInitSt})
+is designed for a general proof pattern to prove an invariant with
+one parameter (or two   parameters) hold at the initial state. For
+any invariant $inv \in \mathsf{invs}$, a lemma {\sf invHoldAtIniSt}
+is introduced as an interpretation by passing the actual invariant
+$inv$ to the locale. Usually the proof command is just an
+automatical proof command {\sf auto}.
+\item[(2)] Locale {\sf pRule1VsPInv1}  (or {\sf pRule1VsPInv2}) is designed
+ for a general proof pattern to prove the causal relation $\mathsf{invHoldForRule }~pinv~ pr~invs$.
+  holds between an invariant $pinv$ with a parameter (or two parameters) and a rule $pr$ with one parameter.
+   For any invariant $inv \in \mathsf{invs}$, any $r$ in rule set
+$ruleset$, a lemma $rule\_inv$ is introduced as an interpretation by
+passing the actual invariant $inv$ and $r$  to the locale if the
+types of the invariant and rule are in according with the declare of
+formal type of the formal parameters $pInv$ and $pr$.
+\end{description}
+%-------------------------------------------------------------------------
+\subsection{Generating proofs for the main lemma}
+%-------------------------------------------------------------------------
+At last, we discuss how to create automatically the proof for the main lemma, which is shown as below. The key points are as follows:
+\begin{itemize}
+%\item The lemma is specified in a canonic way, especially the $rules$ and $invariants$ are defined by the predicates $\mathsf{exLessP}$,
+%and  $\mathsf{exTwoLessP}$.
+
+\item The proof of part (1) in the proof of the consistency lemma is based on the case analysis on the form of the invariants.
+For a case on $inv_i$, we solve the subgoal by applying the theorem
+$iniImplyInv_i.verify$ where $invInterp_i$ is the name of one
+interpretation;
+
+\item The proof of part (2) in the proof of the consistency lemma is based on the two levels of case analysis on the form of rules and the invariants. In the first level, we do case analysis on the form of rules, then we do case analysis on the form of invariants.
+For a case on proving the existence of casual relation between $rule$ and $inv_i$, we solve the subgoal by the theorem  $rule\_inv_i.verify$ where $rule\_inv_i$ is the name of one interpretation.
+\end{itemize}
+
+\vspace{2mm}
+\begin{specification}
+lemma main:
+  $\isasymlbrakk$  s$\in$ reachableSet \{ mutualIni  N\} (rules N); 0<N$\isasymrbrakk$\\
+  $\Longrightarrow$ $\forall$ inv. inv $\in$ (invariants N) $\longrightarrow$ formEval inv s\\
+proof(rule consistentLemma)\\
+  show consistent (invariants N) \{mutualIni  N\} (rules N)\\
+  proof(cut\_tac a1, unfold consistent\_def,rule conjI)\\
+~~    show  $\forall$inv ini s. inv $\in$ (invariants N)
+$\longrightarrow$ ini $\in$\{mutualIni  N\}$\longrightarrow$formEval
+ini s $\longrightarrow$ formEval inv s\\
+   ~~ proof((rule allI)+,(rule impI)+)\\
+   ~~~~   fix inv ini s\\
+  ~~~~    assume b1:inv $\in$ (invariants N) \\
+  ~~~~    and b2:ini $\in$
+{mutualIni  N}  and b3:formEval ini s\\
+    ~~~~  show formEval inv s\\
+   ~~~~   proof -\\
+
+   ~~~~~~     have c1:      exLessP N (\%i.  inv= inv1 i) $\vee$exLessP N (\%i.  inv= inv2 i) $\vee$
+    exTwoLessP N (\%i j. inv=inv3 i
+   j) \\$\vee$ exTwoLessP N (\%i j. inv=inv4 i j)$\vee$exTwoLessP N (\%i j. inv=inv5 i j)\\%$\vee$\\
+ %  ~~~~~~~~                     exTwoLessP N (\%i j. inv=mutualInv3 i j)\\
+
+    ~~~~~~       by (cut\_tac b1, simp add:invariants\_def)\\
+
+     ~~~~~~    moreover\\
+    ~~~~~~    \{assume d1: exLessP N (\%i.  inv= inv1 i)\\
+      ~~~~~~     have formEval inv s\\
+       ~~~~~~~~      by (metis b2 b3 d1 iniImplyInv.verify)\}\\
+      % ~~~~~~~~   \}\\
+       ~~~~~~~~   ......\\
+     % ~~~~~~   moreover\\
+     % ~~~~~~   \{assume d1: exTwoLessP N (\%i j.  inv=inv5 i j)\\
+     %  ~~~~~~    have formEval inv s\\
+     %   ~~~~~~~~     by (metis b2 b3 d1 invInterp5.iniImplyInv)\}\\
+       % ~~~~~~ \}\\
+       ~~~~~~   ultimately show formEval inv s\\
+        ~~~~~~ ~~   by blast\\
+
+    ~~~~   qed\\
+   ~~  qed\\
+
+next   show  $\forall$inv r. inv $\in$ invariants N$\longrightarrow$
+ r $\in$rules N$\longrightarrow$invHoldForRule inv r (invariants N) \\
+
+   proof((rule allI)+,(rule impI)+)\\
+~~       fix inv r\\
+~~       assume b1: inv ¡Ê invariants N
+ and b2:
+r ¡Ê rules N\\
+
+~~       have c1:exLessP N ($\%$i.r=Exit i)$\vee$exLessP N ($\%$i.r=Idle i)
+  $\vee$ exLessP N ($\%$i.r=Crit i)$\vee$exLessP N ($\%$i.r=Try i)\\
+
+~~ ~~         by(cut$\_$tac  b2,auto)\\
+\end{specification}
+\begin{specification}
+
+~~ moreover\\
+~~$\{~~$assume c1:
+ exLessP N ($\%$
+i.  rule= Exit i)\\
+~~~~from c1 obtain iR where c2: iR $\le$
+ N $\wedge$ r= Exit iR\\
+
+~~ ~~          by (auto simp add: exLessP$\_$def)\\
+
+~~ have c3:
+~~ exTwoLessP N ($\%$i j. inv=inv1 i j)$\vee$exLessP N
+  ($\%$i.inv inv2 i)$\vee$ exTwoLessP N ($\%$ i j.inv=inv3 i j)\\
+~~ $\vee$ exLessP N  ($\%$ i.  inv=inv4 i)$\vee$ exTwoLessP N($\%$
+ i j. inv=inv5 i j)\\
+~~~~~   ~by (cut$\_$tac b1, simp )\\
+
+~~~~  moreover\\
+~~~~$\{$~~assume d1: exTwoLessP N ($\%$
+i j.  inv= inv1 i j)\\
+
+~~~~ ~~            from d1 obtain i1 and i2 where d2: i1 $\le$
+ N $\wedge$ i2 $\le$
+N $\wedge$ i1 $\neq$i2$\wedge$  inv= inv1 i1 i2\\
+~~~~~~~~             by (-,unfold exTwoLessP$\_$def,auto)\\
+~~~~~~  have inv r (invariants N) \\
+~~~~~~~~            by(cut$\_$tac  c2 d2£¬metis exit$\_$inv1.verify)\}\\
+%~~~~           then have
+%invHoldForRule inv r (invariants N) \\
+
+%~~~~~~             by(cut$\_$tac c2 d2, simp)
+ %       $\}$\\
+~~~~moreover\\
+~~~~        $\{$ assume d1:
+% exTwoLessP N ($\%$
+i j.  inv= inv5 i j)\\
+
+~~~~  ......~~~~          \\
+~~~~~~   have
+invHoldForRule inv r (invariants N) \\
+
+~~~~~~             by(cut$\_$tac c2 d2, simp) $\}$\\
+
+
+~~~~                    ultimately have
+invHoldForRule inv r (invariants N) \\
+
+~~~~~~          by blast\\
+~~       $\}$\\
+
+~~  moreover\\
+~~         $\{$ assume c1: exLessP N ($\%$
+i.  rule= Idle i)\\
+
+~~~~  ......\\
+~~~~  ......\\
+~~   \}\\
+~~                   ultimately show invHoldForRule inv r
+(invariants N)\\
+~~by blast\\
+~~ qed\\
+  qed
+next\\
+~~show s $\in$ reachableSet {mutualIni N} (rules N)\\
+~~~~by (metis a1)
+%
+next\\
+~~show  $\forall$inv. inv $\in$invariants N$\longrightarrow$
+ ofImplyForm inv\\
+~~ apply(rule allI,rule impI)\\
+~~ by auto\\
+
+qed\\ end\\
+\end{specification}
+
+%=========================================
+\section{Experiments}
+%=========================================
+
+Besides the simple mutual exclusion protocol we have used as a running example,
+we have conducted experiments on a number of cache coherence protocols,
+including typical bus-snoopy protocols such as MESI and MOESI,
+ directory-based protocols such as  Germanish, and  German protocols.
+Table~\ref{Summarization of experiment results} summarizes  our experimental results below.
+Among the benchmarks, the German protocol was posted as
+a challenge to the formal verification community by Steven German in 2000.
+With the presented approach in the current paper,
+we are able to give a complete proof to verify the
+mutual exclusion property of the German protocol in a theorem prover.
+%
+For the proof scripts of the above case studies, interesting readers
+are referred to~\cite{LiCache13}.
+%The proof script in Isar for the protocol {\tt simpMutual} consists
+%of 3211 lines, which is automatically generated by
+%\texttt{proofGen}. We refer interested readers to~\cite{LiCache13}
+%for details.
+
+\begin{table}[!t] \label{Summarization of experiment results}
+\centering \caption{Summarization of experimental results on benchmarks}
+\begin{tabular}{|c| r | r | r | r |}
+\hline
+~~protocol~~ &  ~~\#rules~~ & \#invariants & \#lines of codes & verification time  \\
+\hline
+simpMutual& 4& 5 & 2,024 & 0:39.623 \\
+\hline
+MESI & 4& 3 & 1,540 & 0:38.695  \\
+\hline
+MOESI &  5& 3 &2,942 & 0:37.874  \\
+\hline
+ German-ish  & 6& 4 &3,670 & 1:05.158  \\
+\hline
+German & 13 & 48 & 76,500 & 56:18.288   \\
+\hline
+\end{tabular}
+\end{table}
+
+%=========================================
+\section{Conclusion}
+%=========================================
+In this paper, we have presented an approach
+for parameterized verification of cache coherence protocol.
+The novelty of our work mainly lies in two aspects: (1)
+instead of directly proving the invariants by induction, we propose
+a general proof method based on the consistency lemma to decompose the complex
+and main proof goal into a large number of small goals which
+preserve a similar proof pattern; (2) instead of proving the
+decomposed subgoals by hand, we automatically generate proofs for them from the
+information computed in a small protocol instance of the protocol.
+%
+In more details, we automatically generate proof scripts from the general proof patterns drawn from the
+information computed in a small  instance of the protocol.
+This is mainly due to the fact that parameterized
+proof of a cache coherence protocol should share the same
+proof patterns which are suitable for a ground proof of a
+small protocol instance. We generalize the ground proof information to a general and parametric proof.
+Isabelle's locale feature provides a good
+support for us to implement the automatically generating procedures.
+
+\bibliographystyle{splncs}
+\bibliography{ccp}
+\end{document}
