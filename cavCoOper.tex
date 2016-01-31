@@ -129,7 +129,7 @@ The hardness of parameterized verification is mainly due to the requirement of c
 the desired properties should hold in any instance of the parameterized
 system, not just for a single protocol instance. The model checking tools, although powerful in verification of
 non-parameterized systems, becomes impractical to verify parameterized systems, as they can verify only an instance of the parameterized
-system in each execution. 
+system in each execution.
 A desirable approach is to provide a proof that the correctness holds for any instance.
 
 \paragraph*{Related Work} There have been a lot of research papers in the field of  parameterized
@@ -206,11 +206,7 @@ formal theory in Isabelle, which is the formal library for verifying protocol ca
 Our tool {\sf paraVerifier} is composed of two parts:  an invariant finder {\tt invFinder}
 and a proof generator {\tt proofGen}. %In order to verify  that an
 %invariant $inv$ holds for any parameterizd instance of a protocol.
-Given a protocol $\mathcal{P}$ and a property $inv$, {\tt invFinder} tries to search
-useful auxiliary invariants and causal relations which are
-capable of proving $inv$. { \bf This process is guided by the heuristics inspired by constructing auxiliary invariants and causal relations that satisfy
-consistency relation.  Oracles will be used such as  a reference model of $\mathcal{P}$ with a fixed number
-of clients in different model-checkers, and a SMT-solver. (to be rephrased)}
+Given a protocol $\mathcal{P}$ and a property $inv$, {\tt invFinder} tries to find useful auxiliary invariants and causal relations which are capable of proving $inv$. To construct auxiliary invariants and causal relations, we employ heuristics inspired by consistency relation. Also, when several candidate invariants are obtained using the heuristics, we use oracles such as an SMT-solver to check each of them under a small reference model of $\mathcal{P}$, and chooses the one that has been verified.
 
 
 After {\tt invFinder} finds the auxiliary invariants and causal relations, {\tt proofGen} generalizes them  into a parameterized form, which are then used to construct a completely parameterized formal proof in a theorem prover (e.g., Isabelle) to model $\mathcal{P}$ and to prove the property $inv$. After the base theory is imported, the generated proof is checked automatically.  Usually, a proof is done interactively. Special efforts in the design of the proof generation are made in order to make the proof checking automatically. %In order to make the proof checking automatical, the basically formal library theory should be imported, and support
@@ -281,7 +277,7 @@ $\mathsf{forallForm}(1,pf)\equiv~pf(1)$, and $\mathsf{forallForm}((n+1),pf)\equi
 
 
 Now we use a simple example to illustrate the above definitions by a simple mutual exclusion protocol with $N$ nodes. Let $\mathsf{I}$, $\mathsf{T}$,
- $\mathsf{C}$, and  $\mathsf{E}$  be three enumerating values, $x$,    $n$ are  simple and array variables, $N$ a natural number,  $pini(N)$   the predicate to specify the inial state, prules(N) the four rules of the protocol, $mutualInv(i,j)$ a property that $n[i]$ and $ n[j]$ cann't be $C$ at the same time. We want to verify that $mutualInv(i,j)$ holds for any $i\le N$, $j \le N$ s.t. $i \neq j$.
+ $\mathsf{C}$, and  $\mathsf{E}$  be three enumerating values, $x$,    $n$ are  simple and array variables, $N$ a natural number,  $pini(N)$   the predicate to specify the inial state, prules(N) the four rules of the protocol, $mutualInv(i,j)$ a property that $n[i]$ and $ n[j]$ cannot be $C$ at the same time. We want to verify that $mutualInv(i,j)$ holds for any $i\le N$, $j \le N$ s.t. $i \neq j$.
 
 \begin{example}\label{example1}Mutual-exclusion example.
 
@@ -314,7 +310,7 @@ mutualInv(i,j) $\equiv$
 \end{example}
 
 
-As Hoare logics specifies,  after executing statement $\alpha$, $f$ holds iff $\mathsf{preCond}?f, \alpha?$ holds before the execution.
+As Hoare logics specifies,  after executing statement $\alpha$, $f$ holds iff $\mathsf{preCond}(f, \alpha)$ holds before the execution.
 \begin{lemma}\label{lemma-preCond}
 Suppose $s\overset{\alpha}{\twoheadrightarrow } s'$,
 $s\models \mathsf{preCond} (f, \alpha)$ if and only if $s'\models f$
@@ -461,22 +457,47 @@ $\vee(\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \i
 $\vee(\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 $\wedge$ f =  aux2  \iInv1 \iInv2) \}.
 
 \end{specification}
+
+In the following discussion, we assume that $i_1 \neq N$, $i_2 \neq N$, and $iR_1 \leq N$.
+
 \begin{itemize}
-\item  $\mathsf{invHoldRule_1 }(s,\mathsf{invOnXC}( 1),
-\mathsf{crit}(1))$ because $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(1)),
- \mathsf{invOnXC} (1))=\negc (\mathsf{flase}\eqc\mathsf{true}\andc \mathsf{C}\eqc\mathsf{C})$ which is a tautology;
+%\item  $\mathsf{invHoldRule_1 }(s,\mathsf{invOnXC}( 1),
+%\mathsf{crit}(1))$ because $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(1)),
+% \mathsf{invOnXC} (1))=\negc (\mathsf{flase}\eqc\mathsf{true}\andc \mathsf{C}\eqc\mathsf{C})$ which is a tautology;\\
 
-\item  $\mathsf{invHoldRule_2 }(s,\mathsf{mutual}(
-1,2), \mathsf{try}(3))$ because $\mathsf{preCond}(\mathsf{act}(\mathsf{try}(3)),
- \mathsf{mutual}( 1,2))=\mathsf{mutual} (1,2)$;
+%\item  $\mathsf{invHoldRule_2 }(s,\mathsf{mutual}(
+%1,2), \mathsf{try}(3))$ because $\mathsf{preCond}(\mathsf{act}(\mathsf{try}(3)),
+ %\mathsf{mutual}( 1,2))=\mathsf{mutual} (1,2)$;
 
- \item   $\mathsf{invHoldRule_3 }(s,\mathsf{mutual} (1,2), \mathsf{crit}(1),(\mathsf{pinvs} (N))$.
-   because
- $\mathsf{invOnXC}( 2) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(1)),
- \mathsf{mutual} (1,2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[2]\eqc\mathsf{C})$,
- and $  s \models \mathsf{guard}(\mathsf{crit}(1)) \andc \mathsf{invOnXC}(2)$ implies
- $ s \models \negc (\mathsf{C}\eqc\mathsf{C}\andc n[2]\eqc\mathsf{C})$. Notice that  the guard condition of
- $\mathsf{crit}(1)$ is $n[1]\eqc T \andc x\eqc\mathsf{true}$.
+% \item   $\mathsf{invHoldRule_3 }(s,\mathsf{mutual} (1,2), \mathsf{crit}(1),(\mathsf{pinvs} (N))$.
+%   because
+% $\mathsf{invOnXC}( 2) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(1)),
+% \mathsf{mutual} (1,2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[2]\eqc\mathsf{C})$,
+% and $  s \models \mathsf{guard}(\mathsf{crit}(1)) \andc \mathsf{invOnXC}(2)$ implies
+% $ s \models \negc (\mathsf{C}\eqc\mathsf{C}\andc n[2]\eqc\mathsf{C})$. Notice that  the guard condition of
+% $\mathsf{crit}(1)$ is $n[1]\eqc T \andc x\eqc\mathsf{true}$.
+
+% \item
+
+\item     $\mathsf{invHoldForRule_2 }(s,\mathsf{mutual} (i_1,i_2), \mathsf{crit}(iR_1),(\mathsf{pinvs} (N))$, where  $i_1 \neq i_2$,  $i_1 \neq iR_1$, and $i_2 \neq iR_1$, since $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),\mathsf{mutual} (i_1,i_2))=\mathsf{mutual} (i_1,i_2)$.
+
+
+ \item   $\mathsf{invHoldForRule_3 }(s,\mathsf{mutual} (i_1,i_2), \mathsf{crit}(iR_1),(\mathsf{pinvs} (N))$, where $i_1 \neq i_2$, and $i_1 = iR_1$.
+  Since
+ $\mathsf{invOnXC}( i_2) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),
+ \mathsf{mutual} (i_1,i_2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_2]\eqc\mathsf{C})$.
+
+
+\item   $\mathsf{invHoldForRule_3 }(s,\mathsf{mutual} (i_1,i_2), \mathsf{crit}(iR_1),(\mathsf{pinvs} (N))$, where $i_1 \neq i_2$, and $i_2 = iR_1$. Since
+ $\mathsf{invOnXC}( i_1) \in \mathsf{pinvs} (N)$ implies $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1))
+ \mathsf{mutual} (i_1,i_2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_1]\eqc\mathsf{C})$.
+% where $i_1 \neq i_2$,  $i_1 \neq iR_1$, and $i_2 \neq iR_1$.
+  % because
+ %$\mathsf{invOnXC}( i_2) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),
+ %\mathsf{mutual} (i_1,i_2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_2]\eqc\mathsf{C})$,
+ %where $i_1 \neq i_2$, and $i_2 = iR_1$.% $  s \models \mathsf{guard}(\mathsf{crit}(i_1)) \andc \mathsf{invOnXC}(i_2)$ implies
+% $ s \models \negc (\mathsf{C}\eqc\mathsf{C}\andc n[2]\eqc\mathsf{C})$. Notice that  the guard condition of
+% $\mathsf{crit}(1)$ is $n[1]\eqc T \andc x\eqc\mathsf{true}$.
  \end{itemize}
 \end{example}
 
@@ -498,45 +519,121 @@ $inv$ holds for any reachable state $s$ such that $s  \in
  then   for all $inv$ s.t. $inv \in invs$, $s \models inv $.
 \end{lemma}
 
+
+
+Now we apply the consistence lemma to prove that the mutual exclusion property holds for each reachable state of the mutual-exclusion protocol. Let us recall example \ref{example1} and  \ref{example2}.
+\begin{lemma} \label{caseSimp}
+  If $ P=(pini(N),prules(N))$,  $s \in \mathsf{reachableSet}(P)$, and $0<N$,
+  then for all $inv$ s.t. $inv \in pinvs(N)$, $s\models inv $.
+\end{lemma}
+
+Consistency lemma has eliminated the need of directly use of usual induction proof method. We only check the causal relation between $f$ and $r$ by case analysing parameters of a rule and an invariant, and such a causal relation checking is within the ability of an automatical tactic provided by a theorem prover like Isabelle. Due to the uniform style of checking causal relation, it is also feasible to generate a proof of such a style by an external proof generator. However, as shown in Example \ref{example2}, the   three items shows that there are three subcases where we compare rule parameter $iR_1$ with formula parameters $i_1$ and $i_2$, different kinds of causal relations hold between rule $\mathsf{crit}~iR_1$ and invariant $\mathsf{mutualInv}~i_1~i_2$. Only if a proof script contains enough information on the case splitting and  which kind of causal relation to be checked in each case, Isabelle can help us to automatically  check whether the kind of causal relation hold in the case. How to provide these key proof information is a central problem in work of both {\sf invFinder} and {\sf proofGen}.
+
 \section{  {\sf invFinder}}
+{\sf invFinder}  works iteratively in a semi-proving and semi-searching way. A queue  $newInvs$ is used to store new invariants found up to now, which initially only contains invariant formulas we want to verify. In each iteration, the head element $cinv$ of $newInvs$ is popped,  and used to compute the causal relation between  $cinv$ and a parameterized rule $pr$. Then {\sf invFinder}  instantiates the parameterized rule into a set of concrete rules $crs$ with different groups of concrete parameters according to a parameter instantiation policy. \lyj{Each rule in $crs$  represents a pattern w.r.t. the relationship (equivalent or not) between concrete rule parameters and invariant parameters.} Such a parameter instantiation to the rule $pr$ can be generalized to a symbolic predicate which is according with a case as shown Example \ref{example2}, therefore, a good parameter instantiation policy should guarantee the completeness. Namely, each of subcases in the needed case-splitting should be covered by a concrete rule which is instantiated from $pr$ according to the policy. For a rule $cr \in crs$, {\sf invFinder} tries to prove that some causal relation   exists between the rule and an invariant; if there is no such an invariant
+in the current invariant set, {\sf invFinder} automatically generates a new auxiliary invariant  and records the corresponding causal
+relation information between the current rule and invariant. %Note that the same causal relation should  hold between the generalized rule and invariant.
+Whenever a new invariant is generated, it is pushed into $newInvs$.  {\sf invFinder} performs the above searching process until $newInvs$  is empty.
 
-In this section, we present an algorithm called {\tt InvFinder}, which finds all necessary ground invariants from a protocol instance. 
+\subsection{Parameter instantiation policy}
+In order to formulate our parameter instantiation policy, we introduce the concept of permutation modulo to symmetry relation $\simeq_m^n$,  and a quotient set of $\mathsf{perms}_{m}^{n}$ (the set of all $n$-permutations of $m$) under the  relation.  Here a $n$-permutation of $m$ is ordered arrangement of a $n$--element subset of an $m$-element set $I=\{i. 0<i\le m\}$. We use a list with size $n$ to stand for a $n$-permutation of $m$, whose elements are mutually different from each other and taken from $I$. For instance, $[1,2]$ is a 2-permutation of 3. If $xs_{[i]}=i$ for all $i \le |xs|$, we call it identical permutation, and sometimes is denoted by $1~ \mathsf{upto}~ n$ if $n=|xs|$.
 
-\subsection{The InvSearch Algorithm}
+\begin{definition}
+Let $m$ and $n$ be two natural numbers, where $n \le m$,  $L$ and $L'$ are two lists which stand for two  $n$-permutations of $m$,
+\begin{enumerate}
+\item
+$L \sim_m^n L' \equiv (|L| =|L'|=n) \wedge (\forall i. i<|L| \wedge L_{[i]} \le m-n \longrightarrow L_{[i]}=L'_{[i]}) $.
 
-The core of {\tt InvFinder} is an algorithm called {\tt InvSearch}, which works iteratively in a semi-proving and semi-searching fashion to create invariant.
+\item $L \simeq_m^n L' \equiv L \sim_m^n L' \wedge   L' \sim_m^n L$.
 
-\SetAlFnt{\small}
+%\item$[[L]]_{m}^{n} \equiv \{L'. L \in \mathsf{perms}_{m}^{n} \wedge L \sim_m^n L'\}$.
+
+\item $\mathsf{semiP}(m,n,S)\equiv (\forall  L \in \mathsf{perms}_{m}^{n} \exists  L' \in S. L \simeq_m^n L' ) \wedge (\forall  L\in S. \forall L'\in S. L \neq L' \longrightarrow \neg  (L \simeq_m^n L' )$.
+
+\item    A set $S$ is called a quotient of the set $\mathsf{perms}_{m}^{n}$ under the relation $\simeq_m^n$ if    $\mathsf{semiP}(m,n,S)$.
+\end{enumerate}
+\end{definition}
+
+According to the definition of of the relation $\simeq_m^n$, $L \simeq_{m+n}^n L' $ means that if we compare any element $L_{[i]}$ with any $j\le m$, the comparing result should be the same as that obtained by comparing $L'_{[i]}$ with $j$, namely  $L_{[i]}=j$ if and only if $L'_{[i]}=j$. For instance, let $L=[2,3]$ and $L'=[2,4]$, then $L \simeq_{4}^2 L' $, for any $0<j\le 2$, we have $L_{[i]}=j$ iff $L'_{[i]}=j$. This observation is formally captured by the following lemma.
+\begin{lemma}\label{lemma:simeq1}%[(consistency lemma)]
+If $L \simeq_{m+n}^n L' $, then for any $0<i\le |L|$, any $0<j \le m$, $L_{[i]}=j$ if and only if $L'_{[i]}=j$.
+\end{lemma}
+
+Lemma \ref{lemma:simeq1} shows that, we can analyze a group of concrete parameters by analyzing only one of them as a presentative. Keeping this in mind, let us look at the following lemma, which together with Lemma \ref{lemma:simeq1} is the theoretical basis of our policy.
 
 
-\begin{algorithm}\label{alg:invSearch}
+\begin{lemma}\label{lemma:simeqQuotinent}  Let $S $ be a set s.t.  $\mathsf{semiP}(m,n,S)$,
+\begin{enumerate}
+\item \label{complete}  for any $L \in \mathsf{perms}_{m}^{n}$, there exists a $L' \in S$ s.t. $L \simeq_m^n L'$.
+\item \label{distinct} let $L \in S$, $L' \in S$, if $L \ne L'$, then there exists two indice $i \le m$ and $j \le n$ such that $L_{[i]}=j$ and $L'_{[i]}\ne j$.
+\end{enumerate}
+\end{lemma}
 
-\caption{Core Searching Algorithm: $InvSearch$}
+Lemma \ref{lemma:simeqQuotinent} shows that, \ref{complete}) completeness of $S$ w.r.t. the set $\mathsf{perms}_{m}^{n}$ under the relation $\simeq$, \ref{distinct})  the distinct between two different elements in $S$. Therefore, $S$ has covered all analysing patterns according to the aforementioned comparing scheme between elements of $L$ with numbers $j<n-m$, and the case pattern represented by each element in $S$ is also different from that represented by the other elelments. \lyj{my correction} ({\bf this sentence should be finished...}). This fact can be illustrated by the following example.
 
-\KwIn{$chk$, $tautChk$, $rule$, $inv$, $invs$   }
+\begin{example}
+Let $m=2$, $n=1$, $S=\{[1],[2],[3]\}$ and  $\mathsf{semiP}(m,n,S)$,  let $LR$ be an element in $S$, there are three cases:
+\begin{enumerate}
+\item $LR=[1]$: it is a special case where $LR_{[1]}=1 $;
+\item $LR=[2]$: it is a special case where $LR_{[1]}=2 $;
+\item $LR=[3]$: it is a special case where $LR_{[1]}\ne 1$ and $LR_{[1]}\ne 2$.
+\end{enumerate}
+\end{example}
+\lyj{my correction}  Note that each one in the above cases are disjoint with the other one, and the disjuction of all the cases is true.
+
+Consider  natural numbers $m$ and $n$, computing a quotient of $\mathsf{perms}_{m}^{n}$ can be implemented by an algorithm $\mathsf{cmpSemiperm}$. Roughly speaking, $\mathsf{cmpSemiperm}$ firstly computes the set $\mathsf{perms}_m^n$, and push elements of it into a queue $S_0$, and select elements of $S_0$ into a set $S$. Initially $S$ is set empty. the head element of $S_0$ is pop into $L$, then $L$ will be checked whether there is an element $L'$ in $S$ s.t. $L\simeq_m^n L'$. If  yes, then $L$ will be discarded, else $L$ is inserted into $S$. This procedure is repeated until $S$ is empty. Finnaly $S$ will be returned. The detail of $\mathsf{cmpSemiperm}$ can be found in \cite{}.
+
+\begin{definition}
+A  concrete invariant formula $cinv$ is normalized if one of the following conditions hold:
+\begin{itemize}
+\item there exists a parameterized invariant $pinv$ and an identical permutation $LI$ with $|LI|>0$ such that $cinv=pinv(1,...~|LI|)$;
+\item no array variable occurs in $cinv$;
+\end{itemize}
+\end{definition}
+
+Any normalized $cinv$ containing array variables is obtained by instantiating a parameterized invariant $pinv$ with a parameter list which is an identical permutation $LI$ (i.e., the $j^{th}$ parameter is $j$ itself $LI_{[j]}=j$). Thus, consider a list of parameter $LR$ which is used to instantiate a parameterized rule $pr$, we  have $LR_{[i]}=j$ (or $LR_{[i]}\ne j$) is equivalent to $LR_{[i]}=LI_{[j]}$ (or $LR_{[i]}\ne LI_{[j]}$) \lyj{my correction}{\bf[what is LR, you only use it in an example, need to define it clearly in this paragraph] }, which is a factor to specify a case by comparing $LR_{[i]}$ with $LI_{[j]}$ .  All the auxiliary invariant formulas will be in a normalized form, and checked with any parameterized rule whether some kind of causal relation hold between them.
+
+
+%{\bf Our Parameter Instantiation Policy:}
+Let $cinv$  be a normalized concrete invariant, $pr$ be a parameterized rule, $m$ be the number of actual parameters occurring in $cinv$, and $n$  be the number of formal parameters occurring in $pr$,  our policy is to compute the set  $\mathsf{cmpSemiperm}(m+n,n )$ \lyj{see the added para before definition 4}{\bf [what is this cmpSemiperm, never defined]}, and use elements of it as a group of parameters to instantiate $pr$ into a set $crs$ of concrete rules.  For instance, for the invariant $\mathsf{mutualInv}(1,2)$, three groups of parameters [1], [2], [3] will be used to instantiate $\mathsf{crit}$ respectively, each of which will be used to check which kind of  causal relation exists between it and $\mathsf{mutualInv}(1,2)$.
+
+\subsection{Core Searching Algorithm}
+{\bf Jump from policy to core algorithm suddenly... need to introduce the relation between policy and the below algorithm. }
+For a  $cinv$ and a rule $r \in crs$, the core part of the {\sf invFinder} tool is shown in Algorithm \ref{alg:invfinderI}. It needs to call two oracles. The first one, denoted by {\tt chk}, checks whether a ground formula is an invariant Such an oracle can be implemented by firstly translating the formula into a formula in SMV, and then calling SMV to check whether it is an invariant  in a given small reference model of the protocol. If  the reference model is too small to check the invariant, then the formula will be checked by Murphi in a big reference model.  The second oracle, denoted by {\tt tautChk}, checks whether a formula is a tautology. Such a tautology checker is implemented by translating the formula into a form in the SMT (abbreviation for SAT Modulo Theories) format, and then calls an SMT solver such as Z3 to check it. 
+
+%Besides the two oracles which are passed as parameters,
+There are   parameters in the algorithm \ref{alg:invFinder-I}, including a rule instance $r$, an invariant $inv$, a sets of invariants $invs$.  The sets $invs$   stores the auxiliary invariants constructed up to now. The algorithm   searches for new invariants and    constructs the causal relation between the rule instance $r$ and the invariant $inv$.
+The returned result is a pair of formula option,    and causal relation item between $r$ and $inv$. A formula option value $NONE$ denotes that no new invariant is found; and $SOME(f)$ that a new auxiliary invariant $f$ is searched.
+
+
+\begin{algorithm}\label{alg:invFinder-I}
+
+\caption{Core Searching Algorithm: $coreFinder$}\label{alg:invfinderI}
+
+\KwIn{  $r$, $inv$, $invs$   }
 
 \KwOut{A formula  option $f$, a new causal relation $rel$}
 
 {
-    $g\leftarrow $the guard of rule, $S\leftarrow $the statement of rule\;
+    $g\leftarrow $the guard of r, $S\leftarrow $the statement of r\;
 
-    $inv'\leftarrow preCond(inv, S)$\;
+    $inv'\leftarrow preCond(inv, S)$\; \label{line:preCondComp}
 
     \If{$inv=inv'$}
     {
-    $relItem\leftarrow (rule, inv, invRule_2,-)$\;
+    $relItem\leftarrow (r, inv, invRule_2,-)$\;
     \Return $(NONE,  relItem )$\;
     }
     \ElseIf{$tautChk(g\rightarrow inv')=true$}
     {
-    $relItem\leftarrow (rule, inv, invRule_1,-)$\;
+    $relItem\leftarrow (r, inv, invRule_1,-)$\;
     \Return $(NONE,  relItem )$\;
     }
     \Else
     {
-    $candidates\leftarrow subsets(dualNeg(inv')\andc g)$\;
+    $candidates\leftarrow subsets(decompose(dualNeg(inv')\andc g))$\;
     $newInv\leftarrow choose(chk,candidates)$\;
-    $relItem\leftarrow (rule, inv, invRule_3,newInv)$\;
+    $relItem\leftarrow (r, inv, invRule_3,newInv)$\;
     \If{$isNew(newInv,  invs)$}
     {
     $newInv \leftarrow  normalize(newInv)$\;%$ and insert it into the head of $newInvs$\;
@@ -551,10 +648,8 @@ The core of {\tt InvFinder} is an algorithm called {\tt InvSearch}, which works 
 \end{algorithm}
 
 
-The {\tt InvSearch} algorithm needs to call two oracles. The first one, denoted by {\tt chk}, checks whether a ground formula is an invariant in a given small reference model of the protocol. Such an oracle can be implemented by translating the formula into a formula in SMV, and calling SMV to check whether it is an invariant. The second oracle, denoted by
-{\tt tautChk}, checks whether a formula is a tautology. It is implemented by translating the formula into a form in the SMT (SAT Modulo Theories) format, which is checked by an SMT solver such as Z3.
-
-There are some input parameters in {\tt InvSearch}, including a rule instance $rule$, an invariant $inv$, a sets of invariants $invs$, and a set of causal relations $casRel$. The algorithm {\tt InvSearch} searches for new invariants and    constructs the causal relation between the rule instance $r$ and the invariant $inv$. The sets $invs$  and the set $casRel$ stores causal relations constructed up to now.%  The above function {\sf findInvsFromRule} tries to find new
+%{\sf invFinder} is implemented by FL, which is an excellent STE-tool
+%  The above function {\sf findInvsFromRule} tries to find new
 %invariants and construct the causal relation between the rule
 %instance $rule$. %The statement {\tt
 %cond => te|fe} is an abbreviation of the if-then-else expression
@@ -563,200 +658,57 @@ There are some input parameters in {\tt InvSearch}, including a rule instance $r
 %causal relations constructed up to now, the above oracle functions
 %are also passed as parameters.  % Causal relations  are still not
 %checked between the ones in $newInvs$ and rules.
-The returned result is a pair of the newly found invariant (if found)  and causal relation item.
 %
 
-After computing the pre-condition $ inv'$, which is the weakest precondition of the input formula $inv$ w.r.t. $S$, and takes further operations according to the cases it faces with:
-{\sf InvSearch} performs case analysis on $inv'$:
+Now let us explain the body of $coreFinder$. After computing the pre-condition $ inv'$ in line \ref{line:preCondComp}, which is the weakest precondition of the input formula $inv$ w.r.t. $S$, and takes further operations according to the cases it faces with:
+%Algorithm {\sf invFinder-I} performs case analysis on $inv'$:
 
-
-First,  if $ inv=inv'$,
+\begin{description}
+\item[(1)]  if $ inv=inv'$,
  which means that statement $S$ does not change $inv$, then no new invariant is created, and  new causal
-relation item marked with tag {\tt invHoldRule$_2$} is recorded
-between $rule$ and $inv$, but at this moment there are no new
-invariants to be added. %; for instance, let $ rule=\mathsf{crit} (3)$,  $ inv=\mathsf{mutualInv}(1,2)$, thus $inv'=\mathsf{preCond}(S,inv)=inv$, then a pair  $ (\mathsf{NONE}, ( crit(3), inv, \mathsf{invHoldRule}_2,\_))$ will be returned, where $NONE$ means no new invariant formula is returned.
+relation item marked with tag {\tt invHoldForRule$_2$} is recorded
+between $r$ and $inv$, but at this moment there are no new
+invariants to be added; for instance, let $ r=\mathsf{crit} (3)$,  $ inv=\mathsf{mutualInv}(1,2)$, thus
+$inv'=\mathsf{preCond}(S,inv)=inv$, then a pair  $ (\mathsf{NONE}, ( crit(3), inv, \mathsf{invHoldForRule}_2,\_))$ will be returned, where $NONE$ means no new invariant formula is returned.
 
-Secondly, if $\mathsf{ tautChk}$ verifies that $g \longrightarrow inv'$ is a tautology, then  no new invariant is created, and
+\item[(2)] Secondly, if $\mathsf{ tautChk}$ verifies that $g \dashrightarrow inv'$ is a tautology, then  no new invariant is created, and
 the new causal relation item marked with tag
-$ \mathsf{invHoldRule}_1$ is recorded between $rule$ and $inv$. %For instance, let $rule=\mathsf{crit}(2)$, $inv=\mathsf{invOnXC}(1)$, $inv'=\mathsf{preCond}(S,inv)=\neg(\mathsf{false }\eqc \mathsf{true} \andc n[1] \eqc \mathsf{C})$, obviously, $ g \longrightarrow_C inv'$ holds forever because $inv'$ is always evaluated true, thus a pair $(\mathsf{NONE},  (\mathsf{crit}(2), inv, \mathsf{invHoldRule}_1,\_))$ will be returned.
-
-
-Thirdly, if neither of the above two cases holds, then a new auxiliary invariant $newInv$ will be constructed, which will make the causal relation $ \mathsf{invHoldRule}_3$  to hold.
- We first give some definitions. A formula $f$ can be composed into a set of sub-formulas $f_i$, denoted as $decompose(f)$, such that each $f_i$ is not of a conjunction form and $f$ is semantically equivalent to $f_1 \andc f_2 \andc ... \andc f_N$. For a formula $f$, we use $subsets(f)$ to denote the power set of $decompose(f)$.
-Now we can describe the construction of the auxiliary invariant:
-A proper formula is chosen from the candidate set $subsets(dualNeg(inv')\andc g)$ to construct a new invariant $newInv$. This is accomplished by the {\tt choose} function, which calls the oracle {\tt chk} to verify whether a formula is an invariant in the given reference model. After $newInv$ is chosen, the function $isNew$ checks whether this invariant is new w.r.t. $newInvs$ or $invs$. If this is the case, the invariant will be normalized, and then be  added into $newInvs$, and the new causal relation item marked with tag {\tt invRule$_3$} will be added into the causal relations. Here, the meaning of the word ``new" is modulo to the symmetry relation. For instance,   $\mathsf{mutualInv}(1,2)$ is equivalent to
-$\mathsf{mutualInv}(2,1)$ in a symmetry view. The $\mathsf{ normalize}$ function normalizes the numbering order of the use of parameters in the invariant $inv$.
-The result formula should be   a normal form, whose parameters
-  always start from 1, and increase one by one if there are more
-  parameters. %Namely,  $\negc (x\eqc\mathsf{true} \andc n[1]\eqc\mathsf{C})$ is normalized, but $\negc (x\eqc\mathsf{true} \andc n[2]\eqc\mathsf{C})$  not.    Let $ invs=\emptyset$, $ rule=\mathsf{crit}(1)$, $ inv=\mathsf{mutualInv}(1,2)$, $ inv'= \mathsf{preCond}(S,inv)=\negc(true\eqc true \andc n[2]\eqc C)$, from all the subsets of $\{n[1]\eqc T, x\eqc true, n[2]\eqc C\}$, the $ \mathsf{choose}$ oracle selects the subset $\{ x=true, n[2]\eqc C\}$ combines all the item in this candidate, then constructs a new invariant $ \neg(x\eqc true \andc n[2]\eqc C)$. After   normalization, the new invariant   $\neg(x=true \andc  n[1]\eqc C)$  and  a  relation item $ ((crit(1),   \mathsf{invHoldRule}_3, invs)$ will be returned.
-
-
-
-
-
-
-%The main body of {\sf paraVerifier}'s algorithm iteratively calls
-%the function {\sf findInvsFromRule}  by instantiating each
-%parameterized rule with different actual parameters of the finite
-%reference protocol model. This procedure is finished until no more
-%5new invariants can be created.
-There are three key techniques in our invariant candidate choosing policy. Recalling that our candidate choosing problem can be formulated as follows: Among a set $S$ of invariant formulas, choose a subset $S_1\subseteq S$ such that $S_1$ is the minimal set that satisfies $\neg \bigwedge S_1$ is an invariant. Meanwhile, for any formula set $S_2$ such that $|S_2|<|S_1|$,  $\neg \bigwedge S_2$ is not an invariant.
-
-The first is about  checking whether a formula $\neg \bigwedge S_1$ is an invariant. In our implementation, the oracle firstly tries to use a reachable set of a simplified reference protocol instance within a small size $L$  to check the validity of the formula if each variable of $\neg \bigwedge S_1$ exists in the instance; otherwise, the oracle uses MURPHI or  BMC feature of NUSMV to rule out the non-invariant formulas within another reference protocol instance where all the variables of $\neg \bigwedge S_1$ exists, and regard the formula as an invariant if MURPHI or  BMC procedure time-outs. For verification of a complex protocol, the combination of the two strategies is critical  as we cannot enumerate a complete reachable set of a protocol instance. %For FLASH with data manipulations, it is not feasible to enumerate a complete reachable set of a reference protocol instance with size $3$  to check the validity of the  candidate; however we can use the  reachable set of a reference instance of simplified FLASH protocol without data manipulations with size $3$ to conjecture control properties, and use the second strategy from a full FLASH protocol with data with size $3$ to guess the properties on data properties or control properties involving a parameter which is greater than L.
-
-Secondly, choosing policy are done in an augmenting way. Firstly, we initialize $size=1$ choose a set $S$ with $|S_1|=size$, if {\tt chk $S_1$}, then stops; otherwise increases $size$; this process repeats until $S=S_1$ or  {\tt chk $S_1$}.
-
-Finally, heuristic choosing policies can be adopted based on experiences in this field. For instance, if the pre-condition {\tt inv'} contains only a parameterized variable $v$ with a parameter $i$, then $f$ in $S$ will be chosen with some priority which $v$ occurs in $f$. If we still cannot choose such a formula $f$, we  try to find another formula $g$ which contains a global variable $v'$ which will be assigned with a new value in the statement of the rule. $\{ f,g \}$ usually is the desired set $S_1$.
-
-
-
-\subsection{The Parameter Instantiation Policy}
-
-According to a parameter instantiation policy, main body of {\sf invFinder} generates a group of actual parameters to instantiate a parameterized rule $pr$ into a set of actual rules $R$, and call Algorithm \ref{alg:invSearch} to compute new invariant and causal relation between each rule   $r\in rs$ and an invariant formula $inv$. In order to formulate our parameter instantiation policy, we need introduce the concept of permutation modulo to symmetry relation $\sim_m^n$,  and a quotient set of $\mathsf{perms}_{m}^{n}$ (the set of all $n$-permutations of $m$) under the  relation.
-\begin{definition}
-Let $m$ and $n$ be two natural numbers, where $n \le m$,  $L$ and $L'$ are two lists which stand for two  $n$-permutations of $m$,
-\begin{enumerate}
-\item
-$L \sim_m^n L' \equiv (|L| =|L'|) \wedge (\forall i. i<|L| \wedge L_{[i]} \le m-n \longrightarrow L_{[i]}=L'_{[i]})$.
-
-%\item$[[L]]_{m}^{n} \equiv \{L'. L \in \mathsf{perms}_{m}^{n} \wedge L \sim_m^n L'\}$.
-
-\item $\mathsf{semiP}(m,n,S)\equiv (\forall  L \in \mathsf{perms}_{m}^{n} \exists  L' \in S. L \sim_m^n L' ) \wedge (\forall  L\in S. \forall L'\in S. L \neq L' \longrightarrow \neg  (L \sim_m^n L' )$.
-
-\item    A set $S$ is called a quotient of the set $\mathsf{perms}_{m}^{n}$ under the relation $\sim_m^n$ if and only if    $\mathsf{semiP}(m,n,S)$.
-\end{enumerate}
-\end{definition}
-
-For instance, let $m=5$, $n=2$, $[1,2]\not\sim_5^2[2,1]$, $[1,3]\not \sim_5^2[1,4]$ and  $[5,4]\sim_5^2 [4,5]$. It is easy to see that, $[[1,2],[1,3],[2,1],[2,3],[3,1],[3,2],[3,4]]$ is a quotient set of $\mathsf{perms}_{m}^{n}$ under $\sim_5^2$.
-
-If $m>0$,   $\mathsf{perms}_{m}^{1}$ is the quotient set of itself under $\sim_m^1$.
-
-
-{\bf Our Parameter Instantiation Policy:}
-Let $cinv$  be a concrete invariant, $pr$ be a parameterized rule, $\mathsf{aPNumOfInv}(cinv) $ be the number of actual parameters occurring in $cinv$, and $\mathsf{fpNumOfRule}(pr) $  be the number of formal parameters occurring in $pr$,  our policy is to compute the set  $\mathsf{cmpSemiperm}(\mathsf{aPNumOfInv}(cinv)+\mathsf{fpNumOfRule}(pr),\mathsf{fpNumOfRule}(pr) )$, and use elements of it as a group of parameters to instantiate $pr$ into a set $R$ of actual rules.
-
-
-
-
-The instantiation policy should be complete. That is,
-%How many instantiations are needed? Here the underlying instantiation principle should guarantee that each typical proof case by comparing parameters occurring in a rule and an invariant in parameterized protocol instance,  should be covered by a sampling case in our parameter instantiation policy. That is to say,
-if we regard the finite instantiations as samplings, it must guarantee that the samples are sufficient to be generalized in {\sf proofGen}
-to parameterized forms  to finish  parameterized proofs. We first explain the concept of ``typical proof
-case by comparing parameters occurring in a rule and an invariant".  Let $LR=[2]$, $LI=[1,2]$, we compare an element in $LR$ with another of $LI$, $LR_1 = LI_2$ is a formula characterizing the comparison between the first element in $LR$ with the second element in $LI$. 
-\begin{definition}
-let $LR \in \mathsf{perms}_N^{|LR|}$ and $LI \in \mathsf{perms}_N^{|LI|}$ are two permutations s.t. $0<|LR|\le N$ and $0<|LI|\le N$
-\begin{enumerate}
-\item $\mathsf{equality}(LR,LI,i,j) \equiv LR_{[i]} = LI_{[j]}$. Recall that $LR_{[i]}$ is the $i-$th element of $LR$.
-\item $LR' \in \mathsf{perms}_{N'}^{\mathsf|LR|)}$ and $LI' \in \mathsf{perms}_{N'}^{|LI'|}$ are two permutations s.t. $0<|LR'|\le N$ and $0<|LI'|\le N$ and $|LR|=|LR'|$, and $|LI|=|LI'|$, $\mathsf{reflection}((LR,LI),(LR',LI')) \equiv \forall i \le |LR|. \forall j\le |LI|. (\mathsf{equality}(LR,LI,i,j) \leftrightarrow \mathsf{equality}(LR',LI',i,j))$
-
-\end{enumerate}
-\end{definition}
-
-The $\mathsf{reflection}((LR,LI),(LR',LI'))$ means that, if we do case analysis by comparing elements in $LR$ and in $LI$, the case pattern are the same with that by comparing those in $LR'$ and in $LI'$.
-
-
-%Recall our parameter instantiation policy:  for a parameterized rule $pR$, a parameterized   formula $pinv$, we only use an identical permutation $ID$ to instantiate $pinv$, and permutations in $\mathsf{cmpSemiperm}(\mathsf{len}(LR)+\mathsf{len}(LI),\mathsf{len}(LR))$ to instantiate $pR$.
-
-Now we look at the completeness of our instantiation policy:    let $LR$ and $LI$ are actual parameters to instantiate $pR$ and $pInv$, the case analysis pattern between $LR$ and  $LI$ can be reflected by that between some $LR'$ and $ID$, where $LR' \in \mathsf{cmpSemiperm}(\mathsf{len}(LR)+\mathsf{len}(LI),\mathsf{len}(LR))$, $ID$ is a permutation with the same length with $LI$. Luckily, the following lemma gives a positive answer.
-
-
-
-%relation $LR_i=LI_j$  can be kept by a comparing  $LR'_i=ID_j$, where $LR'$ is a permutation in  $\mathsf{cmpSemiperm}(\mathsf{len}(LR)+\mathsf{len}(LI),\mathsf{len}(LR))$, $ID$ is identical permutation such that $ID_i=i$.
-\begin{lemma}[completeness of parameter instantiation]\label{lemma:completeness}
-let $LR \in \mathsf{perms}_N^{\mathsf{len}(LR)}$ and $LI \in \mathsf{perms}_N^{\mathsf{len}(LI)}$ are two permutations s.t. $|LR|>0$ and $|LI|)>0$ and $|LR| \le N$  and $|LI| \le N$, let $ID$ be an identical permutation which has the same length with $LI$, there exists a permutation $LR' \in \mathsf{cmpSemiperm}(|LR|+|LI|,|LR|)$ s.t. $\mathsf{reflection}((LR,LI),(LR',ID))$.
-\end{lemma}
-
-Here we use two examples to explain this lemma. Let $LR=[2]$, $LI=[2,1]$, there exists $LR'=[1]\in \mathsf{cmpSemiperm}(3,1)$ s.t. $reflect((LR,LI),(LR',ID))$; let $LI=[5,6]$, there exists $LR'=[3]\in \mathsf{cmpSemiperm}(3,1)$ s.t. $\mathsf{reflect}((LR,LI),(LR',ID))$.
-
-
-\subsection{The Top-level Algorithm?}
-Now we discuss the top level of {\sf invFinder}. First we show how to search
-new invariants and causal relations between  a parameterized  rule   $pr$ and an invariant formula. The algorithm of parameter instantiation to the $pr$ and calling {\sf invSearch} to search  auxiliary invariants are listed in Algorithm \ref{alg:invFinder-II}:
-
-\begin{algorithm}\label{alg:invFinder-II}
-
-\caption{parameter instantiations: invFinder-II }\label{alg:parameterInstantiate}
-
-\KwIn{parameterized rule $pr$,  a concrete invariant $cinv$, two formula set $invs$ and $newInvs$, a relation set $rel$ }
-
-\KwOut{  two formula set $invs'$ and $newInvs'$, a relation set $rel'$ }
-
-{  $ni\leftarrow \mathsf{aPNumOfInv}(cinv) $\;
-   $nr \leftarrow \mathsf{fpNumOfRule}(pr)$\;
-
-   $S \leftarrow \mathsf{cmpSemiperm}(ni+nr,nr)$\;
-   $invs' \leftarrow invs$, $newInvs' \leftarrow newInvs$, $rel' \leftarrow rel$\;
-
-     \While{$S  \neq \emptyset$}
-     {
-       $L \leftarrow \mathsf{hd}(S )$\;
-        $S  \leftarrow \mathsf{tl}(S )$\;
-        $r \leftarrow \mathsf{apply}(pr,L)$\;
-        $(invOpt,relItem) \leftarrow  \mathsf{InvSearch}(chk,tauto,r,cinv,invs')$\;
-      $rel' \leftarrow rel'@[relItem]$\;
-       \If{$invOpt \neq NONE$}
-        {$newInv \leftarrow \mathsf{getReal}(\mathsf{fst}(result)) $\;
-        $invs' \leftarrow invs'@[newInv]$\;
-         $newInvs' \leftarrow newInvs'@[newInv]$\;
-        }
-     }
-    \Return $invs', newInvs'$  and  $rel'$
-}
-
-
-
-\end{algorithm}
-
-Input formula set $invs$ and $newInvs$, a relation set $rel$ are the invariant formula set, and new invariant formula set and causal relation computed up to now. The meaning of ``new" is that a formula in $newInvs$ has not been used to search new invariants yet. The generated groups of parameters are stored in $S$, and are repeatedly  used to instantiate $pr$ into a rule $r$, and to search new invariants and causal relation items by calling $\mathsf{InvSearch}$.  The searched new invariant formulas are added into $invs'$ and $newInvs'$; new relation items $rel'$.
-
-
-
-\begin{algorithm}{alg:topInvFinder}
-
-\caption{top level algorithm of invFinder: invFinder}\label{alg:parameterInstantiate}
-
-\KwIn{parameterized rule set $PR$,   a formula set $invs$  }
-
-\KwOut{  a formula set $invs'$, a relation set $rel'$ }
-
-{ % $ni\leftarrow \mathsf{aPNumOfInv}(cinv) $\;
-  % $nr \leftarrow \mathsf{fpNumOfRule}(pr)$\;
-
-  % $S \leftarrow \mathsf{cmpSemiperm}(ni+nr,nr)$\;
-    $invs' \leftarrow invs$, $newInvs' \leftarrow invs$, $rel' \leftarrow \emptyset$\;
-
-     \While{$newInvs'  \neq \emptyset$}
-     { $cinv \leftarrow hd(newInvs')$\;
-       $newInvs' \leftarrow tl(newInvs')$\;
-       $PR' \leftarrow PR$\;
-       \While{$PR'  \neq \emptyset$}
-       {
-        $pr\leftarrow \mathsf{hd}(PR' )$\;
-        $PR'  \leftarrow \mathsf{tl}(PR' )$\;
-        $(invs',newinvs',rel') \leftarrow  \mathsf{InvFinder-II}$($pr$,    $cinv$,   $invs'$, $newInvs'$,$rel')$\;
-       }
-
-     }
-    \Return $invs'$,  and  $rel'$
-}
-
-
-
-\end{algorithm}
-
-For a parameterized rule set $PR$ of a protocol, and a set of invariant set $invs$ under verification, the top level of algorithm {\sf invFinder} is outlined in Algorithm \ref{alg:topInvFinder}. $invs'$ and $newInvs'$ are initialized by $invs$, and $rel'$ by $\emptyset$. There are two level of loops in {\sf invFinder}. Head element of $newInvs'$ is pushed into a new invariant $cinv$, and head of $PR$ into $pr'$, then $\mathsf{InvFinder-II}$ is iteratively called to compute new invariant formulas and relation items. This searching procedure is not finished until no new invariant is searched.
-
-
-For instance, let $PR=\{try, crit, exit, idel\}$, $invs=\{mutualInv(1,2)\}$,    {\sf invFinder} is called to compute invariant formulas and causal relations.  The output of the {\sf invFinder} is shown in Table \ref{label-ground-causal relation}. In the table,  each row records the  index of a normalized   invariant, name of a parameterized rule, the rule
+$ \mathsf{invHoldForRule}_1$ is recorded between $r$ and $inv$. For instance, let $r=\mathsf{crit}(2)$, $inv=\mathsf{invOnXC}(1)$,
+ $inv'=\mathsf{preCond}(S,inv)=\neg(\mathsf{false }\eqc \mathsf{true} \andc n[1] \eqc \mathsf{C})$, obviously, $
+g \dashrightarrow inv'$ holds forever because $inv'$ is always evaluated true,
+ thus a pair $(\mathsf{NONE},  (\mathsf{crit}(2), inv, \mathsf{invHoldForRule}_1,\_))$ will be returned.
+
+
+ \item[(3)] Thirdly, if neither of the above two cases holds, then a new auxiliary invariant $newInv$ will be constructed, which will make the causal relation $ \mathsf{invHoldForRule}_3$  to hold. The candidate set is $subsets(decompose(dualNeg(inv')\andc g))$, where $decompose(f)$ decompose $f$ into a set of sub-formulas $f_i$  such that each $f_i$ is not of a conjunction form and $f$   is semantically equivalent to $f_1 \andc f_2 \andc ... \andc f_N$. $dualNeg(\negc f)$ returns $f$. $subsets(S)$ to denote the power set of $S$.
+%The construction of the auxiliary invariant is introduced better after giving some definitions. A formula $f$ can be composed into a set of sub-formulas $f_i$, denoted as $decompose(f)$, such that each $f_i$ is not of a conjunction form and $f$   is semantically equivalent to $f_1 \andc f_2 \andc ... \andc f_N$.  $f_i$ usually is an atomic formula in our work after decomposition. For a formula $f$, we use $subsets(f)$ to denote the power set of $decompose(f)$, which contains all subsets of $decompose(f)$. $dualNeg(\negc f)$ returns $f$. The $\mathsf{ normalize}(f)$ function normalizes the numbering order of the use of parameters in the invariant $inv$.
+%The result formula should be in  a normal form, whose parameters
+%  always start from 1, and increase one by one if there are more
+%  parameters. E.g.,  $\negc (x\eqc\mathsf{true} \andc n[1]\eqc\mathsf{C})$ is normalized, but
+%  $\negc (x\eqc\mathsf{true} \andc n[2]\eqc\mathsf{C})$  not. The implementation of $\mathsf{ normalize}$ firstly compute a protype of $f'$,  which is obtained by substituting concrete parameters with different  e index variables $i_1$, ...$i_n$ in a pre-order traversal of the syntax of $f$, where $n$ is  the number of concrete parameters occurring in $f$ , then the returned result by $normalize$ is the formula which is obtained by substituting index variables $i_1$, ...$i_n$ with concrete indexes 1,...,$n$. Namely, we can see a normalized formula is obtained by substituting formal index variables with an identical permutation $1~ \mathsf{upto}~ n$.
+A proper formula is chosen from the candidate set to construct a new invariant $newInv$. This is accomplished by the {\tt choose} function, which calls the oracle {\tt chk} to verify whether a formula is an invariant in the given reference model. After $newInv$ is chosen, the function $isNew$ checks whether this invariant is new w.r.t. $newInvs$ or $invs$. If this is the case, the invariant will be normalized, and then be  added into $newInvs$, and the new causal relation item marked with tag {\tt invRule$_3$} will be added into the causal relations. Here, the meaning of the word ``new" is modulo to the symmetry relation. For instance,   $\mathsf{mutualInv}(1,2)$ is equivalent to
+$\mathsf{mutualInv}(2,1)$ in a symmetry view.  Let $ invs=\emptyset$, $ r=\mathsf{crit}(1)$, $ inv=\mathsf{mutualInv}(1,2)$,
+$ inv'= \mathsf{preCond}(S,inv)=\negc(true\eqc true \andc n[2]\eqc C)$, from all the subsets of $\{n[1]\eqc T, x\eqc true, n[2]\eqc C\}$, the $ \mathsf{choose}$ oracle selects the subset $\{ x=true, n[2]\eqc C\}$ combines all the item in this candidate, then constructs a new invariant $inv_0= \negc(x\eqc true \andc
+   n[2]\eqc C)$. After   normalization, the new invariant   $\negc(x=true \andc
+   n[1]\eqc C)$  and  a  relation item $ (crit(1),   \mathsf{invHoldForRule}_3, inv_0)$ will be returned.
+
+
+\end{description}
+
+%Roughly speaking, the top level of {\sf invFinder} works as follows: a queue  $newInvs'$ is used to store new invariants found, and the initial value of $newInvs'$ is set by the initial invariant formulas we want to verify. Head element of $newInvs'$ is pushed, and used to check the consistency relation with all the parameterized rules.  $\mathsf{InvFinder}$ is iteratively called to compute new invariant formulas and relation items. This searching procedure is not finished until no new invariant is searched.
+
+For instance, let $PR=\{try, crit, exit, idle\}$, $invs=\{mutualInv(1,2)\}$,    the output of the {\sf invFinder}, which is stored in file {\tt mutual.tbl},  is shown in Table
+\ref{table:groundCausalRelation}. In the table,  each line records the    index of a normalized   invariant, name of a parameterized rule, the rule
   parameters to instantiate the rule, a causal relation between
   the ground invariant and a kind of causal relation which involves the kind and proper formulas
   $f'$   in need (which are used to construct
-      causal relations $\mathsf{invHoldRule}_3$). The auxiliary invariants found by {\sf invFinder} includes: $\mathsf{inv_2}  \equiv  \negc (\mathsf{x} \eqc true  \andc  n[1]=C)$, $\mathsf{inv_3}    \equiv \negc  ( n[1]=C \andc n[2]=E)$,
-$\mathsf{inv_4}  \equiv  \negc (x \eqc \mathsf{true}  \andc  n[1]\eqc \mathsf{E})$,   $\mathsf{inv_5}    \equiv \negc  ( n[1]\eqc \mathsf{C} \andc n[2] \eqc \mathsf{C})$.
+      causal relations $\mathsf{invHoldForRule}_3$). The auxiliary invariants found by {\sf invFinder} includes: $\mathsf{inv_2}  \equiv  \negc (\mathsf{x} \eqc true  \andc  n[1]=C)$, $\mathsf{inv_3}    \equiv \negc  ( n[1]=C \andc n[2]=E)$,
+$\mathsf{inv_4}  \equiv  \negc (x \eqc \mathsf{true}  \andc  n[1]\eqc \mathsf{E})$,   $\mathsf{inv_5}    \equiv \negc  ( n[1]\eqc \mathsf{C} \andc n[2] \eqc \mathsf{C})$.  \footnote{The names $\mathsf{mutualEx}$ and $\mathsf{invOnX1}$ in
+  this work are just for easy-reading, their
+ index here is generated  in some order by {\sf invFinder}}.
 
 
 
- \begin{table}[!t]\label{table:ground-causal relation}
+ \begin{table}[!t]\label{table:groundCausalRelation}
 \centering \caption{A fragment of output of {\sf invFinder}} % {\tt
 %simpMutual.tbl}
 \begin{tabular}{|c|c|c|c|c|  }
@@ -766,94 +718,303 @@ $\mathsf{inv_4}  \equiv  \negc (x \eqc \mathsf{true}  \andc  n[1]\eqc \mathsf{E}
   .. & ..&.. &..&.. \\
 
 \hline
-  crit  & [1]&mutualInv(1,2)& invHoldRule3 &invOnXC(2) \\
+  crit  & [1]&mutualInv(1,2)& invHoldForRule3 &invOnXC(2) \\
 \hline
-  crit &[2]& mutualInv(1,2)& invHoldRule3 &invOnXC(1)  \\
+  crit &[2]& mutualInv(1,2)& invHoldForRule3 &invOnXC(1)  \\
 \hline
-  crit & [3]& mutualInv(1,2) & invHoldRule2  & \\
+  crit & [3]& mutualInv(1,2) & invHoldForRule2  & \\
 \hline
   .. & ..&.. &..&.. \\
 
 \hline
-  crit  & [1]&invOnX$_1$(1) & invHoldRule1 &\_ \\
+  crit  & [1]&invOnXC(1) & invHoldForRule1 &\_ \\
 \hline
-  crit &[2]& invOnX$_1$(1) & invHoldRule1 &\_  \\
+  crit &[2]& invOnXC(1) & invHoldForRule1 &\_  \\
 \hline
 \end{tabular}
 \end{table}
 
 
-
-
 \section{Generalization}
 %From this section, our modelling language has been extended to HOL (Higher-order Logic) provided by Isabelle, which not only include the language in Section \ref{sec:protocolSyntax}, but also higher-order logic features. This is not surprising because our formal theory for a parameterized instance of a protocol is done in HOL/Isabelle.  In order to include the theory formally in section \ref{sec:protocolSyntax} and \ref{sec:causal_rel}, we define a Isabelle theory {\tt cache.thy}.
 
-Intuitively, generalization means that a concrete index (formula or rule) is generalized into a set of concrete indice (formulas or rules), which can be formalized  by a symbolic index (formula or rules) with side conditions  specified by the constraint formulas. There are two
-main kinds generalization in our work: (1) generalization on model constraints; (2) generalization to instantiation parameters for generation of case-splittings in the proofs, e.g., $iR_1 = \iInv_1$ or $iR_1 = \iInv_2$  stand for case splitting by comparing  a symbolic rule parameter $iR_1$ and invariant parameters $\iInv_1$ and $\iInv_2$. These formulas should be formalized in HOL.    In order to do this, we  adopt a symbolic value $\mathsf{symb}(str)$, where $str$ is   a special identifier. In this work, we use  special symbolic values $\mathtt{\iInv_i}$  to denote parameters of an parameterized   formula,  and $\mathtt{\iR_i}$ parameters of an parameterized rule, and $\mathtt{N}$   size of an parameterized protocol instance. Generalization in (1) is rather straightforward, and is put in the appendix; here we focus on (2).
+Intuitively, generalization means that a concrete index (formula or rule) is generalized into a set of concrete indice (formulas or rules), which can be formalized  by a symbolic index (formula or rules) with side conditions  specified by   constraint formulas.     In order to do this, we  adopt a new constructor to model symbolic index or symbolic value $\mathsf{symb}(str)$, where $str$ is   a string.  We use $\mathtt{N}$ to denote $symb("N")$, which formalizes the size of an parameterized protocol instance. A concrete index $i$ can be transformed into a symbolic one by some special strategy $g$.   Namely $symbolize(g,i)=symb(g(i))$. In this work, two special transforming function $fInv(i)="iInv"\cat itoa(i)$ and $fIr(i)="iR"\cat itoa(i)$, where $itoa(i)$ is the standard function transforming an integer $i$ into a string. We use  special symbols $\mathtt{\iInv_i}$  to denote $symbolize(fInv,i)$;  and $\mathtt{\iR_i}$ to denote $symbolize(fIr,i)$. The former formalizes a symbolic parameter of a parameterized   formula, and the latter    a symbolic  parameter of a parameterized rule. Accordingly, we define $symbolize2f(g,inv)$ (or  $symbolize2r(f,r)$), which returns the symbolic transformation result to a concrete formula $inv$ (or rule $r$) by replacing a concrete index $i$ occurring in $inv$ (or $r$) with a symbolic index $symbolize(g,i)$.
+
+
+There are two
+main kinds generalization in our work: (1) generalization on model constraints, which is specifying that any parameter index should be not greater than the instance size $\mathtt{N}$, and different parameters to instantiate a parameterized rule (formula) should be different. They are rather straightforward, and are put in the appendix; (2) generalization  for generation of case-splittings in the proofs, e.g., $iR_1 = \iInv_1$ or $iR_1 = \iInv_2$  stand for case splitting by comparing  a symbolic rule parameter $iR_1$ and invariant parameters $\iInv_1$ and $\iInv_2$. %These formulas should be formalized in HOL.
 
 
 \begin{definition}
-Let $LR$ be a permutation s.t. $|LR|>0$, which represents a list of actual parameters to instantiate a rule,    let $LI$  be an identical permutation $|LI|>0$,  which  represents a list of actual parameters to instantiate a normalized invariant, we define:
+Let $LR$ be a permutation s.t. $|LR|>0$, which represents a list of actual parameters to instantiate a rule,    let $LI$  be a  permutation $|LI|>0$,  which  represents a list of actual parameters to instantiate a normalized invariant, we define:
 \begin{enumerate}
-\item symbolic comparation  between $LR_i$ and $LI_j$: \\
+\item symbolic comparison condition generalized from comparing $LR_{[i]}$ and $LI_{[j]}$: \\
 \begin{numcases}{symbCmp(LR,LI,i,j)\equiv }
- \mathtt{\iR_i} = \mathtt{\iInv_j} &    $equality(LR,LI,i,j)$\\
-\mathtt{\iR_i} \ne \mathtt{\iInv_j} , & otherwise
+ \mathtt{\iR_i} = \mathtt{\iInv_j} &   if $LR_{[i]}=LI_{[j]}$\\
+\mathtt{\iR_i} \ne \mathtt{\iInv_j} & otherwise
 \end{numcases}
 %$symbCmp(LR,LI,i,j)\equiv$ if $equality(LR,LI,i,j)$ then $\mathtt{\iR_i} = \mathtt{\iInv_j}$ else $ (\mathtt{\iR_i} \ne \mathtt{\iInv_j})$
 
-\item symbolic case on a parameter $i$ between $LR_i$ and $LI$ :\\
-\begin{numcases}{ symbcaseI(LR,LI,i)\equiv }
-   symbCmp(LR,LI,i,j)& $\exists! j.  equality(LR,LI,i,j)$\\
+\item symbolic comparison  condition generalized from comparing   $LR_{[i]}$ and with all $LI_{[j]}$ :\\
+\begin{numcases}{ symbCaseI(LR,LI,i)\equiv }
+   symbCmp(LR,LI,i,j)& if $\exists! j.  LR_{[i]}=LI_{[j]}$\\
    forallForm(|LI|,pf)& otherwise
  \end{numcases}
- where  $pf(j)= symbCmp(LR,LI,i,j)$, and $\exists!j.P$ is an qualifier meaning that  there exists a unique $j$ s.t. property $P$.
+ where  $pf(j)= symbCmp(LR,LI,i,j)$, and $\exists!j.P$ is an qualifier meaning that  there exists a unique $j$ s.t. property $P$;
 
-\item symbolic case  between $LR$ and $LI$ : $symbcaseI(LR,LI )\equiv forallForm(|LR|,pf)$, where $pf(i)= symbcaseI(LR,LI,i )$
+\item symbolic case  generalized from comparing $LR$ with $LI$ : $symbCase(LR,LI )\equiv forallForm(|LR|,pf)$, where $pf(i)= symbCaseI(LR,LI,i )$;
 
-\item symbolic partition decided by a $LRS$ and $LI$, where $LRS$ is a set of permutations with the same length: $partition(LRS,LI) \equiv existsForm(|LRS|,pf)$,  where $pf(i)= symbcase(LRS_i,LI)$
+\item symbolic partition generalized from comparing all $LRS_{[k]}$ with $LI$, where $LRS$ is a list of permutations with the same length: $partition(LRS,LI) \equiv existsForm(|LRS|,pf)$,  where $pf(i)= symbCase(LRS_i,LI)$.
 
 \end{enumerate}
 \end{definition}
 
-$symbCmp(LR,LI,i,j)$ defines a symbolic formula according to the condition $equality(LR,LI,i,j)$, which represents the semantics of the equality between $LR_i$ and $LI_j$; $symbCmp(LR,LI,i)$  a symbolic formula equality matching conditions between $LR_{[i]}$  and all $LI_{[j]}$ such that $j \le |LI|$; $symbcaseI(LR,LI )$ a subcase decided by all $LR_{[i]}$  and all $LI_{[j]}$; $partition(LRS,LI)$  is a disjunction of subcases $symbcase(LRS_{[i]},LI )$.  Recall the examples in the previous section:
+$symbCmp(LR,LI,i,j)$ defines a symbolic formula  generalized from comparing $LR_{[i]}$ and $LI_{[j]}$; $symbCaseI(LR,LI,i)$  a symbolic formula summarizing the results of comparison  between $LR_{[i]}$  and all $LI_{[j]}$ such that $j \le |LI|$; $symbCase(LR,LI )$ a symbolic formula representing a subcase generalized from comparing all $LR_{[i]}$  and all $LI_{[j]}$; $partition(LRS,LI)$  is a disjunction of subcases $symbCase(LRS_{[i]},LI )$.  Recall the first three lines in Table. \ref{table:groundCausalRelation}, and $LI=[1,2]$ is the list of parameters occurring in $mutualEx(1,2)$
+ %\begin{itemize}
+ %\item when   $LI=[1]$ is a list of parameters occurring in $invOnXC(1)$
+%\begin{itemize}
+ % \item $LR=[1]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)=(\mathtt{\iR_1} = \mathtt{\iInv_1})$, $symbCase(LR,LI)=symbCaseI(LR,LI,1)=(\mathtt{\iR_1} = \mathtt{\iInv_1})$.
+
+ % \item  $LR=[2]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)= (\mathtt{\iR_1} \ne \mathtt{\iInv_1})$, $symbCase(LR,LI)=symbCase(LR,LI,1)=(\mathtt{\iR_1} \ne \mathtt{\iInv_1})$
+
+  % \item let $LRS=[[1],[2]]$, $partition(LRS,LI)= (\mathtt{\iR_1} = \mathtt{\iInv_1}) \vee  (\mathtt{\iR_1} \ne \mathtt{\iInv_1})$
+%\end{itemize}
+%\item when   $LI=[1,2]$ is a list of parameters occurring in $mutualEx(1,2)$
 \begin{itemize}
-\item when   $LI=[1]$ is a list of parameters occuring in $invOnXC(1)$
-\begin{itemize}
-  \item $LR=[1]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)=(\mathtt{\iR_1} = \mathtt{\iInv_1})$, $symbcase(LR,LI)=symbcaseI(LR,LI,1)=(\mathtt{\iR_1} = \mathtt{\iInv_1})$.
 
-  \item  $LR=[2]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)= (\mathtt{\iR_1} \ne \mathtt{\iInv_1})$, $symbcase(LR,LI)=symbcase(LR,LI,1)=(\mathtt{\iR_1} \ne \mathtt{\iInv_1})$
+  \item $LR=[1]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)=(\mathtt{\iR_1} = \mathtt{\iInv_1})$, $symbCase(LR,LI,1)=(\mathtt{\iR_1} = \mathtt{\iInv_1})$.
 
-   \item let $LRS=[[1],[2]]$, $partition(LRS,LI)= (\mathtt{\iR_1} = \mathtt{\iInv_1}) \vee  (\mathtt{\iR_1} \ne \mathtt{\iInv_1})$
-\end{itemize}
-\item when   $LI=[1,2]$ is a list of parameters occuring in $mutualEx(1,2)$
-\begin{itemize}
-
-  \item $LR=[1]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)=(\mathtt{\iR_1} = \mathtt{\iInv_1})$, $symbcase(LR,LI,1)=(\mathtt{\iR_1} = \mathtt{\iInv_1})$.
-
-  \item  $LR=[2]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)= (\mathtt{\iR_1} \ne \mathtt{\iInv_1})$, $symbcase(LR,LI)=(\mathtt{\iR_1} = \mathtt{\iInv_2})$ becasue $LR_{[1]}=LI_{[2]}$.
+  \item  $LR=[2]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)= (\mathtt{\iR_1} \ne \mathtt{\iInv_1})$, $symbCase(LR,LI)=(\mathtt{\iR_1} = \mathtt{\iInv_2})$ becasue $LR_{[1]}=LI_{[2]}$.
 
 
- \item  $LR=[3]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)=\neg(\mathtt{\iR_1} = \mathtt{\iInv_1})$, $symbcase(LR,LI)=symbcaseI(LR,LI,1)= (\mathtt{\iR_1} \ne \mathtt{\iInv_1}) \wedge  (\mathtt{\iR_1} \ne \mathtt{\iInv_2})$ because neither $LR_{[1]}=LI_{[1]}$ nor $LR_{[1]}=LI_{[2]}$.
+ \item  $LR=[3]$ is the actual parameter list to instantiate $crit$, $symbCmp(LR,LI,1,1)=\neg(\mathtt{\iR_1} = \mathtt{\iInv_1})$, $symbCase(LR,LI)=symbCaseI(LR,LI,1)= (\mathtt{\iR_1} \ne \mathtt{\iInv_1}) \wedge  (\mathtt{\iR_1} \ne \mathtt{\iInv_2})$ because neither $LR_{[1]}=LI_{[1]}$ nor $LR_{[1]}=LI_{[2]}$.
 
   \item let $LRS=[[1],[2],[3]]$, $partition(LRS,LI)= (\mathtt{\iR_1} = \mathtt{\iInv_1}) \vee (\mathtt{\iR_1} = \mathtt{\iInv_2}) \vee ( (\mathtt{\iR_1} \ne \mathtt{\iInv_1}) \wedge  (\mathtt{\iR_1} \ne \mathtt{\iInv_2}))$
 \end{itemize}
-\end{itemize}
+%\end{itemize}
 
-Note that $partition(LRS,LI)$ is a complete partition if it is a tautology. In the above example, the two partitions are both complete.
+Note that $partition(LRS,LI)$ is a complete partition if it is a tautology. In the above example, the two partitions are both complete. If we see a line as a concrete test case for some concrete causal relation in table \ref{table:groundCausalRelation},  then $symbCase(LR, LI)$ is an abstraction predicate to generalize the concrete case. Namely, if we transform $symbCase(LR, LI)$ by substitute $\mathtt{\iInv_i}$ with $LI_{[i]}$, and $\mathtt{\iR_j}$ with $LR_{[j]}$, the result is semantically equivalent to true. %If another $LR'$ and $LI'$ are permutations s.t.  $symbCase(LR', LI')$, then the same kind of causal relation  should hold, thus we can apply the same proof tactics to prove.
 
-If we see a line as a concrete test case for some concrete causal relation in table \ref{table:groundCausalRelation},  then $symbcase(LR, ID)$ is an abstraction predicate to generalize the concrete case, where $LR$ and $ID$ are the concrete rule and invariant parameters in the line. %If another $LR'$ and $LI'$ are permutations s.t.  $symbcase(LR', LI')$, then the same kind of causal relation  should hold, thus we can apply the same proof tactics to prove.
-The last thing is how to transform the formula $f'$ in a line of table \ref{table:groundCausalRelation} where the causal relation $\mathsf{invHoldRule_3}$ holds. An index occuring in $f'$ can   occur in the invariant formula, or in the rule. We need look up the parameters occurring in the formula  or in the rule to determine the   transformation.
+The last thing is how to generalize the formula $f'$ in a line of table \ref{table:groundCausalRelation} where the causal relation $\mathsf{invHoldForRule_3}$ holds. An index occurring in $f'$ can   occur in the invariant formula, or in the rule. We need look up the parameters occurring in the formula  or in the rule to determine the   transformation.
 
 \begin{definition}
-Let $LI$ and $LR$ are two permutations,\\
+Let $LI$ and $LR$ are two permutations,  $find\_first(L,i)$ returns the least index $j$ s.t. $L_{[i]}=j$ if there exists such an index; otherwise returns an error.
 $lookup(LI,LR, i)\equiv$
- if $i\in LI$ then $\iInv_{find\_first(LI,i)}$ else $iR_{find\_first(LR,i) }$\\
-$symbolize'(f,LI,LR)$ is a formula transformed from $f$ by substituting each $i$ with $lookup(LI,LR, i)$.
+ if $i\in LI$ then $\mathtt{\iInv_{find\_first(LI,i)}}$ else $\mathtt{iR_{find\_first(LR,i) }}$
+%$symbolize'(f,LI,LR) $ is a formula transformed from $f$ by substituting each $i$ with $lookup(LI,LR, i)$.
 \end{definition}
 
-For instance, let $LI=[1,2]$, $LR=[2]$, then $symbolize'(invOnXC(2),LI,LR)$ is $\neg(x\eqc true \wedge n[\iInv_2]\eqc C)$. %Let $LI=[1]$, $LR=[1,2]$, then $symbolize'(mutualInv(1,2),LI,LR)$ is $\neg(n[\iInv_1]\eqc C \wedge n[\iR_2]\eqc C)$. Here the latter exmple is only  artificial because there is no rule which will be instantiated by $[1,2]$. But for complex protocols like FLASH, the case exits where a rule with two parameters and an invariant with only a parameter exits.
+$lookup(LI,LR, i)$ returns the symbolic index transformed from $i$ according to whether $i$ occurs in $LI$ or in $LR$, which defines the generalization strategy into the concrete index $i$.
+For instance, let $LI=[1,2]$, $LR=[2]$, then  $lookup(LI,LR, 2)=\mathtt{\iInv_2}$, and  $invOnXC(2)$ is transformed into $\neg(x\eqc true \wedge n[\mathtt{\iInv_2}]\eqc C)$ by the strategy $lookup$.
+
+%Let $LI=[1]$, $LR=[1,2]$, then $symbolize'(mutualInv(1,2),LI,LR)$ is $\neg(n[\iInv_1]\eqc C \wedge n[\iR_2]\eqc C)$. Here the latter exmple is only  artificial because there is no rule which will be instantiated by $[1,2]$. But for complex protocols like FLASH, the case exits where a rule with two parameters and an invariant with only a parameter exits.
 For convenience in generating Isabelle proofs,      %a formula $\mathsf{diffConGen}~(\mathsf{paraMumsOfInv}~cr~"iR"$ to specify with the assumptions that mutual difference between the parameters of the symbolic invariant.  Here we assume that the string $"iR"$ does not occur in $cr$.
- A table $symbCausalTab$ is generated, which  stores causal relation between a parameterized rule and an  invariant w.r.t. a  size $N$. An entry of the table is referenced by concatation of the name of a rule and an invariant formula. Such an entry is a record containing fields {\tt symbCases} and  {\tt relationItems}, and created by collecting all the lines on the concrete relation items between the rule and the invariant. {\tt symbCases}  stores the list of symbolic cases each of which is derived by $\mathtt{symbcase}(LR, 1~\mathsf{upto}~n)$, where $LR$ is the rule parameters, and $n$ the number of parameters occuring in the invariant. relations store a list of generalized causal relation items.  For instance, for the rule $crit$ and $inv5$, a record $(|\mathtt{symbcases}=[\mathtt{\iR_1} = \mathtt{\iInv_1},\mathtt{\iR_1} = \mathtt{\iInv_2},(\mathtt{\iR_1} \ne \mathtt{\iInv_1}) \wedge  (\mathtt{\iR_1} \ne \mathtt{\iInv_2})]$; $\mathtt{relationItems}= [invHoldRule_3(f_1')$,$invHoldRule_3(f_2')$,$invHoldRule_2]|)$, where $f_1'=symbolize'([1,2],[1],invONXC(2))$, and $f_2'=symbolize'([1,2],[2],invONXC(1))$.
+a table $symbCausalTab$ is generated, which  stores causal relation between a parameterized rule and an  invariant w.r.t. a  size $N$. An entry of the table is referenced by concatation of the name of a rule and an invariant formula. Such an entry is a record containing fields {\tt symbCases} and  {\tt relationItems}, and created by collecting all the lines on the concrete relation items between the rule and the invariant. {\tt symbCases}  stores the list of symbolic cases each of which is derived by $\mathtt{symbCase}(LR, 1~\mathsf{upto}~n)$, where $LR$ is the rule parameters, and $n$ the number of parameters occuring in the invariant. relations store a list of generalized causal relation items.  For instance, for the rule $crit$ and $inv5$, a record $(|\mathtt{symbCases}=[\mathtt{\iR_1} = \mathtt{\iInv_1},\mathtt{\iR_1} = \mathtt{\iInv_2},(\mathtt{\iR_1} \ne \mathtt{\iInv_1}) \wedge  (\mathtt{\iR_1} \ne \mathtt{\iInv_2})]$; $\mathtt{relationItems}= [invHoldForRule_3(f_1')$,$invHoldForRule_3(f_2')$,$invHoldForRule_2]|)$, where $f_1'=symbolize2f(lookup([1,2],[1]),invONXC(2))$, and $f_2'=symbolize2f(lookup([1,2],[2]),invONXC(1))$.
+
+
+%-------------------------------------------------------------------------
+\section{Automatical generation of Isabelle proof by {\tt proofGen}}
+%-------------------------------------------------------------------------
+%\subsection{An  Example of Generated Isabelle/Script} \label{subsection:introOfIsabelleProof}
+A formal model for a protocol case in a theorem prover like Isabelle
+includes the definitions of constants and rules and invariants,
+lemmas, and proofs. An overview of the hierarchy  of the formal proof scripts of  is
+shown in Fig \ref{fig:arch}.% \begin{figure}[!ht]\label{fig:isabelleProofIntro}
+% \centering %
+ %\vspace{-0.8cm}
+%\includegraphics[width=1.0\textwidth]{isabelleScript.pdf}
+%\vspace{-0.5cm}
+% \caption{An overview of an Isabelle proof}
+
+%\end{figure}
+
+In detail, the proof script is divided into   parts as follows: (1) Definitions of protocol under case study including enumerating datatypes; definitions of formally parameterized invariant formulas, and the set of all actual invariants w.r.t. a protocol instance; definitions of formally parameterized rules, and the set of all actual rules w.r.t. a protocol instance; definitions of specification of the initial state; (2) A lemma  such as {\tt rule$_i$\_Vs\_inv$_j$} on a causal relation of a rule and an invariant; (3) A  Lemma  such as {\tt rules\_inv$_i$} on causal relations for all rules in  the rule set  and an invariant. (4) A lemma {\tt rules\_invs} on a causal relation for all rules in  the rule set  and all invariants in the invariant set. (4) A Lemma such as {\tt iniImply\_inv$_i$} on a fact that an invariant {\tt inv$_i$}  hold at the initial state defined by the specification of the initial state. (5) A lemma {\tt on\_inits} proves that for all invariants they hold at the initial state of the protocol. (6) Main theorem  proving that any invariant formula  holds at any reachable state of the  N-parameterized FLASH protocol instance.
+
+
+%\subsubsection{Lemmas for Causal Relation between Rules and Invariants}
+ % Now we discuss how to use records on {\tt crit} and {\tt inv$_1$} in the tables   $symbInvs$, $symbRules$, and $symbCausalTab$ to generate a lemma to prove that causal relation hold between   crit and   $inv_1$, which will be applied in the proof of main lemma.
+ A lemma at the bottom level, specifies that causal relation hold between  a rule like  {\tt crit} and a parameterized rule like  $inv_1$, An  example lemma
+{\tt critVsinv$_1$} and its proof in Isabelle in the {\tt mutualEx} protocol, is illustrated as follows:
+
+
+\begin{specification}
+%\begin{algorithm}
+%\caption{Generating a kind of proof which is according with a relation tag of $invHoldForRule_{1-3}$ : rel2proof}\label{lemma:causal relation lemma}
+1lemma critVsinv1:\\
+2  assumes  a1: $\exists$ \iR1. \iR1 $\le$ N $\wedge$ r=crit \iR1 and \\
+  a2: $\exists$  \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\neq$ \iInv2 $\wedge$ f=inv1  \iInv1 \iInv2\\
+3  shows  invHoldForRule s f r (invariants
+  N)\\
+4  proof -\\
+   from a1 obtain \iR1 where a1:\iR1 $\le$ N $\wedge$ r=crit \iR1 \\
+\twoSpaces   by blast\\
+   from a2 obtain \iInv1 \iInv2 where \\
+   a2: \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\neq$ \iInv2 $\wedge$ f=inv1  \iInv1 \iInv2\\
+\twoSpaces   by blast \\
+5  have iR1=\iInv1 $\vee$ \iR1=\iInv2 $\vee$ (\iR1 $\ne$ \iInv1 $\wedge$  \iR1 $\ne$ \iInv2) by auto\\
+
+6  moreover\{assume  b1:\iR1=\iInv1\\
+7  \twoSpaces have invHoldForRule3 s f r (invariants N)\\
+ \twoSpaces  \twoSpaces   proof(cut\_tac a1 a2 b1, simp, rule\_tac x=$\negc$ (x=true $\andc$ n[\iInv2]=C)  in exI,auto)qed\\
+8  \twoSpaces then have invHoldForRule s f r
+(invariants
+  N)
+by auto\}\\
+
+9  moreover\{assume  b1:iR1=\iInv2\\
+10 \twoSpaces have invHoldForRule3 s f r (invariants N)\\
+ \twoSpaces \twoSpaces   proof(cut\_tac a1 a2 b1, simp, rule\_tac x=$\negc$ (x=true $\andc$ n[\iInv1]=C  in exI,auto)qed\\
+11 \twoSpaces then have invHoldForRule s f r (invariants
+  N)
+by auto\}\\
+
+12   moreover\{assume  b1:(\iR1 $\ne$  \iInv1 $\wedge$   \iR1 $\ne$  \iInv2)\\
+13 \twoSpaces have invHoldForRule2 s f r  \\
+  \twoSpaces \twoSpaces  proof(cut\_tac a1 a2 b1,  auto) qed\\
+14 \twoSpaces then have invHoldForRule s f r
+(invariants
+  N)
+by auto\} \\
+
+15ultimately show invHoldForRule s f r
+(invariants N) by blast\\
+16qed\\
+%\end{algorithm}
+\end{specification}
+
+In the above proof, line 2 are assumptions on the parameters of the invariant and rule, which are composed of two parts: (1) assumption {\tt a1} specifies that there exists an actual parameter {\tt \iR1} with which {\tt r} is a rule obtained by instantiating {\tt crit}; (2) assumption {\tt a2} specifies that  there exists   actual parameters {\tt \iInv1} and {\tt \iInv2} with which {\tt f} is a formula obtained by instantiating {\tt inv1}.
+ %(1) the facts that all parameters of this invariant should be less than the parameter $N$; %(2) the facts that all parameters of this invariant should be less than the parameter $N$; (3) the constraints of he mutual difference between parameters of the invariant (rule), which can %be looked up in the field of those records  from the table $symbInvTab$ ($symbRuleTab$) by the invariant (rule) name {\tt inv1} ({\tt crit}), which specifies that the mutual difference %between two parameters.
+Line 4 are two typical  proof patterns forward-style which fixes local variables such as {\tt \iR1} and new facts such as {\tt a1: iR1 $\le$ N $\wedge$ r=crit \iR1}. From line 5, the remaining parts of the proof is a typically readable one in Isar style \cite{Wen99}, which uses calculation
+reasoning such as {\tt moreover} and {\tt ultimately} to do  case analysis.
+Line 5 splits cases of {\tt iR1} into all possible cases by comparing
+{\tt \iR1} with {\tt \iInv1} and {\tt \iInv2}, which is in fact characterized by $partition([1],[2],[3]],[1,2])$. Lines 6-14  proves    these cases one by one: Lines 6-8 proves the case where {\tt iR1=\iInv1}, line 7 first proves that the causal relation $invHoldForRule_3$ holds by supplying a formula, which is $symbolize'(invOnXC(2),[1,2],[1])$. %Notes that $invOnXC(2)$ is the $f'$ which is provided in the last column of the line.
+From the conclusion at line 7, line 8 furthermore proves the causal relation $invHoldForRule$ hold; Lines 9-11 proves the case where {\tt iR1=\iInv2}, proof of which is similar to that of case 1; Lines 12-14 the case   where neither {\tt iR1=\iInv1} nor {\tt iR1=\iInv2}. Each proof of a subcase is done in a block {\tt moreover b1:asm1 proof1}, the {\tt ultimately}  proof command in line 15 concludes by summing up all the subcases.
+
+
+
+\paragraph*{Algorithms of Proof Generator {\sf proofGen}}
+A lemma such as {\tt critVsinv1}  is generated by collecting all the records on the invariant {\tt inv1} and rule {\tt crit} in the aforementioned tables.
+Due to length limitation, we illustrate the algorithm to generate a key part of the proof of the lemma: the generation of a subproof according to a symbolic  relation tag of $invHoldForRule_{1-3}$, which is shown in Algorithm \ref{alg:proofGenOfReltag}.
+
+\begin{algorithm}
+\caption{Generating a kind of proof which is according with a relation tag of $invHoldForRule_{1-3}$ : rel2proof}\label{alg:proofGenOfReltag}
+\KwIn{A causal    relation item $relTag$}
+\KwOut{  An Isablle proof: $proof$   }
+
+{
+ \If{$relTag=invHoldForRule_1$}
+  {$proof \leftarrow $ sprintf\\
+\twoSpaces"have invHoldForRule1 f r (invariants N)  \\
+\twoSpaces         by(cut\_tac a1 a2 b1, simp, auto) \\
+\twoSpaces then have invHoldForRule f r (invariants N)  by blast" \; }
+ \ElseIf{ $relTag=invHoldForRule_2$}
+  {$proof \leftarrow$  sprintf\\
+\twoSpaces"have invHoldForRule2 f r (invariants N)
+\twoSpaces         by(cut\_tac a1 a2 b1, simp, auto) \\
+\twoSpaces then have invHoldForRule f r (invariants N)  by blast" \; }
+ \Else{
+ \label{label:getFormField}$f' \leftarrow getFormField(relTag)$\;
+ $proof \leftarrow$ sprintf\\
+\twoSpaces"have invHoldForRule3 f r (invariants N)  \\
+\twoSpaces proof(cut\_tac a1 a2 b1, simp, rule\_tac x=\%s  in exI,auto)qed\\
+\twoSpaces then have invHoldForRule f r (invariants N)  by blast" (symbf2Isabelle f')"\;}
+\Return{proof}
+}
+\end{algorithm}
+
+In the body of function {\sf rel2proof},  $sprintf$ writes a formatted data to string and returns it.
+In line \ref{label:getFormField}, $getFormField(relTag)$ returns the field of formula $f'$ if $relTag=invHoldForRule_3(f')$.  {\sf rel2proof} transforms a symbolic relation tag into a paragraph of proof, as shown in lines 7-8, 10-11, or 13-14. Such a relation tag is stored as an element in {\tt relationTags} field of an entry of $symbCausalTable$ on $crit$ and $inv1$.
+If the tag is among $invHoldForRule_{1-2}$, the transformation is rather straight-forward, else the form $f'$ is assigned by the formula $getFormField(relTag)$, and provided to tell Isabelle the formula which should be used to construct the $invHoldForRule_3$ relation.
+
+Roughly speaking, the generation of a lemma such as {\tt critVsinv1} needs the information stored in the aforementioned three tables in the end of section \ref{sec:generalization}. Lines 1-4 can be generated by looking up information on {\tt inv1} in the table {\tt symbInvs} and that on {\tt crit} in {\tt symbRules}. Line 5 can be generated by combining the disjunction of elements of the {\tt symbCases} field of the entry of{\tt symbCausalTable} on {\tt crit} and {\tt inv1}, which is a command of case splitting. Lines 6, 9, 12 are generated by the elements of the {\tt symbCases} field of the entry respectively, which are assumptions of  subcases. Subproofs of subcases can be generated by Algorithm \ref{alg:proofGenOfReltag} according to three  elements in {\tt relationTags} field of the entry. Lines 15-16 are string with fixed pattern, which can be output directly.
+
+
+%=========================================
+\section{Experiments and related work}
+%=========================================
+We implement our tool in Ocaml \cite{ocamlRef}. More experiments are
+done including typical bus-snoopy ones such as MESI and MOESI,
+ directory-based ones such as  Germanish, and  German protocols. The detail experiment codes and data can
+be found in \JP{\cite{LiCache14}}. Each experiment data includes the
+${\sf paraVerifier}$ instance, invariant sets found, Isabelle proof
+scripts, and the simulation flow graph of one single node. A table
+summarizes  our experiments below. %Among the benchmarks, the German
+%protocol   was posted
+% as
+ Among the benchmarks, a case study is done
+%on a directory-based protocol, German protocol, which was posted as
+%a challenge to the formal verification community by Steven German in
+%2000. German protocol is a moderate case.
+%To the best of our knowledge, few people but us give a complete proof to verify
+%the mutual exclusion  property of the German protocol
+ %in a theorem prover.
+  We   have successfully verified the important properties of the FLASH protocol, resulting into an independent and different proof from the literature. As Chou, Mannava, Park pointed out in \cite{Chou2004}, FLASH is a good benchmark for any proposed method for parameterized verification: °∞if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols°±. Therefore, our approach has reached this most important landmark. %From the line on the statistics on the FLASH, we can see the huge resource consumed by this case study. Such a big proof project is also a great challenge to a theorem prover like Isabelle. The total size of the proof scripts for FLASH verification is about 16M, which cann't be directly processed by Isabelle if we put all the proof scripts in a file. A file with 5000k is too large to be processed by Isabelle. Instead we have to divided   the proofs into small pieces, which are processed in some order. Therefore we work out a proof project control script in a {\tt ROOT} file to control the proof sessions. The proof consumptions of resources are according with the complexity of the problems. By the FLASH experiment, we demonstrate that ITP combined with automatic proof generation can handle industry-scale case like FLASH.
+
+
+There have been a lot of research papers in the field of  parameterized
+verification~\cite{Pnueli1996,Bj√∏rner1997,Arons2001,Pnueli2001,Tiwari2001,Chou2004,Pandav2005,Lv2007,cubicle2011}.
+Among them, only four of them have verified FLASH. The first full verification of safety properties of FLASH is done by work in \cite{Park1996a}. Park and Dill  proved the safety properties of FLASH using  PVS \cite{cade92-pvs}. %They introduce the aggressioned FLASH protocol, which
+%is in fact an abstracted transaction version of FLASH,   need prove
+%the correspondence between the abstract and the original FLASH
+%protocol, and then prove the correctness of the abstracted protocol, and subsequently derive the correctness of  the
+%original protocol by the correspondence.
+The CMP method, which adopts parameter abstraction and guard strengthening, is proposed
+in~\cite{Chou2004} for verifying a safety property  of
+a parameterized system.  An abstract instance of the parameterized protocol
+is constructed by a counter-example-guided refinement process. McMillan applied compositional
+model checking \cite{McMillan2001}  and used Candence SMV  \cite{cadenceSMV} to the verification of both safety and liveness properties of FLASH. However, auxiliary invariants are needed in all the above three approaches, and provided manually depending on verifier's deep insight in the FLASH protocol itself. In contrast to these work, auxiliary invariants are found automatically  by {\sf invFinder}. Auxiliary invariants are searched automatically by a heuristics-guided algorithm with the help of an oracle - a reference instance of the protocol. But these auxiliary invariants are in concrete form, and not generalized to the paramterized form. Thus there is no a parameterized proof derived for parameterized verification of FLASH. The heuristics-guided algorithm used in our work is different from that in \cite{cubicle2011} because the heuristics is basing on the construction of causal relation which is uniquely proposed in our work. Thus the auxiliary invariants are different from those found in \cite{cubicle2011}. We also generalize these concrete invariants into a parameterized proof according to a strategy, and  generate a parameterized proof in Isabelle, which is readable for human.
+
+
+
+
+
+
+\begin{table}[!t] \label{Summarization of experiment results}
+\centering
+\caption{Verification results on benchmarks.}
+\vspace{-2mm}
+\begin{tabular}{|c|r|r|r|r|}
+\hline
+Protocols &  \#rules & \#invariants & time (seconds) & Memory (MB) \\
+\hline\hline
+mutualEx & 4& 5 & 3.25 & 7.3  \\
+\hline
+MESI & 4& 3 & 2.47 & 11.5  \\
+\hline
+MOESI &  5& 3 &2.49 & 23.2  \\
+\hline
+Germanish~\cite{cubicle2011}  & 6&3&2.9 & 7.8   \\
+%\hline
+%German~\cite{Chou2004} & 13 & 24 & 4.09 & 26.7   \\
+\hline
+German~\cite{Chou2004} & 13 & 52 & 38.67 & 14  \\
+\hline
+FLASH\_nodata & 60 & 152 & 280 & 26  \\
+\hline
+FLASH\_data & 62 & 162 & 510 & 26  \\
+\hline
+\end{tabular}
+\vspace{-5mm}
+\end{table}
+
+%=========================================
+\section{Conclusion }
+%=========================================
+Within {\sf paraVerifier},
+our automatic framework for parameterized verification of cache coherence protocol,
+(1) instead of directly proving the invariants of a protocol by induction, we propose a general
+proof method based on the consistency lemma to decompose the proof goal into a number of small ones;
+(2) instead of proving the decomposed subgoals by hand,
+we automatically generate proofs for them based on the information computed in a small protocol instance.\footnote{Technical details
+of {\sf paraVerifier} will be made available in a technical report.}
+
+As we demonstrate in this work, combining theorem proving with
+automatic proof generation is promising in the field of formal
+verification of industrial protocols. Theorem proving can guarantee the rigorousness of the verification results,
+while automatic proof generation can release the burden of human interaction.
+
+
+\bibliographystyle{splncsnat}
+\bibliography{gste,cache,refer,bib-proanyIsabelle}
 
 \end{document}
