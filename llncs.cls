@@ -1,3 +1,4 @@
+
 % LLNCS DOCUMENT CLASS -- version 2.17 (12-Jul-2010)
 % Springer Verlag LaTeX2e support for Lecture Notes in Computer Science
 %
@@ -52,8 +53,8 @@
 \RequirePackage{multicol} % needed for the list of participants, index
 \RequirePackage{aliascnt}
 
-\setlength{\textwidth}{12.2cm}
-\setlength{\textheight}{19.3cm}
+\setlength{\textwidth}{12.4cm}
+\setlength{\textheight}{19.4cm}
 \renewcommand\@pnumwidth{2em}
 \renewcommand\@tocrmarg{3.5em}
 %
