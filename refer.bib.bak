@@ -380,10 +380,3 @@ pages={31-43}
  year = {2015},
  publisher = {北京全路通信信号研究设计院有限公司},
 }
-
-@MISC{LiCache16,
-  author = {Y. Li, Kaiqiang duan },
-  title = {paraVerifier},
-  year = {2016},
-  note = {\url{https://github.com/paraVerifier/paraVerifier}}
-  }

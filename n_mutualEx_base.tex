@@ -1,0 +1,244 @@
+\documentclass{article}      
+\usepackage{color}           
+\usepackage{alltt}           
+\usepackage[latin1]{inputenc}
+\usepackage{hyperref}
+\title{n_mutualEx_base.thy}
+
+\newcommand{\syntaxNULL}[1]{\textcolor[rgb]{0.0,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTA}[1]{\textcolor[rgb]{0.8,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTB}[1]{\textcolor[rgb]{1.0,0.5176470588235295,0.0}{#1}}
+\newcommand{\syntaxCOMMENTC}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxCOMMENTD}[1]{\textcolor[rgb]{0.8,0.4,0.0}{#1}}
+\newcommand{\syntaxDIGIT}[1]{\textcolor[rgb]{1.0,0.0,0.0}{#1}}
+\newcommand{\syntaxFUNCTION}[1]{\textcolor[rgb]{0.6,0.4,1.0}{#1}}
+\newcommand{\syntaxINVALID}[1]{\colorbox[rgb]{1.0,1.0,0.8}{\textcolor[rgb]{1.0,0.0,0.4}{#1}}}
+\newcommand{\syntaxKEYWORDA}[1]{\textcolor[rgb]{0.0,0.4,0.6}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDB}[1]{\textcolor[rgb]{0.0,0.6,0.4}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDC}[1]{\textcolor[rgb]{0.0,0.6,1.0}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDD}[1]{\textcolor[rgb]{0.4,0.8,1.0}{\textbf{#1}}}
+\newcommand{\syntaxLABEL}[1]{\textcolor[rgb]{0.00784313725490196,0.7254901960784313,0.00784313725490196}{#1}}
+\newcommand{\syntaxLITERALA}[1]{\textcolor[rgb]{1.0,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALB}[1]{\textcolor[rgb]{0.8,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALC}[1]{\textcolor[rgb]{0.6,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALD}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxMARKUP}[1]{\textcolor[rgb]{0.0,0.0,1.0}{#1}}
+\newcommand{\syntaxOPERATOR}[1]{\textcolor[rgb]{0.0,0.0,0.0}{\textbf{#1}}}
+\newcommand{\syntaxNULL}[1]{\textcolor[rgb]{0.0,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTA}[1]{\textcolor[rgb]{0.8,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTB}[1]{\textcolor[rgb]{1.0,0.5176470588235295,0.0}{#1}}
+\newcommand{\syntaxCOMMENTC}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxCOMMENTD}[1]{\textcolor[rgb]{0.8,0.4,0.0}{#1}}
+\newcommand{\syntaxDIGIT}[1]{\textcolor[rgb]{1.0,0.0,0.0}{#1}}
+\newcommand{\syntaxFUNCTION}[1]{\textcolor[rgb]{0.6,0.4,1.0}{#1}}
+\newcommand{\syntaxINVALID}[1]{\colorbox[rgb]{1.0,1.0,0.8}{\textcolor[rgb]{1.0,0.0,0.4}{#1}}}
+\newcommand{\syntaxKEYWORDA}[1]{\textcolor[rgb]{0.0,0.4,0.6}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDB}[1]{\textcolor[rgb]{0.0,0.6,0.4}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDC}[1]{\textcolor[rgb]{0.0,0.6,1.0}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDD}[1]{\textcolor[rgb]{0.4,0.8,1.0}{\textbf{#1}}}
+\newcommand{\syntaxLABEL}[1]{\textcolor[rgb]{0.00784313725490196,0.7254901960784313,0.00784313725490196}{#1}}
+\newcommand{\syntaxLITERALA}[1]{\textcolor[rgb]{1.0,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALB}[1]{\textcolor[rgb]{0.8,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALC}[1]{\textcolor[rgb]{0.6,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALD}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxMARKUP}[1]{\textcolor[rgb]{0.0,0.0,1.0}{#1}}
+\newcommand{\syntaxOPERATOR}[1]{\textcolor[rgb]{0.0,0.0,0.0}{\textbf{#1}}}
+\newcommand{\syntaxNULL}[1]{\textcolor[rgb]{0.0,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTA}[1]{\textcolor[rgb]{0.8,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTB}[1]{\textcolor[rgb]{1.0,0.5176470588235295,0.0}{#1}}
+\newcommand{\syntaxCOMMENTC}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxCOMMENTD}[1]{\textcolor[rgb]{0.8,0.4,0.0}{#1}}
+\newcommand{\syntaxDIGIT}[1]{\textcolor[rgb]{1.0,0.0,0.0}{#1}}
+\newcommand{\syntaxFUNCTION}[1]{\textcolor[rgb]{0.6,0.4,1.0}{#1}}
+\newcommand{\syntaxINVALID}[1]{\colorbox[rgb]{1.0,1.0,0.8}{\textcolor[rgb]{1.0,0.0,0.4}{#1}}}
+\newcommand{\syntaxKEYWORDA}[1]{\textcolor[rgb]{0.0,0.4,0.6}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDB}[1]{\textcolor[rgb]{0.0,0.6,0.4}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDC}[1]{\textcolor[rgb]{0.0,0.6,1.0}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDD}[1]{\textcolor[rgb]{0.4,0.8,1.0}{\textbf{#1}}}
+\newcommand{\syntaxLABEL}[1]{\textcolor[rgb]{0.00784313725490196,0.7254901960784313,0.00784313725490196}{#1}}
+\newcommand{\syntaxLITERALA}[1]{\textcolor[rgb]{1.0,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALB}[1]{\textcolor[rgb]{0.8,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALC}[1]{\textcolor[rgb]{0.6,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALD}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxMARKUP}[1]{\textcolor[rgb]{0.0,0.0,1.0}{#1}}
+\newcommand{\syntaxOPERATOR}[1]{\textcolor[rgb]{0.0,0.0,0.0}{\textbf{#1}}}
+\newcommand{\syntaxNULL}[1]{\textcolor[rgb]{0.0,0.0,0.0}{\textbf{#1}}}
+\newcommand{\syntaxCOMMENTA}[1]{\textcolor[rgb]{0.8,0.0,0.0}{\textbf{#1}}}
+\newcommand{\syntaxCOMMENTB}[1]{\textcolor[rgb]{1.0,0.5176470588235295,0.0}{\textbf{#1}}}
+\newcommand{\syntaxCOMMENTC}[1]{\textcolor[rgb]{0.4,0.0,0.8}{\textbf{#1}}}
+\newcommand{\syntaxCOMMENTD}[1]{\textcolor[rgb]{0.8,0.4,0.0}{\textbf{#1}}}
+\newcommand{\syntaxDIGIT}[1]{\textcolor[rgb]{1.0,0.0,0.0}{\textbf{#1}}}
+\newcommand{\syntaxFUNCTION}[1]{\textcolor[rgb]{0.6,0.4,1.0}{\textbf{#1}}}
+\newcommand{\syntaxINVALID}[1]{\colorbox[rgb]{1.0,1.0,0.8}{\textcolor[rgb]{1.0,0.0,0.4}{\textbf{#1}}}}
+\newcommand{\syntaxKEYWORDA}[1]{\textcolor[rgb]{0.0,0.4,0.6}{#1}}
+\newcommand{\syntaxKEYWORDB}[1]{\textcolor[rgb]{0.0,0.6,0.4}{#1}}
+\newcommand{\syntaxKEYWORDC}[1]{\textcolor[rgb]{0.0,0.6,1.0}{#1}}
+\newcommand{\syntaxKEYWORDD}[1]{\textcolor[rgb]{0.4,0.8,1.0}{#1}}
+\newcommand{\syntaxLABEL}[1]{\textcolor[rgb]{0.00784313725490196,0.7254901960784313,0.00784313725490196}{\textbf{#1}}}
+\newcommand{\syntaxLITERALA}[1]{\textcolor[rgb]{1.0,0.0,0.8}{\textbf{#1}}}
+\newcommand{\syntaxLITERALB}[1]{\textcolor[rgb]{0.8,0.0,0.8}{\textbf{#1}}}
+\newcommand{\syntaxLITERALC}[1]{\textcolor[rgb]{0.6,0.0,0.8}{\textbf{#1}}}
+\newcommand{\syntaxLITERALD}[1]{\textcolor[rgb]{0.4,0.0,0.8}{\textbf{#1}}}
+\newcommand{\syntaxMARKUP}[1]{\textcolor[rgb]{0.0,0.0,1.0}{\textbf{#1}}}
+\newcommand{\syntaxOPERATOR}[1]{\textcolor[rgb]{0.0,0.0,0.0}{#1}}
+\newcommand{\syntaxNULL}[1]{\textcolor[rgb]{0.0,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTA}[1]{\textcolor[rgb]{0.8,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTB}[1]{\textcolor[rgb]{1.0,0.5176470588235295,0.0}{#1}}
+\newcommand{\syntaxCOMMENTC}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxCOMMENTD}[1]{\textcolor[rgb]{0.8,0.4,0.0}{#1}}
+\newcommand{\syntaxDIGIT}[1]{\textcolor[rgb]{1.0,0.0,0.0}{#1}}
+\newcommand{\syntaxFUNCTION}[1]{\textcolor[rgb]{0.6,0.4,1.0}{#1}}
+\newcommand{\syntaxINVALID}[1]{\colorbox[rgb]{1.0,1.0,0.8}{\textcolor[rgb]{1.0,0.0,0.4}{#1}}}
+\newcommand{\syntaxKEYWORDA}[1]{\textcolor[rgb]{0.0,0.4,0.6}{#1}}
+\newcommand{\syntaxKEYWORDB}[1]{\textcolor[rgb]{0.0,0.6,0.4}{#1}}
+\newcommand{\syntaxKEYWORDC}[1]{\textcolor[rgb]{0.0,0.6,1.0}{#1}}
+\newcommand{\syntaxKEYWORDD}[1]{\textcolor[rgb]{0.4,0.8,1.0}{#1}}
+\newcommand{\syntaxLABEL}[1]{\textcolor[rgb]{0.00784313725490196,0.7254901960784313,0.00784313725490196}{#1}}
+\newcommand{\syntaxLITERALA}[1]{\textcolor[rgb]{1.0,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALB}[1]{\textcolor[rgb]{0.8,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALC}[1]{\textcolor[rgb]{0.6,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALD}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxMARKUP}[1]{\textcolor[rgb]{0.0,0.0,1.0}{#1}}
+\newcommand{\syntaxOPERATOR}[1]{\textcolor[rgb]{0.0,0.0,0.0}{#1}}
+\newcommand{\syntaxNULL}[1]{\textcolor[rgb]{0.0,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTA}[1]{\textcolor[rgb]{0.8,0.0,0.0}{#1}}
+\newcommand{\syntaxCOMMENTB}[1]{\textcolor[rgb]{1.0,0.5176470588235295,0.0}{#1}}
+\newcommand{\syntaxCOMMENTC}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxCOMMENTD}[1]{\textcolor[rgb]{0.8,0.4,0.0}{#1}}
+\newcommand{\syntaxDIGIT}[1]{\textcolor[rgb]{1.0,0.0,0.0}{#1}}
+\newcommand{\syntaxFUNCTION}[1]{\textcolor[rgb]{0.6,0.4,1.0}{#1}}
+\newcommand{\syntaxINVALID}[1]{\colorbox[rgb]{1.0,1.0,0.8}{\textcolor[rgb]{1.0,0.0,0.4}{#1}}}
+\newcommand{\syntaxKEYWORDA}[1]{\textcolor[rgb]{0.0,0.4,0.6}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDB}[1]{\textcolor[rgb]{0.0,0.6,0.4}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDC}[1]{\textcolor[rgb]{0.0,0.6,1.0}{\textbf{#1}}}
+\newcommand{\syntaxKEYWORDD}[1]{\textcolor[rgb]{0.4,0.8,1.0}{\textbf{#1}}}
+\newcommand{\syntaxLABEL}[1]{\textcolor[rgb]{0.00784313725490196,0.7254901960784313,0.00784313725490196}{#1}}
+\newcommand{\syntaxLITERALA}[1]{\textcolor[rgb]{1.0,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALB}[1]{\textcolor[rgb]{0.8,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALC}[1]{\textcolor[rgb]{0.6,0.0,0.8}{#1}}
+\newcommand{\syntaxLITERALD}[1]{\textcolor[rgb]{0.4,0.0,0.8}{#1}}
+\newcommand{\syntaxMARKUP}[1]{\textcolor[rgb]{0.0,0.0,1.0}{#1}}
+\newcommand{\syntaxOPERATOR}[1]{\textcolor[rgb]{0.0,0.0,0.0}{\textbf{#1}}}
+\newcommand{\syntaxNULL}[1]{\textcolor[rgb]{1.0,1.0,1.0}{#1}}
+
+\newcommand{\gutter}[1]{\textcolor[rgb]{0,0,0}{{|}#1}}
+\newcommand{\gutterH}[1]{\textcolor[rgb]{1,0,0}{{|}#1}}
+
+\definecolor{bgcolor}{rgb}{1.0,1.0,1.0}
+\newsavebox{\opencurlybracket}%
+\newsavebox{\closecurlybracket}%
+\newsavebox{\lessthan}%
+\newsavebox{\greaterthan}%
+\newsavebox{\dollarbox}%
+\newsavebox{\underscorebox}%
+\newsavebox{\andbox}%
+\newsavebox{\hashbox}%
+\newsavebox{\backslashbox}%
+\newsavebox{\atbox}%
+\newsavebox{\percentbox}%
+\newsavebox{\hatbox}%
+\setbox\opencurlybracket=\hbox{\verb.{.}%
+\setbox\closecurlybracket=\hbox{\verb.}.}%
+\setbox\lessthan=\hbox{\verb.<.}%
+\setbox\dollarbox=\hbox{\verb.$.}%
+\setbox\underscorebox=\hbox{\verb._.}%
+\setbox\andbox=\hbox{\verb.&.}%
+\setbox\hashbox=\hbox{\verb.#.}%
+\setbox\atbox=\hbox{\verb.@.}%
+\setbox\backslashbox=\hbox{\verb.\.}%
+\setbox\greaterthan=\hbox{\verb.>.}%
+\setbox\percentbox=\hbox{\verb.\%.}%
+\setbox\hatbox=\hbox{\verb.^.}%
+\def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}
+\begin{document}
+\pagecolor{bgcolor}
+\noindent
+\ttfamily
+\syntaxNULL{}\gutter{\ \ \ \ 1{|}\ }\syntaxKEYWORDA{theory}{\ }n\usebox{\underscorebox}mutualEx\usebox{\underscorebox}base{\ }\syntaxKEYWORDB{imports}{\ }paraTheory\hspace*{\fill}\\
+\gutter{\ \ \ \ 2{|}\ }\syntaxKEYWORDB{begin}\hspace*{\fill}\\
+\gutter{\ \ \ \ 3{|}\ }\syntaxKEYWORDA{section}\syntaxCOMMENTC{\usebox{\opencurlybracket}*Main{\ }definitions*\usebox{\closecurlybracket}}\hspace*{\fill}\\
+\gutter{\ \ \ \ 4{|}\ }\syntaxKEYWORDA{definition}{\ }I\syntaxOPERATOR{::}\syntaxLITERALA{"scalrValueType"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}{\ }\syntaxLITERALA{"I\<equiv>{\ }enum{\ }''control''{\ }''I''"}\hspace*{\fill}\\
+\gutterH{\ \ \ \ 5{|}\ }\syntaxKEYWORDA{definition}{\ }T\syntaxOPERATOR{::}\syntaxLITERALA{"scalrValueType"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}{\ }\syntaxLITERALA{"T\<equiv>{\ }enum{\ }''control''{\ }''T''"}\hspace*{\fill}\\
+\gutter{\ \ \ \ 6{|}\ }\syntaxKEYWORDA{definition}{\ }C\syntaxOPERATOR{::}\syntaxLITERALA{"scalrValueType"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}{\ }\syntaxLITERALA{"C\<equiv>{\ }enum{\ }''control''{\ }''C''"}\hspace*{\fill}\\
+\gutter{\ \ \ \ 7{|}\ }\syntaxKEYWORDA{definition}{\ }E\syntaxOPERATOR{::}\syntaxLITERALA{"scalrValueType"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}{\ }\syntaxLITERALA{"E\<equiv>{\ }enum{\ }''control''{\ }''E''"}\hspace*{\fill}\\
+\gutter{\ \ \ \ 8{|}\ }\syntaxKEYWORDA{definition}{\ }true\syntaxOPERATOR{::}\syntaxLITERALA{"scalrValueType"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}{\ }\syntaxLITERALA{"true\<equiv>{\ }boolV{\ }True"}\hspace*{\fill}\\
+\gutter{\ \ \ \ 9{|}\ }\syntaxKEYWORDA{definition}{\ }false\syntaxOPERATOR{::}\syntaxLITERALA{"scalrValueType"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}{\ }\syntaxLITERALA{"false\<equiv>{\ }boolV{\ }False"}\hspace*{\fill}\\
+\gutterH{\ \ \ 10{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 11{|}\ }\syntaxKEYWORDA{definition}{\ }n\usebox{\underscorebox}Try\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }rule"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 12{|}\ }\syntaxLITERALA{"n\usebox{\underscorebox}Try{\ }{\ }i\<equiv>}\hspace*{\fill}\\
+\gutter{\ \ \ 13{|}\ }\syntaxLITERALA{let{\ }g{\ }={\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }i)){\ }(Const{\ }I)){\ }in}\hspace*{\fill}\\
+\gutter{\ \ \ 14{|}\ }\syntaxLITERALA{let{\ }s{\ }={\ }(parallelList{\ }{[}(assign{\ }((Para{\ }(Ident{\ }''n''){\ }i),{\ }(Const{\ }T))){]}){\ }in}\hspace*{\fill}\\
+\gutterH{\ \ \ 15{|}\ }\syntaxLITERALA{guard{\ }g{\ }s"}\hspace*{\fill}\\
+\gutter{\ \ \ 16{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 17{|}\ }\syntaxKEYWORDA{definition}{\ }n\usebox{\underscorebox}Crit\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }rule"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 18{|}\ }\syntaxLITERALA{"n\usebox{\underscorebox}Crit{\ }{\ }i\<equiv>}\hspace*{\fill}\\
+\gutter{\ \ \ 19{|}\ }\syntaxLITERALA{let{\ }g{\ }={\ }(andForm{\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }i)){\ }(Const{\ }T)){\ }(eqn{\ }(IVar{\ }(Ident{\ }''x'')){\ }(Const{\ }true))){\ }in}\hspace*{\fill}\\
+\gutterH{\ \ \ 20{|}\ }\syntaxLITERALA{let{\ }s{\ }={\ }(parallelList{\ }{[}(assign{\ }((Para{\ }(Ident{\ }''n''){\ }i),{\ }(Const{\ }C))),{\ }(assign{\ }((Ident{\ }''x''),{\ }(Const{\ }false))){]}){\ }in}\hspace*{\fill}\\
+\gutter{\ \ \ 21{|}\ }\syntaxLITERALA{guard{\ }g{\ }s"}\hspace*{\fill}\\
+\gutter{\ \ \ 22{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 23{|}\ }\syntaxKEYWORDA{definition}{\ }n\usebox{\underscorebox}Exit\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }rule"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 24{|}\ }\syntaxLITERALA{"n\usebox{\underscorebox}Exit{\ }{\ }i\<equiv>}\hspace*{\fill}\\
+\gutterH{\ \ \ 25{|}\ }\syntaxLITERALA{let{\ }g{\ }={\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }i)){\ }(Const{\ }C)){\ }in}\hspace*{\fill}\\
+\gutter{\ \ \ 26{|}\ }\syntaxLITERALA{let{\ }s{\ }={\ }(parallelList{\ }{[}(assign{\ }((Para{\ }(Ident{\ }''n''){\ }i),{\ }(Const{\ }E))){]}){\ }in}\hspace*{\fill}\\
+\gutter{\ \ \ 27{|}\ }\syntaxLITERALA{guard{\ }g{\ }s"}\hspace*{\fill}\\
+\gutter{\ \ \ 28{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 29{|}\ }\syntaxKEYWORDA{definition}{\ }n\usebox{\underscorebox}Idle\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }rule"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutterH{\ \ \ 30{|}\ }\syntaxLITERALA{"n\usebox{\underscorebox}Idle{\ }{\ }i\<equiv>}\hspace*{\fill}\\
+\gutter{\ \ \ 31{|}\ }\syntaxLITERALA{let{\ }g{\ }={\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }i)){\ }(Const{\ }E)){\ }in}\hspace*{\fill}\\
+\gutter{\ \ \ 32{|}\ }\syntaxLITERALA{let{\ }s{\ }={\ }(parallelList{\ }{[}(assign{\ }((Para{\ }(Ident{\ }''n''){\ }i),{\ }(Const{\ }I))),{\ }(assign{\ }((Ident{\ }''x''),{\ }(Const{\ }true))){]}){\ }in}\hspace*{\fill}\\
+\gutter{\ \ \ 33{|}\ }\syntaxLITERALA{guard{\ }g{\ }s"}\hspace*{\fill}\\
+\gutter{\ \ \ 34{|}\ }\hspace*{\fill}\\
+\gutterH{\ \ \ 35{|}\ }\syntaxKEYWORDA{definition}{\ }rules\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }rule{\ }set"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 36{|}\ }\syntaxLITERALA{"rules{\ }N{\ }\<equiv>{\ }\usebox{\opencurlybracket}r.}\hspace*{\fill}\\
+\gutter{\ \ \ 37{|}\ }\syntaxLITERALA{(\<exists>{\ }i.{\ }i\<le>N\<and>r=n\usebox{\underscorebox}Try{\ }{\ }i){\ }\<or>}\hspace*{\fill}\\
+\gutter{\ \ \ 38{|}\ }\syntaxLITERALA{(\<exists>{\ }i.{\ }i\<le>N\<and>r=n\usebox{\underscorebox}Crit{\ }{\ }i){\ }\<or>}\hspace*{\fill}\\
+\gutter{\ \ \ 39{|}\ }\syntaxLITERALA{(\<exists>{\ }i.{\ }i\<le>N\<and>r=n\usebox{\underscorebox}Exit{\ }{\ }i){\ }\<or>}\hspace*{\fill}\\
+\gutterH{\ \ \ 40{|}\ }\syntaxLITERALA{(\<exists>{\ }i.{\ }i\<le>N\<and>r=n\usebox{\underscorebox}Idle{\ }{\ }i)}\hspace*{\fill}\\
+\gutter{\ \ \ 41{|}\ }\syntaxLITERALA{\usebox{\closecurlybracket}"}\hspace*{\fill}\\
+\gutter{\ \ \ 42{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 43{|}\ }\syntaxKEYWORDA{definition}{\ }inv\usebox{\underscorebox}\usebox{\underscorebox}1\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }nat{\ }\<Rightarrow>{\ }formula"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 44{|}\ }\syntaxLITERALA{"inv\usebox{\underscorebox}\usebox{\underscorebox}1{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1{\ }\<equiv>}\hspace*{\fill}\\
+\gutterH{\ \ \ 45{|}\ }\syntaxLITERALA{(neg{\ }(andForm{\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1)){\ }(Const{\ }C)){\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0)){\ }(Const{\ }C))))"}\hspace*{\fill}\\
+\gutter{\ \ \ 46{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 47{|}\ }\syntaxKEYWORDA{definition}{\ }inv\usebox{\underscorebox}\usebox{\underscorebox}2\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }formula"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 48{|}\ }\syntaxLITERALA{"inv\usebox{\underscorebox}\usebox{\underscorebox}2{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1{\ }\<equiv>}\hspace*{\fill}\\
+\gutter{\ \ \ 49{|}\ }\syntaxLITERALA{(neg{\ }(andForm{\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1)){\ }(Const{\ }C)){\ }(eqn{\ }(IVar{\ }(Ident{\ }''x'')){\ }(Const{\ }true))))"}\hspace*{\fill}\\
+\gutterH{\ \ \ 50{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 51{|}\ }\syntaxKEYWORDA{definition}{\ }inv\usebox{\underscorebox}\usebox{\underscorebox}3\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }nat{\ }\<Rightarrow>{\ }formula"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 52{|}\ }\syntaxLITERALA{"inv\usebox{\underscorebox}\usebox{\underscorebox}3{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1{\ }\<equiv>}\hspace*{\fill}\\
+\gutter{\ \ \ 53{|}\ }\syntaxLITERALA{(neg{\ }(andForm{\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0)){\ }(Const{\ }C)){\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1)){\ }(Const{\ }E))))"}\hspace*{\fill}\\
+\gutter{\ \ \ 54{|}\ }\hspace*{\fill}\\
+\gutterH{\ \ \ 55{|}\ }\syntaxKEYWORDA{definition}{\ }inv\usebox{\underscorebox}\usebox{\underscorebox}4\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }formula"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 56{|}\ }\syntaxLITERALA{"inv\usebox{\underscorebox}\usebox{\underscorebox}4{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1{\ }\<equiv>}\hspace*{\fill}\\
+\gutter{\ \ \ 57{|}\ }\syntaxLITERALA{(neg{\ }(andForm{\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1)){\ }(Const{\ }E)){\ }(eqn{\ }(IVar{\ }(Ident{\ }''x'')){\ }(Const{\ }true))))"}\hspace*{\fill}\\
+\gutter{\ \ \ 58{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 59{|}\ }\syntaxKEYWORDA{definition}{\ }inv\usebox{\underscorebox}\usebox{\underscorebox}5\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }nat{\ }\<Rightarrow>{\ }formula"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutterH{\ \ \ 60{|}\ }\syntaxLITERALA{"inv\usebox{\underscorebox}\usebox{\underscorebox}5{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1{\ }\<equiv>}\hspace*{\fill}\\
+\gutter{\ \ \ 61{|}\ }\syntaxLITERALA{(neg{\ }(andForm{\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0)){\ }(Const{\ }E)){\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1)){\ }(Const{\ }E))))"}\hspace*{\fill}\\
+\gutter{\ \ \ 62{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 63{|}\ }\syntaxKEYWORDA{definition}{\ }invariants\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }formula{\ }set"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 64{|}\ }\syntaxLITERALA{"invariants{\ }N{\ }\<equiv>{\ }\usebox{\opencurlybracket}f.}\hspace*{\fill}\\
+\gutterH{\ \ \ 65{|}\ }\syntaxLITERALA{(\<exists>{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1.{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0\<le>N\<and>p\usebox{\underscorebox}\usebox{\underscorebox}Inv1\<le>N\<and>p\usebox{\underscorebox}\usebox{\underscorebox}Inv0\urltilda=p\usebox{\underscorebox}\usebox{\underscorebox}Inv1\<and>f=inv\usebox{\underscorebox}\usebox{\underscorebox}1{\ }{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1){\ }\<or>}\hspace*{\fill}\\
+\gutter{\ \ \ 66{|}\ }\syntaxLITERALA{(\<exists>{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1.{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1\<le>N\<and>f=inv\usebox{\underscorebox}\usebox{\underscorebox}2{\ }{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1){\ }\<or>}\hspace*{\fill}\\
+\gutter{\ \ \ 67{|}\ }\syntaxLITERALA{(\<exists>{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1.{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0\<le>N\<and>p\usebox{\underscorebox}\usebox{\underscorebox}Inv1\<le>N\<and>p\usebox{\underscorebox}\usebox{\underscorebox}Inv0\urltilda=p\usebox{\underscorebox}\usebox{\underscorebox}Inv1\<and>f=inv\usebox{\underscorebox}\usebox{\underscorebox}3{\ }{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1){\ }\<or>}\hspace*{\fill}\\
+\gutter{\ \ \ 68{|}\ }\syntaxLITERALA{(\<exists>{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1.{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1\<le>N\<and>f=inv\usebox{\underscorebox}\usebox{\underscorebox}4{\ }{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1){\ }\<or>}\hspace*{\fill}\\
+\gutter{\ \ \ 69{|}\ }\syntaxLITERALA{(\<exists>{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1.{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0\<le>N\<and>p\usebox{\underscorebox}\usebox{\underscorebox}Inv1\<le>N\<and>p\usebox{\underscorebox}\usebox{\underscorebox}Inv0\urltilda=p\usebox{\underscorebox}\usebox{\underscorebox}Inv1\<and>f=inv\usebox{\underscorebox}\usebox{\underscorebox}5{\ }{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv0{\ }p\usebox{\underscorebox}\usebox{\underscorebox}Inv1)}\hspace*{\fill}\\
+\gutterH{\ \ \ 70{|}\ }\syntaxLITERALA{\usebox{\closecurlybracket}"}\hspace*{\fill}\\
+\gutter{\ \ \ 71{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 72{|}\ }\syntaxKEYWORDA{definition}{\ }initSpec0\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }formula"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 73{|}\ }\syntaxLITERALA{"initSpec0{\ }N{\ }\<equiv>{\ }(forallForm{\ }(down{\ }N){\ }(\usebox{\percentbox}{\ }i{\ }.{\ }(eqn{\ }(IVar{\ }(Para{\ }(Ident{\ }''n''){\ }i)){\ }(Const{\ }I))))"}\hspace*{\fill}\\
+\gutter{\ \ \ 74{|}\ }\hspace*{\fill}\\
+\gutterH{\ \ \ 75{|}\ }\syntaxKEYWORDA{definition}{\ }initSpec1\syntaxOPERATOR{::}\syntaxLITERALA{"formula"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 76{|}\ }\syntaxLITERALA{"initSpec1{\ }{\ }\<equiv>{\ }(eqn{\ }(IVar{\ }(Ident{\ }''x'')){\ }(Const{\ }true))"}\hspace*{\fill}\\
+\gutter{\ \ \ 77{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 78{|}\ }\syntaxKEYWORDA{definition}{\ }allInitSpecs\syntaxOPERATOR{::}\syntaxLITERALA{"nat{\ }\<Rightarrow>{\ }formula{\ }list"}{\ }\syntaxKEYWORDB{where}{\ }\syntaxOPERATOR{{[}}simp\syntaxOPERATOR{{]}}\syntaxOPERATOR{:}\hspace*{\fill}\\
+\gutter{\ \ \ 79{|}\ }\syntaxLITERALA{"allInitSpecs{\ }N{\ }\<equiv>{\ }{[}}\hspace*{\fill}\\
+\gutterH{\ \ \ 80{|}\ }\syntaxLITERALA{(initSpec0{\ }N),}\hspace*{\fill}\\
+\gutter{\ \ \ 81{|}\ }\syntaxLITERALA{(initSpec1{\ })}\hspace*{\fill}\\
+\gutter{\ \ \ 82{|}\ }\syntaxLITERALA{{]}"}\hspace*{\fill}\\
+\gutter{\ \ \ 83{|}\ }\hspace*{\fill}\\
+\gutter{\ \ \ 84{|}\ }\syntaxKEYWORDB{end}\hspace*{\fill}\\
+\mbox{}
+\normalfont
+\end{document}
+
