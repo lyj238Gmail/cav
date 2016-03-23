@@ -422,9 +422,8 @@ begin
     node[client].local_requests[addr] := false;
     clear node[client].inchan[channel2];
 endrule;
-endruleset;*/
+endruleset;
 
-ruleset client: node_id; addr: addr_type do
 rule "`client' receives reply from home"
     
     addr = node[client].inchan .channel_2.msg.addr
@@ -445,6 +444,53 @@ begin
     node[client].local_requests[addr] := false;
     clear node[client].inchan.channel_2;
 endrule;
+
+*/
+
+ruleset client: node_id; addr: addr_type do
+
+ruleset client: node_id; addr: addr_type do
+rule "`client' receives reply 'grant_shared' from home"
+    
+    addr = node[client].inchan.channel_2.msg.addr
+  & node[client].inchan.channel_2.valid
+  & (node[client].inchan.channel_2.msg.op = grant_shared) ==>
+begin
+      node[client].cache[addr].data  := node[client].inchan.channel_2.msg.data;
+      node[client].cache[addr].state := cache_shared;
+
+    node[client].local_requests[addr] := false;
+    clear node[client].inchan.channel_2;
+endrule;
+
+
+rule "`client' receives reply 'grant_upgrade' from home"
+    
+    addr = node[client].inchan.channel_2.msg.addr
+  & node[client].inchan.channel_2.valid
+  & (node[client].inchan.channel_2.msg.op = grant_upgrade) ==>
+begin
+      node[client].cache[addr].state := cache_exclusive;
+
+    node[client].local_requests[addr] := false;
+    clear node[client].inchan.channel_2;
+endrule;
+
+
+rule "`client' receives reply 'grant_exclusive' from home"
+    
+    addr = node[client].inchan.channel_2.msg.addr
+  & node[client].inchan.channel_2.valid
+  & (node[client].inchan.channel_2.msg.op = grant_exclusive) ==>
+begin
+      node[client].cache[addr].data  := node[client].inchan.channel_2.msg.data;
+      node[client].cache[addr].state := cache_exclusive;
+
+    node[client].local_requests[addr] := false;
+    clear node[client].inchan.channel_2;
+endrule;
+endruleset;
+
 endruleset;
  
 
@@ -552,26 +598,44 @@ endruleset;*/
 
 ruleset home: node_id; addr: addr_type; source: node_id  do
 rule "`home' accepts a request message_req_upgrade_forall_cache_invalid " 
-    node[home].inchan.channel_1.msg.op = req_upgrade & 
-    (forall n:node_id do node[home].directory[addr][n] = cache_invalid   endforall) &
     addr = node[home].inchan.channel_1.msg.addr &
-	source = node[home].inchan.channel_1.msg.source &
-    node[home].inchan.channel_1.valid
-  & node[home].home_requests[addr].status = inactive ==>
+	  source = node[home].inchan.channel_1.msg.source &
+    node[home].inchan.channel_1.valid &
+    node[home].home_requests[addr].status = inactive &
+    node[home].inchan.channel_1.msg.op = req_upgrade & 
+    (forall n:node_id do node[home].directory[addr][n] = cache_invalid   endforall) 
+    ==>
 begin
 
   node[home].inchan.channel_1.msg.op := read_exclusive;
   
   node[home].home_requests[addr].source := source;
   node[home].home_requests[addr].op := read_exclusive;
-  
-  
-     
     
    node[home].home_requests[addr].data   := node[home].memory[addr];
    node[home].home_requests[addr].status := completed;
     
    clear node[home].inchan.channel_1;
+endrule;
+
+rule "`home' accepts a request message req_upgrade_no_src_cache_invalid_forallother_invalid" 
+    (node[home].inchan.channel_1.msg.op = req_upgrade) & 
+    (!(node[home].directory[addr][src] = cache_invalid ))&
+     (forall n:node_id do (node[home].directory[addr][n] = cache_invalid | !(src =n))   endforall) & 
+    source = node[home].inchan.channel_1.msg.source &
+    node[home].inchan.channel_1.valid
+  & node[home].home_requests[addr].status = inactive ==>
+begin
+
+    
+  
+  node[home].home_requests[addr].source := source;
+  node[home].home_requests[addr].op := req_upgrade;
+   
+  node[home].home_requests[addr].status := completed;
+     
+    
+  clear node[home].inchan.channel_1;
 endrule;
  
 rule "`home' accepts a request message read_shared_home_cache_shared" 
@@ -619,25 +683,7 @@ begin
 endrule; 
 
 
-rule "`home' accepts a request message req_upgrade_no_src_cache_invalid_forallother_invalid" 
-    (node[home].inchan.channel_1.msg.op = req_upgrade) & 
-    (!(node[home].directory[addr][src] = cache_invalid ))&
-     (forall n:node_id do (node[home].directory[addr][n] = cache_invalid | !(src =n))   endforall) & 
-    source = node[home].inchan.channel_1.msg.source &
-    node[home].inchan.channel_1.valid
-  & node[home].home_requests[addr].status = inactive ==>
-begin
 
-    
-  
-  node[home].home_requests[addr].source := source;
-  node[home].home_requests[addr].op := req_upgrade;
-   
-  node[home].home_requests[addr].status := completed;
-     
-    
-  clear node[home].inchan.channel_1;
-endrule;
 
 
 endruleset;
