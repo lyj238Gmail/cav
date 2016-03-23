@@ -85,16 +85,16 @@
         Kaiqiang Duan  \and
         Shaowei Cai  \and
         Yi Lv
-\thanks{%
-Yongjian~Li and Kaiqiang Duan and Shaowei Cai and Yi Lv are with State Key Laboratory of Computer
-Science, Institute of Software, Chinese Academy of sciences ,
-Beijing, China.
-E-mail: lyj238,zengnj@ios.ac.cn}%
-\thanks{William~N.~N.~Hung is with Synopsys Inc., Mountain View,
-California, USA.
-E-mail: william\_hung@alumni.utexas.net}%
-\thanks{Xiaoyu~Song is with ECE Department, Portland State
-University, Portland, Oregon, USA. E-mail: song@ece.pdx.edu}
+%\thanks{%
+%Yongjian~Li and Kaiqiang Duan and Shaowei Cai and Yi Lv are with State Key Laboratory of Computer
+%Science, Institute of Software, Chinese Academy of sciences ,
+%Beijing, China.
+%E-mail: lyj238,zengnj@ios.ac.cn}%
+%\thanks{William~N.~N.~Hung is with Synopsys Inc., Mountain View,
+%California, USA.
+%E-mail: william\_hung@alumni.utexas.net}%
+%\thanks{Xiaoyu~Song is with ECE Department, Portland State
+%University, Portland, Oregon, USA. E-mail: song@ece.pdx.edu}
 }
 %\authorrunning{Li et al.}
 %55\institute{
@@ -238,8 +238,8 @@ Given a protocol $\mathcal{P}$ and a property $inv$, {\tt invFinder} tries to fi
 
 After {\tt invFinder} finds the auxiliary invariants and causal relations, {\tt proofGen} generalizes them  into a parameterized form, which are then used to construct a completely parameterized formal proof in a theorem prover (e.g., Isabelle) to model $\mathcal{P}$ and to prove the property $inv$. After the base theory is imported, the generated proof is checked automatically.  Usually, a proof is done interactively. Special efforts in the design of the proof generation are made in order to make the proof checking automatically. %In order to make the proof checking automatical, the basically formal library theory should be imported, and support
 
-%The organization of this work is as follows: Section \ref{sec:Preliminaries} introduces the theoretical foundation; \ref{sec:invFinder} the {\sf invFinder}; \ref{sec:generalization} the generalization strategy; \ref{sec:prooGen} the {\sf proofGen} and the generated proof. We go through these sections by verifying a small example - mutual exclusion example. Section \ref{} shows the further experiments on real-world protocols. Section \ref{} compares ours with the previous work.
-\vspace{-0.5cm}
+The organization of this work is as follows: Section \ref{sec:Preliminaries} introduces the theoretical foundation; \ref{sec:invFinder} the {\sf invFinder}; \ref{sec:generalization} the generalization strategy; \ref{sec:prooGen} the {\sf proofGen} and the generated proof. We go through these sections by verifying a small example - mutual exclusion example. Section \ref{} shows the further experiments on real-world protocols. Section \ref{} compares ours with the previous work.
+
 \section{Preliminaries}\label{sec:Preliminaries}
 \vspace{-0.3cm}
 %\subsection{Protocol syntax} \label{sec:protocolSyntax}
@@ -306,7 +306,7 @@ For an expression $e$ and a statement $\alpha= x_1:=e_1;x_2:=e_2;...;x_k:=e_k $,
 Similarly, for a formula $f$  and a statement $\alpha= x_1:=e_1;x_2:=e_2;...;x_k:=e_k $, we use $f^{\alpha}$ to denote the formula transformed from $f$ by substituting each $x_i$ with $e_i$.
 Moreover, $f^{\alpha}$ can be regarded as the weakest precondition of formula $f$ w.r.t. statement $\alpha$, and we denote $preCond(f,\alpha)\equiv f^{\alpha}$. Noting that a state transition is caused by an execution of the statement, formally, we define: $s\overset{\alpha}{\twoheadrightarrow } s' \equiv$ $(\forall x \in \mathsf{vars}(\alpha). s'(x)= \mathbb{A}[\alpha|_x,s])$ $\wedge (\forall x \notin \mathsf{vars}(\alpha). s'(x)= s(x))$ .
 
-A $rule$ $r$ is a pair $<g,\alpha>$, where $g$ is a formula and is called the $guard$ of rule $r$, and $\alpha$ is a statement and is called the $action$ of rule $r$.
+A $rule$ $r$ is a pair $<g,\alpha>$, where $g$ is a formula and is called the guard of rule $r$, and $\alpha$ is a statement and is called the $action$ of rule $r$.
  For convenience, we denote a rule with the guard $g$ and the statement $\alpha$ as $g \vartriangleright \alpha$. Also, we denote $\mathsf{act}(g \vartriangleright \alpha)\equiv \alpha$ and $\mathsf{pre}(g \vartriangleright \alpha)\equiv g$. If the guard $g$ is satisfied at state $s$, then $\alpha$ can be executed, thus a new state $s'$ is derived, and we say the rule $g \vartriangleright \alpha$ is triggered at $s$, and transited to $s'$. Formally, we define: $s\overset{r}{\rightarrow } s' \equiv s\models \mathsf{pre}(r) \wedge s\overset{\mathsf{act}(r)}{\twoheadrightarrow } s'$.
 
 A $protocol$ $\mathcal{P}$ is a pair $(I,R)$, where $I$ is a set of $formulas$ and is called the initializing formula  set, and $R$ is a set of rules. %A $state$ is an instantaneous snapshot of its behavior given by a set of assignments.
@@ -1866,9 +1866,9 @@ automatic proof generation is promising in the field of formal
 verification of industrial protocols. Theorem proving can guarantee the rigorousness of the verification results,
 while automatic proof generation can release the burden of human interaction.
 
-\vspace{-0.5cm}
-\bibliographystyle{splncsnat}
-%\bibliographystyle{plain}
+%\vspace{-0.5cm}
+%\bibliographystyle{splncsnat}
+\bibliographystyle{plain}
 \bibliography{gste,cache,refer,bib-proanyIsabelle,lvyi}
 
 \end{document}
