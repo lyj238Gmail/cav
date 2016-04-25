@@ -1,5 +1,4 @@
-%\documentclass{llncs}
-\documentclass[final]{IEEEtran}
+\documentclass{llncs}
 %%%%%%%%%%%%%%%%%%%%%%
 %%%%   PACKAGES   %%%%
 %%%%%%%%%%%%%%%%%%%%%%
@@ -20,7 +19,7 @@
 \usepackage{multicol}
 %\usepackage{program}
 \usepackage{cases}
-%\usepackage{enumitem}
+\usepackage{enumitem}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %For Isabelle code
 \newlength{\fminilength}
@@ -77,32 +76,24 @@
 %=========================================
 \begin{document}
 
-
-\title{ {\sf A Novel Approach to Parameterized verification of Cache Coherence Protocols}
-}
-%\titlerunning{A Novel Approach to Parameterized verification of Cache Coherence Protocols}
-\author{Yongjian Li  \and
-        Kaiqiang Duan  \and
-        Shaowei Cai  \and
-        Yi Lv
-%\thanks{%
-%Yongjian~Li and Kaiqiang Duan and Shaowei Cai and Yi Lv are with State Key Laboratory of Computer
-%Science, Institute of Software, Chinese Academy of sciences ,
-%Beijing, China.
-%E-mail: lyj238,zengnj@ios.ac.cn}%
-%\thanks{William~N.~N.~Hung is with Synopsys Inc., Mountain View,
-%California, USA.
-%E-mail: william\_hung@alumni.utexas.net}%
-%\thanks{Xiaoyu~Song is with ECE Department, Portland State
-%University, Portland, Oregon, USA. E-mail: song@ece.pdx.edu}
-}
-%\authorrunning{Li et al.}
-%55\institute{
-%State Key Laboratory of Computer Science,
+\title{ {\sf A Novel Approach to Parameterized verification of Cache Coherence Protocols}}
+\titlerunning{A Novel Approach to Parameterized verification of Cache Coherence Protocols}
+\author{Yongjian Li \inst{1} \and
+        Kaiqiang Duan \inst{1} \and
+        Jun Pang \inst{2} \and
+        Shaowei Cai \inst{1} \and
+        Yi Lv \inst{1} }
+\authorrunning{Li et al.}
+\institute{
+State Key Laboratory of Computer Science,
 %Institute of Software,
-%Chinese Academy of Sciences
-%}
+Chinese Academy of Sciences
+\and
+Computer Science and Communications, University of Luxembourg, Luxembourg
+}
+
 \maketitle
+\vspace{-0.5cm}
 %-------------------------------------------------------------------------
 \begin{abstract}
 %-------------------------------------------------------------------------
@@ -125,7 +116,7 @@ protocol is provided by a formal and readable proof.% in a theorem
 %-------------------------------------------------------------------------
 %-------------------------------------------------------------------------
 
-%\vspace{-0.5cm}
+\vspace{-0.5cm}
 \section{Introduction }
 %-------------------------------------------------------------------------
 %=========================================
@@ -156,56 +147,33 @@ system. The model checkers, although powerful in verification of
 non-parameterized systems, become impractical to verify parameterized systems, as they can verify only an instance of the parameterized
 system in each execution.
 A desirable approach is to provide a proof that the correctness holds for any instance.
-%\vspace{-0.3cm}
+\vspace{-0.3cm}
 \paragraph*{Related Work} There have been a lot of studies in the field of  parameterized
 verification~\cite{Pnueli1996,Bjørner1997,Arons2001,Pnueli2001,Tiwari2001,Chou2004,Pandav2005,Lv2007,cubicle2011}.
 Among them, the `invisible invariants' method~\cite{Arons2001}
 is an automatic technique for parameterized verification. In this
 method, auxiliary invariants are computed in a finite system
-instance to aid inductive invariant checking. Combining parameter
-abstraction and guard strengthening with the idea of computing
-invariants in a finite instance, Lv~et al.~\cite{Lv2007} use a small instance of a
-parameterized protocol as a `reference instance' to compute candidate
-invariants. References to a specific
-node in these candidate invariants are then abstracted away, and the
-resulting formulas are used to strengthen guards of the transition
-rules in the abstract node. Both works~\cite{Arons2001,Lv2007} attempt to automatically
-find invariants. However, the invisible invariants are raw boolean formulas transferred from the reachable sate set of a small finite instance
-of a protocol, which are BDDs computed by TLV (an variant of BDD\_based SMV model checker). They are too raw to have an intuitive meanings. The capacity of the invisible invariant method is seriously limited when computing the reachable  set of invisible invariants for  the inductive checking is not feasible in the case of a large example like FLASH . Until now, the  examples, which can be handled by the "invisible invariant" method, are quite small,  we still can't find successful experiments  on large examples like FLASH.
-
-
-The CMP method, which adopts parameter abstraction and guard strengthening, is proposed
-in~\cite{Chou2004} for verifying a safety property $inv$ of
+instance to aid inductive invariant checking.  % Work~\cite{Arons2001,Lv2007} attempts to automatically
+%find invariants. However, the invisible invariants are raw boolean formulas transferred from the reachable sate set of a small finite instance
+%of a protocol, which are BDDs computed by TLV (an variant of BDD\_based SMV model checker). They are too raw to have an intuitive meanings. The capacity of the invisible invariant method is seriously limited when computing the reachable  set of invisible invariants for  the inductive checking is not feasible in the case of a large example like FLASH . Until now, the  examples, which can be handled by the "invisible invariant" method, are quite small,  we still can't find successful experiments  on large examples like FLASH with data paths.
+The CMP method~\cite{Chou2004} adopts parameter abstraction and guard strengthening to verify a safety property $inv$ of
 a parameterized system.
- An abstract instance of the parameterized protocol,  which consists of m + 1
-nodes $\{P_1, \ldots , P_m, P^*\}$ with $m$ normal nodes and one
-abstract node $P^*$, is constructed iteratively. The abstract system is an
-abstraction for any protocol instance whose size is greater than
-$m$. Normally the initial abstract system does not satisfy the
-invariant $inv$. Nevertheless it is still submitted to a model
-checker for verification. When a counterexample is produced, one needs to
-carefully analyze it and comes up with an auxiliary invariant
-$inv'$, then uses it to strengthen the guards of some transition
-rules of the abstract node. The `strengthened' system is then
-subject to model checking again. This process stops until the
-refined abstract system  eventually satisfies the original invariant
-  as well as all the auxiliary invariants supplied by the
-user. However, this method's soundness is only argued in an
-informal way. To the best of our knowledge, no one has
-formally proved its correctness in a theorem prover. This
-situation may be not ideal because its application domain for cache
-coherence protocols  which demands the highest assurance for
-correctness. Besides, the analysis of counter-example and generation of new auxiliary invariants usually
- depend on human's deep insightful understanding of the protocol. It is too laborious for people to do these analysis and some effective automatic  tool is needed to help people.
-
- Predicate abstraction is also applied to the verification of parameterized systems. Baukus, Lakhnech, and Stahl  have used it to verify German (without data paths)\cite{Baukus2002}, and
- Das, Dill, and Park have used it to verify    FLASH\cite{Park1996a}.  The core of predicate abstraction is to discover  a set of predicates, which are needed  to abstract the states of a system, and an abstract state is a valuation of the predicates. Unfortunately, the task of discover proper predicates is neither easy nor automatical. Furthermore, the abstracted system is needed to proved to be conservative for certain properties under verification. This proof also needs a set of auxiliary invariants. Therefore searching enough auxiliary invariants cann't be avoided. No further efforts are made to make automatical both the discovery of proper predicates and the searching of auxiliary invariants in the work of applying predicate abstraction to the parameterized verification.
-
-Sylvain Conchon, Amit Goel, Sava Krstic, Alain Mebsout, and Fatiha Zaidi have made progress in searching automatically auxiliary invariants\cite{Conchon2013}. A heuristics-guided algorithm, called Barb, searches auxiliary invariants backward  with the help of an oracle (a reference instance of the protocol). Roughly speaking, Barb's work can be seen as a backward reachability analysis. Barb is implemented in an SMT-based model checker Cubicle\cite{Conchon2012}. The correctness of Barb is argued in a generic symbolic framework. The searched auxiliary invariants are claimed to be inductive for deductive proof in a case study of a  protocol. However, the formulation of Barb and the proof is not done in a theorem prover. Neither is a formal proof is given adopting the invariants for the protocol. Besides, the configuration of oracle need to be done manually.
+ An abstract instance of the parameterized protocol %$, % which consists of m + 1
+%nodes $\{P_1, \ldots , P_m, P^*\}$ with $m$ normal nodes and one
+%abstract node $P^*$, is constructed iteratively. The abstract system
+is constructed by a counter-example-guided refinement process in an  %However, this method's soundness is only argued in an
+informal way. %To the best of our knowledge, no one has
+%formally proved its correctness in a theorem prover although the authors argued for a mechanized proof for all the thing of CMP in \cite{Chou2004}. Besides, the analysis of counter-example and generation of new auxiliary invariants usually
+% depend on human's deep insightful understanding of the protocol. It is too laborious for people to do these analysis. %and some effective automatic  tool is needed to help people.
+%It was demonstrated in
+%[7] that this method is powerful enough to handle complex
+%cache coherence protocols such as FLASH effectively.
 
 
 
-The degree of scalability and automatic are two critical merits of approaches to parameterized verification. In this sense, verification of real-world parameterized systems is still a challenging task.
+
+
+The degree of scalability and automatic are two critical merits of approaches to parameterized verification. In this sense, verification of real-world parameterized systems is still a challenging tasks.
 For instance, up to now, the verification of a real-world benchmark FLASH requires human guidance in the existing successful verifications \cite{Park1996a,McMillan2001,Chou2004}. %: ��if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols�� \cite{Chou2004}. However, the existing approaches, which have verified FLASH, need too much human intervention. The first full verification of safety properties of FLASH is done by work in \cite{Park1996a}. Park and Dill  proved the safety properties of FLASH using  PVS \cite{cade92-pvs}. %They introduce the aggressioned FLASH protocol, which
 %is in fact an abstracted transaction version of FLASH,   need prove
 %the correspondence between the abstract and the original FLASH
@@ -261,10 +229,10 @@ Given a protocol $\mathcal{P}$ and a property $inv$, {\tt invFinder} tries to fi
 
 After {\tt invFinder} finds the auxiliary invariants and causal relations, {\tt proofGen} generalizes them  into a parameterized form, which are then used to construct a completely parameterized formal proof in a theorem prover (e.g., Isabelle) to model $\mathcal{P}$ and to prove the property $inv$. After the base theory is imported, the generated proof is checked automatically.  Usually, a proof is done interactively. Special efforts in the design of the proof generation are made in order to make the proof checking automatically. %In order to make the proof checking automatical, the basically formal library theory should be imported, and support
 
-The organization of this work is as follows: Section \ref{sec:Preliminaries} introduces the preliminaries; Section  \ref{sec:causal_rel} introduces the theoretical foundation; Section \ref{sec:invFinder} the {\sf invFinder}; Section \ref{sec:generalization} the generalization strategy; Section \ref{sec:prooGen} the {\sf proofGen} and the generated proof. We go through these sections by verifying a small example - mutual exclusion example. Section \ref{sec:experiments} shows the further experiments on real-world protocols. Section \ref{sec:conclusion} concludes our work.
-
+%The organization of this work is as follows: Section \ref{sec:Preliminaries} introduces the theoretical foundation; \ref{sec:invFinder} the {\sf invFinder}; \ref{sec:generalization} the generalization strategy; \ref{sec:prooGen} the {\sf proofGen} and the generated proof. We go through these sections by verifying a small example - mutual exclusion example. Section \ref{} shows the further experiments on real-world protocols. Section \ref{} compares ours with the previous work.
+\vspace{-0.5cm}
 \section{Preliminaries}\label{sec:Preliminaries}
-%\vspace{-0.3cm}
+\vspace{-0.3cm}
 %\subsection{Protocol syntax} \label{sec:protocolSyntax}
 %Variable are defined by the following BNF grammar:
 %\begin{equation*}
@@ -301,35 +269,18 @@ An $assignment$ is a mapping from a variable to an expression, and is denoted wi
 
 
 
-For every expression $e$ and formula $f$, we denote the value of $e$ (or $f$) under a state $s$ as $\mathbb{A}[e,s]$ (or $\mathbb{B}[f,s]$).
+For every expression $e$ and formula $f$, we denote the value of $e$ (or $f$) under the state $s::var \Rightarrow valueType $ as $\mathbb{A}[e,s]$ (or $\mathbb{B}[f,s]$).
 For a state $s$ and a formula $f$, we write
 $s\models f$ to mean %$\mathbb{A}[e,s]=c$ and
 $\mathbb{B}[f,s]=true$.
-Formal semantics of expressions and formulas are given in HOL  as usual, which is shown as follows: \footnote{The logic to specify parameterized system  can be embedded in HOL supported by Isabelle. Therefore, HOL can be regarded as the main meta-logic in our work.}\\
-
-\begin{table}[h] \label{table-semantics-exp-formula}
-\center\begin{tabular}{|l|l|}
-  \hline
-   Semantics \\ \hline
-  $\mathbb{A}[v,s]\equiv s(v)$, where  $v$ is a variable\\
-    $\mathbb{A}[c,s]\equiv c$, where  $c$ is a constant\\
-   $\mathbb{A}[f?e_1:e_2,s]\equiv$if ($\mathbb{B}[f,s]$) then $\mathbb{A}[e_1,s]$ else $\mathbb{A}[e_2,s]$ \\
-  $\mathbb{B}[ e_1\doteq e_2,s]\equiv   \mathbb{A}[e_1,s]=\mathbb{A}[e_2,s]$  \\
-  $\mathbb{B}[\negc f,s]\equiv \neg \mathbb{B}[f,s]$ \\
-  $\mathbb{B}[f_1\andc f_2,s]\equiv \mathbb{B}[f_1,s] \land \mathbb{B}[f_1,s]$ \\
-  $\mathbb{B}[f_1\orc f_2,s]\equiv \mathbb{B}[f_1,s] \vee \mathbb{B}[f_2,s]$ \\
- $\mathbb{B}[f_1\dashrightarrow f_2,s]\equiv \mathbb{B}[f_1,s]$  implies $\mathbb{B}[f_2,s]$ \\
- %  $\mathbb{B}[f_1\longleftrightarrow f_2,s]\equiv \mathbb{B}[f_1,s]$  if and only if $\mathbb{B}[f_2,s]$ \\
-  \hline
-\end{tabular}
-\end{table}
+Formal semantics of expressions and formulas are given in HOL  as usual, which is shown in \cite{LiCache16}. %\footnote{The logic to specify parameterized system  can be embedded in HOL supported by Isabelle. Therefore, HOL can be regarded as the main meta-logic in our work.}
 
 
 For an expression $e$ and a statement $\alpha= x_1:=e_1;x_2:=e_2;...;x_k:=e_k $, we use $\mathsf{vars(\alpha)}$ to denote the variables to be assigned $\{x_1,x_2,...x_k\}$; and use $e^{\alpha}$ to denote the expression transformed from $e$ by substituting each $x_i$ with $e_i$ simultaneously.
 Similarly, for a formula $f$  and a statement $\alpha= x_1:=e_1;x_2:=e_2;...;x_k:=e_k $, we use $f^{\alpha}$ to denote the formula transformed from $f$ by substituting each $x_i$ with $e_i$.
 Moreover, $f^{\alpha}$ can be regarded as the weakest precondition of formula $f$ w.r.t. statement $\alpha$, and we denote $preCond(f,\alpha)\equiv f^{\alpha}$. Noting that a state transition is caused by an execution of the statement, formally, we define: $s\overset{\alpha}{\twoheadrightarrow } s' \equiv$ $(\forall x \in \mathsf{vars}(\alpha). s'(x)= \mathbb{A}[\alpha|_x,s])$ $\wedge (\forall x \notin \mathsf{vars}(\alpha). s'(x)= s(x))$ .
 
-A $rule$ $r$ is a pair $<g,\alpha>$, where $g$ is a formula and is called the guard of rule $r$, and $\alpha$ is a statement and is called the $action$ of rule $r$.
+A $rule$ $r$ is a pair $<g,\alpha>$, where $g$ is a formula and is called the $guard$ of rule $r$, and $\alpha$ is a statement and is called the $action$ of rule $r$.
  For convenience, we denote a rule with the guard $g$ and the statement $\alpha$ as $g \vartriangleright \alpha$. Also, we denote $\mathsf{act}(g \vartriangleright \alpha)\equiv \alpha$ and $\mathsf{pre}(g \vartriangleright \alpha)\equiv g$. If the guard $g$ is satisfied at state $s$, then $\alpha$ can be executed, thus a new state $s'$ is derived, and we say the rule $g \vartriangleright \alpha$ is triggered at $s$, and transited to $s'$. Formally, we define: $s\overset{r}{\rightarrow } s' \equiv s\models \mathsf{pre}(r) \wedge s\overset{\mathsf{act}(r)}{\twoheadrightarrow } s'$.
 
 A $protocol$ $\mathcal{P}$ is a pair $(I,R)$, where $I$ is a set of $formulas$ and is called the initializing formula  set, and $R$ is a set of rules. %A $state$ is an instantaneous snapshot of its behavior given by a set of assignments.
@@ -364,8 +315,7 @@ assignN(i)$\equiv$n[i]=I\\
 
    idle(i) $\equiv$  n[i] $\eqc$ E $\vartriangleright$ n[i] := I;  x := true
   \\% \\
-   prules(N) $\equiv$ \{r. $\exists$ i. i $\le$ N $\wedge$( r=crit(i)~$\vee$ r=exit(i) \\
-    $\vee$ r=idle (i)~$\vee$ r=try (i)\}\\
+   prules(N) $\equiv$ \{r. $\exists$ i. i $\le$ N $\wedge$( r=crit(i)~$\vee$ r=exit(i)  $\vee$ r=idle (i)~$\vee$ r=try (i)\}\\
 %\\
 
 mutualEx(N)$\equiv$ (pIni(N), prules(N))\\
@@ -379,22 +329,49 @@ mutualInv(i,j) $\equiv$
 \end{example}
 
 
-As Hoare logics specifies,  after executing statement $\alpha$, $f$ holds iff $\mathsf{preCond}(f, \alpha)$ holds before the execution.
-\begin{lemma}\label{lemma-preCond}
-Suppose $s\overset{\alpha}{\twoheadrightarrow } s'$,
-$s\models \mathsf{preCond} (f, \alpha)$ if and only if $s'\models f$
-\end{lemma}
+%As Hoare logics specifies,  after executing statement $\alpha$, $f$ holds iff $\mathsf{preCond}(f, \alpha)$ holds before the execution.
+%\begin{lemma}\label{lemma-preCond}
+%Suppose $s\overset{\alpha}{\twoheadrightarrow } s'$,
+%$s\models \mathsf{preCond} (f, \alpha)$ if and only if $s'\models f$
+%\end{lemma}
+%definition statementEnableForm:: rule $\Rightarrow$
+%formula$\Rightarrow$bool
+%\\
+% where statementEnableForm r f$\equiv$
+%$\forall$s. formEval (pre r) s \\
+%$\longrightarrow$ formEval  (preCond f (act r)) s\\
+%definition statementDisableForm::rule$\Rightarrow$formula$\Rightarrow$bool\\
+%where statementDisableForm r f $\equiv$
+ %    $\forall$s. formEval (pre r) s \\
+%$\longrightarrow$ $\neg$ formEval  (preCond f (act r)) s
+%\end{specification}
 
+%Function $\mathsf{statementEnableForm}$ says that the guard of the rule implies
+% the pre-condition of  formula $f$  w.r.t. statement of
+% the rule. This means that $f$ must be valid after statement $S$ is executed.
+%On the other hand,  $\mathsf{statementDisableForm}$ says that   the
+%guard of the rule implies the negation of the pre-condition of
+%formula $f$ w.r.t. statement of the rule. This means that $f$ must
+%be invalid after statement $S$ is executed.
+%For instance,  for the statement $S=\mathsf{assign}~
+%((\mathsf{Para}~  n~ 0), (\mathsf{Const} ~\mathsf{T}))$, formula
+%$f_1= \mathsf{eqn}~ (\mathsf{IVar}~ (\mathsf{Para}~ n 0))
+%(\mathsf{Const}~ \mathsf{T})) $, $f_2= \mathsf{eqn}~ (\mathsf{IVar}~
+%(\mathsf{Para}~ n ~0))\mathsf (\mathsf{Const}~ \mathsf{E}))$, we
+%have $\mathsf{statementEnableForm}~S~f_1$ and
+%$\mathsf{statementDisableForm}~S~f_2$. We also define two functions
+%$\mathsf{varOfForm}~f$ and $\mathsf{varOfSent}~S$ to denote the set
+%of variables used in the formula $f$ and statement $S$.
 
-
+\vspace{-0.8cm}
 \section{Causal Relations and Consistency Lemma} \label{sec:causal_rel}
-
+\vspace{-0.3cm}
 A novel feature of our work lies in that three kinds of causal
 relations are exploited, which are essentially special cases of the
 general induction rule.  Consider a rule $r$, a formula $f$, and a formula set $fs$, three
  kinds of causal relations are defined as follows:
  \begin{definition}
-We define the following relations: $\mathsf{invHoldRule_1}::state \times formula\times rule \Rightarrow bool$, $\mathsf{invHoldRule_2}::state\times  formula\times rule  \Rightarrow bool$,  $\mathsf{invHoldRule_3}::state \times formula\times rule \times rule set\Rightarrow bool$, and $\mathsf{invHoldRule}::state \times formula\times rule \times rule set\Rightarrow bool$.
+We define the following relations: $\mathsf{invHoldRule_1}::state \times formula\times rule \Rightarrow bool$, $\mathsf{invHoldRule_2}::state\times  formula\times rule  \Rightarrow bool$,  $\mathsf{invHoldRule_3}::state \times formula\times rule \times rule set\Rightarrow bool$, and $\mathsf{invHoldRule_3}::state \times formula\times rule \times rule set\Rightarrow bool$.
 \vspace{-0.2cm}
 \begin{enumerate}
 \item $\mathsf{invHoldRule_1} (s,f,r) \equiv $$s \models \mathsf{pre}(r) \longrightarrow s \models \mathsf{preCond}(f ,\mathsf{act}(r))$;\footnote{Here  $\longrightarrow$ and $\longleftrightarrow$ are HOL connectives.  }
@@ -486,28 +463,24 @@ $s \models ini$ implies $s \models inv$;
 Let us define a set of auxiliary invariants:
 
 \begin{specification}
-invOnXC(i)  $\equiv$ $\negc$(x $\doteq$ true $\andc$ n[i]$\doteq$ C)   \\
+invOnXC(i)  $\equiv$ $\negc$(x $\doteq$ true $\andc$ n[i]$\doteq$ C)   \ \ \
 
 invOnXE(i)   $\equiv \negc$ (x $\doteq$ true$\andc$ n[i] $\doteq$ E)  \\
 
 
-aux$_1$(i,j)   $\equiv \negc$ ( n[i]$\doteq$ C$\andc$n[j] $\doteq$ E)  \\
+aux$_1$(i,j)   $\equiv \negc$ ( n[i]$\doteq$ C$\andc$n[j] $\doteq$ E)   \ \ \
 
 aux$_2$ (i,j) $\equiv \negc$  ( n[i]$\doteq$ E$\andc$n[j]$\doteq$ E)\\
 
-  pinvs(N)$\equiv$ \{f. $\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$\\
-   \iInv1 $\ne$ \iInv2 $\wedge$   \\
-   f =mutualInv   \iInv1 \iInv2) \\
+  pinvs(N)$\equiv$ \{f. $\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 $\wedge$   f =mutualInv   \iInv1 \iInv2) \\
  $ \vee(\exists$ \iInv1. \iInv1 $\le$ N $\wedge$  f =invOnXC  \iInv1)   \\
 $\vee(\exists$ \iInv1. \iInv1 $\le$ N $\wedge$  f= invOnXE \iInv1)    \\
-$\vee(\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 \\
-$\wedge$ f =  aux1  \iInv1 \iInv2) \\
-$\vee(\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 \\
-$\wedge$ f =  aux2  \iInv1 \iInv2) \}.
+$\vee(\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 $\wedge$ f =  aux1  \iInv1 \iInv2) \\
+$\vee(\exists$ \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\ne$ \iInv2 $\wedge$ f =  aux2  \iInv1 \iInv2) \}.
 
 \end{specification}
 
-In the following discussion, we assume that $inv=\mathsf{mutual} (i_1,i_2)$, $r=\mathsf{crit}(iR_1)$, $rs= \mathsf{pinvs} (N)$, and  assumptions  $i_1 \neq N$, $i_2 \neq N$, $i_1 \neq i_2$, and $iR_1 \leq N$ hold.
+In the following discussion, we assume that $i_1 \neq N$, $i_2 \neq N$, and $iR_1 \leq N$.
 
 \begin{itemize}[noitemsep,nolistsep]
 %\item  $\mathsf{invHoldRule_1 }(s,\mathsf{invOnXC}( 1),
@@ -528,18 +501,18 @@ In the following discussion, we assume that $inv=\mathsf{mutual} (i_1,i_2)$, $r=
 
 % \item
 
-\item     $\mathsf{invHoldRule_2 }(s,inv,r)$, where   $i_1 \neq iR_1$, and $i_2 \neq iR_1$, since $\mathsf{preCond}(\mathsf{act}(r),inv)=inv$.
+\item     $\mathsf{invHoldRule_2 }(s,\mathsf{mutual} (i_1,i_2), \mathsf{crit}(iR_1),(\mathsf{pinvs} (N))$, where  $i_1 \neq i_2$,  $i_1 \neq iR_1$, and $i_2 \neq iR_1$, since $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),\mathsf{mutual} (i_1,i_2))=\mathsf{mutual} (i_1,i_2)$.
 
 
- \item   $\mathsf{invHoldRule_3 }(s,inv,r,invs)$, where  $i_1 = iR_1$.
+ \item   $\mathsf{invHoldRule_3 }(s,\mathsf{mutual} (i_1,i_2), \mathsf{crit}(iR_1),(\mathsf{pinvs} (N))$, where $i_1 \neq i_2$, and $i_1 = iR_1$.
   Since
- $\mathsf{invOnXC}( i_2) \in invs$, $\mathsf{preCond}$\ $(\mathsf{act}(r),inv)=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_2]\eqc\mathsf{C})$, and $s \models (\mathsf{invOnXC}( i_2) \andc \mathsf{pre}(\mathsf{crit}(iR_1)))$ implies  $s \models \negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_2]\eqc\mathsf{C})$.
+ $\mathsf{invOnXC}( i_2) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),
+ \mathsf{mutual} (i_1,i_2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_2]\eqc\mathsf{C})$, and $\mathsf{invOnXC}( i_2)$ .
 
 
-\item   $\mathsf{invHoldRule_3 }(s,inv,r,invs)$, where $i_2 = iR_1$.  Since
- $\mathsf{invOnXC}( i_1) \in invs$, $\mathsf{preCond}$\ $(\mathsf{act}(r),inv)=\negc (n[i_1]\eqc\mathsf{C}\andc \mathsf{C}\eqc\mathsf{C})$, and $s \models (\mathsf{invOnXC}( i_2) \andc \mathsf{pre}(\mathsf{crit}(iR_1)))$ implies  $s \models \negc ( n[i_1]\eqc\mathsf{C}\andc \mathsf{C}\eqc\mathsf{C})$. %Since
- %$\mathsf{invOnXC}( i_1) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),
-% \mathsf{mutual} (i_1,i_2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_1]\eqc\mathsf{C})$.
+\item   $\mathsf{invHoldRule_3 }(s,\mathsf{mutual} (i_1,i_2), \mathsf{crit}(iR_1),(\mathsf{pinvs} (N))$, where $i_1 \neq i_2$, and $i_2 = iR_1$. Since
+ $\mathsf{invOnXC}( i_1) \in \mathsf{pinvs} (N)$ implies $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),
+ \mathsf{mutual} (i_1,i_2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_1]\eqc\mathsf{C})$.
 % where $i_1 \neq i_2$,  $i_1 \neq iR_1$, and $i_2 \neq iR_1$.
   % because
  %$\mathsf{invOnXC}( i_2) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),
@@ -571,66 +544,25 @@ The following lemma formalizes the essence of the aforementioned causal relation
 
 
 
-Now we apply the consistence lemma to prove that the mutual exclusion property holds for each reachable state of the mutual-exclusion protocol. Let us recall example \ref{example1} and  \ref{example2}.
-\begin{lemma} \label{caseSimp}
-  If $ P=(pini(N),prules(N))$,  $s \in \mathsf{reachableSet}(P)$, and $0<N$,
-  then for all $inv$ s.t. $inv \in pinvs(N)$, $s\models inv $.
-\end{lemma}
+%Now we apply the consistence lemma to prove that the mutual exclusion property holds for each reachable state of the mutual-exclusion protocol. Let us recall example \ref{example1} and  \ref{example2}.
+%\begin{lemma} \label{caseSimp}
+%  If $ P=(pini(N),prules(N))$,  $s \in \mathsf{reachableSet}(P)$, and $0<N$,
+%  then for all $inv$ s.t. $inv \in pinvs(N)$, $s\models inv $.
+%\end{lemma}
 
-\begin{proof} By theorem\ref{consistentLemma}, we need
-to verify that parts (1) and (2) of
- the $\mathsf{consistency}$ relation  hold.
+In order to  apply the consistency lemma to prove that a given property $inv$ (e.g., the mutual exclusion property) holds for each reachable state of a protocol $P=(inis,rs)$ (e.g., mutual-exclusion protocol), we need to solve two problems. First, we need to construct a set of auxiliary invariants $invs$ which contains $inv$ and satisfies  $\mathsf{consistent}( invs, inis, rs)$.  By applying the consistency lemma, we  decompose the original problem of invariant checking into that of checking the causal relation between some $f\in invs$ and $r \in rs$. The latter needs   case analysing on the form of $f$ and $r$.  Only if a proof script contains sufficient information on the case splitting and  the kind of causal relation to be checked in each subcase, Isabelle can help us to automatically  check it. How to  generate automatically such a proof is the second problem.
 
-\begin{description}[noitemsep,nolistsep]
-\item[(1)]
- For any invariant $inv \in pinvs(N)$, any initializing predicate
-$ini \in pini(N)$, any state $s$, if $ini$ is evaluated true at state
-$s$, then $inv$ is
-evaluated true at state $s$.\\
-\item[(2)]
- For any invariant $inv \in \mathsf{pinvs}(N)$, any $r$ in rule set
-$prules(N)$,  $\mathsf{invHoldForRule}(s,inv,r,pinvs(N))$.\\
-\end{description}
-For (1), the proof is rather straightforward.    For instance,
-consider the case where $inv= \mathsf{mutualInv}( i_1, i_2)$ for some $i_1$ and $i_2$, where
- $i_1\le N$, $i_2\le N$, and $i_1\neq i_2$. We can
- conclude that $s\models  n[i_2]\eqc I$ if $s\models pini(N)$,
-thus $s\models inv$ holds. The other invariants can be
-proved similarly.
-
-\noindent For (2), we show  proof of a typical case where
-$inv=\mathsf{mutualInv} (i_1, i_2)$, and $r=\mathsf{crit }(iR)$, where $iR\le N$,. %Here we
-%abbreviate $ant= \mathsf{eqn} (\mathsf{IVar} (\mathsf{Para}  n
-%i_1)) (\mathsf{Const} C)$,
-% $ cons= \mathsf{neg} (\mathsf{eqn} (\mathsf{IVar} (\mathsf{Para}  n %i_2))
-%  (\mathsf{Const} \mathsf{C}))$. Now we consider three cases analysis %on $iR$, $i_1$ and $i_2$:\\
- \begin{description}
- \item[(a)]
-  $iR=i_1$, we  show   $\mathsf{invHoldForRule_3}(s, inv, r,
-pinvs(N))$. Because $\mathsf{preCond}(inv,\mathsf{act}(r))=\negc( \mathsf{C}\eqc\mathsf{C}\andc n[i_2]\eqc\mathsf{C})$ and $\mathsf{pre}(r)=n[i_1]\eqc \mathsf{T} \andc x\eqc \mathsf{ture}$, by IH, we have
-$s \models \mathsf{invOnXC} (i_2)$, obviously, from this and  $s \models \mathsf{pre}(r)$, we have $s \models \negc(  n[i_2]\eqc\mathsf{C})$, which is equivalent to $s \models \mathsf{preCond}(inv,\mathsf{act}(r))$.
-
- \item[(b)] $iR=i_2$, we  show $\mathsf{invHoldForRule_3}(s, inv, r,pinvs(N))$.   Because $\mathsf{preCond}(inv,\mathsf{act}(r))=\negc (n[i_1]\eqc\mathsf{C} \andc \mathsf{C}\eqc\mathsf{C} )$ and $\mathsf{pre}(r)=n[i_2]\eqc \mathsf{T} \andc x\eqc \mathsf{ture}$,  by IH, we have
-$s \models \mathsf{invOnXC} (i_1)$, obviously, from  this and  $s\models \mathsf{pre}(r)$, we have $s \models \negc(  n[i_1]\eqc\mathsf{C})$, which is equivalent to $s\models \mathsf{preCond}(inv,\mathsf{act}(r))$.
-
-
- \item[(c)] $iR\neq i_1$ and $iR\neq i_2$, we  show
-$\mathsf{invHoldForRule_2}(s, inv, r)$. The proof is straightforward because $\mathsf{preCond}(inv,\mathsf{act}(r))=inv$.
-\end{description}
- \end{proof}
-In order to  apply the consistency lemma to prove that a given property $inv$ (e.g., the mutual exclusion property) holds for each reachable state of a protocol $P=(inis,rs)$ (e.g., mutual-exclusion protocol), we need to solve two problems. First, we need to construct a set of auxiliary invariants $invs$ which contains $inv$ and satisfies  $\mathsf{consistent}( invs, inis, rs)$.  By applying the consistency lemma, we  decompose the original problem of invariant checking into that of checking the causal relation between some $f\in invs$ and $r \in rs$. The latter needs three levels of case analysis: the first is on the form of $inv$, the second is on  and $r$, and the last is on the rule parameters $iR$ and invariant parameters such as $i_1$.  Only if a proof script contains sufficient information on the case splitting and  the kind of causal relation to be checked in each subcase, Isabelle can help us to automatically  check it. How to  generate automatically such a proof is the second problem.
-
-\begin{figure}[htbp]
-\centering %
+%\begin{figure}[htbp]
+%\centering %
 %\vspace{-0.8cm}
-\includegraphics[width=0.5\textwidth]{paraVerifier.pdf}
-\vspace{-0.6cm}
-\caption{The workflow of {\sf paraVerifier} \label{fig:arch}
-}
-\end{figure}
+%\includegraphics[width=1.0\textwidth]{paraVerifier.pdf}
+%\vspace{-0.6cm}
+%\caption{The workflow of {\sf paraVerifier}.}
+%\label{fig:arch}
+%\end{figure}
 %\vspace{-0.8cm}
 
-Our solutions to the two problems are shown in Fig. \ref{fig:arch}:
+Our solutions to the two problems are as follows:
 Given a protocol,  \texttt{invFinder} finds all the necessary ground auxiliary invariants from a small instance of the protocol in Murphi. This step solves the first  problem.
  A table {\tt protocol.tbl} is worked out  to store the set of ground invariants and
  causal relations, which are then  used by {\tt proofGen} to
@@ -642,18 +574,16 @@ proof commands which essentially proves the existence of the
 parameterized causal relations. This solves the second problem.  At last, the Isabelle proof script is
 fed into Isabelle to check the correctness of the protocol.
 %Consistency lemma has eliminated the need of directly use of usual induction proof method. Applying it, we  decompose the problem of invariant checking into that of checking the causal relation between $f$ and $r$ by case analysing parameters of a rule and an invariant. As shown in  and such a causal relation checking is within the ability of an automatical tactic provided by a theorem prover like Isabelle. Due to the uniform style of checking causal relation, it is also feasible to generate a proof of such a style by an external proof generator. However, as shown in Example \ref{example2}, the   three items shows that there are three subcases where we compare rule parameter $iR_1$ with formula parameters $i_1$ and $i_2$, different kinds of causal relations hold between rule $\mathsf{crit}~iR_1$ and invariant $\mathsf{mutualInv}~i_1~i_2$. Only if a proof script contains enough information on the case splitting and  which kind of causal relation to be checked in each case, Isabelle can help us to automatically  check whether the kind of causal relation hold in the case. How to provide these key proof information is a central problem in work of both {\sf invFinder} and {\sf proofGen}.
-%\vspace{-0.6cm}
+\vspace{-0.6cm}
 
-\section{  Searching Auxiliary Invariants}\label{sec:invFinder}
-Given a protocol $\mathcal{P}$ and a property set $F$ containing invariant formulas we want to verify, {\tt invFinder} in Algorithm \ref{alg:invfinder} aims to find useful auxiliary invariants and causal relations which are capable of proving any element in $F$.  A set $A$ is used to store all the invariants found up to now, and is initialized as  $F$. A queue  $newInvs$ is used to store new invariants which have not been checked,  and  is initialized as  $F$.  A relation table $tuples$ is used to record the causal relation between a parameterized rule in some parameter setting and a concrete invariant. Initially $tuples$ is set as NULL.
-{\sf invFinder}  works iteratively in a semi-proving and semi-searching way. In each iteration, the head element $f$ of $newInvs$ is popped,  then $\mathsf{Policy}(r,f)$  generates groups of parameters $paras$  according to $r$ and $f$ by some policy. For each parameter $para$ in $paras$,   it is applied to instantiate $r$ into a concrete rule $cr$.  Here  $\mathsf{apply}(r,para)=r$ if $r$ contains no array-variables and $para=[]$; otherwise $\mathsf{apply}(r,para)=r(para_{[1]},..., para_{[|para|]})$. Then $coreFinder(cr,  f, A)$ is called to check
- whether  a causal relation exists between $cr$ and $f$; if there is such one relation item, the relation item $rel$ and a  formula option $newInvOpt$ is returned; otherwise a run-time error occurs in  $coreFinder$, which indicates no proof can be found. In the first case, a tuple $<r, para, f, rel>$ will be inserted into $tuples$; If the formula option $newInvOpt$ is $\mathsf{NONE}$, then no new invariant formula is generated; otherwise $newInvOpt=\mathsf{Some}(f')$ for some formula $f'$, then  $\mathsf{get}(newInvOpt)$ returns $f'$, and the new invariant formula $f'$ will be pushed into the queue $newInvs$ and inserted into the invariant set $A$.  The above searching process is executed until $newInvs$ becomes empty.  At last, the table $tuples$ is returned.
+\section{  Searching Auxiliary Invariants}
+
 
 \SetAlFnt{\small}
 
-%\vspace{-0.8cm}
+\vspace{-0.8cm}
 
-\begin{algorithm}
+\begin{algorithm}\label{alg:invFinder}
 
 \caption{Algorithm: $invFinder$}\label{alg:invfinder}
 
@@ -697,8 +627,10 @@ Given a protocol $\mathcal{P}$ and a property set $F$ containing invariant formu
 %}
 
 \end{algorithm}
-%\vspace{-0.8cm}
-
+\vspace{-0.8cm}
+Given a protocol $\mathcal{P}$ and a property set $F$ containing invariant formulas we want to verify, {\tt invFinder} aims to find useful auxiliary invariants and causal relations which are capable of proving any element in $F$.  A set $A$ is used to store all the invariants found up to now, and is initialized as  $F$. A queue  $newInvs$ is used to store new invariants which have not been checked,  and  is initialized as  $F$.  A relation table $tuples$ is used to record the causal relation between a parameterized rule in some parameter setting and a concrete invariant. Initially $tuples$ is set as NULL.
+{\sf invFinder}  works iteratively in a semi-proving and semi-searching way. In each iteration, the head element $f$ of $newInvs$ is popped,  then $\mathsf{Policy}(r,f)$  generates groups of parameters $paras$  according to $r$ and $f$ by some policy. For each parameter $para$ in $paras$,   it is applied to instantiate $r$ into a concrete rule $cr$.  Here  $\mathsf{apply}(r,para)=r$ if $r$ contains no array-variables and $para=[]$; otherwise $\mathsf{apply}(r,para)=r(para_{[1]},..., para_{[|para|]})$. Then $coreFinder(cr,  f, A)$ is called to check
+ whether  a causal relation exists between $cr$ and $f$; if there is such one relation item, the relation item $rel$ and a  formula option $newInvOpt$ is returned; otherwise a run-time error occurs in  $coreFinder$, which indicates no proof can be found. In the first case, a tuple $<r, para, f, rel>$ will be inserted into $tuples$; If the formula option $newInvOpt$ is $\mathsf{NONE}$, then no new invariant formula is generated; otherwise $newInvOpt=\mathsf{Some}(f')$ for some formula $f'$, then  $\mathsf{get}(newInvOpt)$ returns $f'$, and the new invariant formula $f'$ will be pushed into the queue $newInvs$ and inserted into the invariant set $A$.  The above searching process is executed until $newInvs$ becomes empty.  At last, the table $tuples$ is returned.
 
 %instantiates the parameterized rule $r$ into a set of concrete rules $crs$ with different groups of concrete parameters Each rule in $crs$  represents a pattern w.r.t. the relationship (equivalent or not) between concrete rule parameters and invariant parameters. Such a parameter instantiation to the rule $pr$ can be generalized to a symbolic predicate {\bf which is according with a case (what do you mean?)}, as shown in Example \ref{example2}. Therefore, a good parameter instantiation policy should guarantee the completeness. Namely, each of subcases in the needed case-splitting should be covered by a concrete rule which is instantiated from $pr$ according to the policy.
 
@@ -800,7 +732,7 @@ Let $cinv$  be a normalized concrete invariant w.r.t. a parameterized invariant 
 \vspace{-0.3cm}
 For a  $cinv$ and a rule $r \in crs$, the core part of the {\sf invFinder} tool is shown in Algorithm \ref{alg:invfinderI}. It needs to call two oracles. The first one, denoted by {\tt chk}, checks whether a ground formula is an invariant. Such an oracle can be implemented by translating the formula into a formula in SMV, and calling SMV to check whether it is an invariant  in a given small reference model of the protocol. If  the reference model is too small to check the invariant, then the formula will be checked by Murphi in a big reference model.  The second oracle, denoted by {\tt tautChk}, checks whether a formula is a tautology. Such a tautology checker is implemented by translating the formula into a form in the SMT (SAT Modulo Theories) format, and checking it by an SMT solver such as Z3.
 
-%\vspace{-0.6cm}
+\vspace{-0.6cm}
 \begin{algorithm}\label{alg:invFinder-I}
 
 \caption{Core Searching Algorithm: $coreFinder$}\label{alg:invfinderI}
@@ -841,7 +773,7 @@ For a  $cinv$ and a rule $r \in crs$, the core part of the {\sf invFinder} tool 
 %}
 
 \end{algorithm}
-%\vspace{-0.8cm}
+\vspace{-0.8cm}
 
 
 
@@ -923,22 +855,22 @@ $\mathsf{mutualInv}(2,1)$ in a symmetry view. % Let $ invs=\emptyset$, $ r=\math
 \end{tabular}
 \end{table}
 
-%\vspace{-0.8cm}
+\vspace{-0.8cm}
 
 For instance, let $PR=\{try, crit, exit, idle\}$, $invs=\{mutualInv(1,2)\}$,    the output of the {\sf invFinder}, which is stored in file {\tt mutual.tbl},  is shown in Table
 \ref{table:groundCausalRelation}. In the table,  each line records the    index of a normalized   invariant, name of a parameterized rule, the rule
   parameters to instantiate the rule, a causal relation between
   the ground invariant and a kind of causal relation which involves the kind and proper formulas
   $f'$   in need (which are used to construct
-      causal relations $\mathsf{invHoldRule}_3$). The auxiliary invariants found by {\sf invFinder} include: $\mathsf{inv_2}  \equiv  \negc (\mathsf{x} \eqc \mathsf{true}  \andc  n[1]=\mathsf{C})$, $\mathsf{inv_3}    \equiv \negc  ( n[1]=\mathsf{C} \andc n[2]=\mathsf{E})$,
-$\mathsf{inv_4}  \equiv  \negc (x \eqc \mathsf{true}  \andc  n[1]\eqc \mathsf{E})$,   $\mathsf{inv_5}    \equiv \negc  ( n[1]\eqc \mathsf{E} \andc n[2] \eqc \mathsf{E})$.  \footnote{The names $\mathsf{mutualEx}$ and $\mathsf{invOnX1}$ in
+      causal relations $\mathsf{invHoldRule}_3$). The auxiliary invariants found by {\sf invFinder} include: $\mathsf{inv_2}  \equiv  \negc (\mathsf{x} \eqc true  \andc  n[1]=C)$, $\mathsf{inv_3}    \equiv \negc  ( n[1]=C \andc n[2]=E)$,
+$\mathsf{inv_4}  \equiv  \negc (x \eqc \mathsf{true}  \andc  n[1]\eqc \mathsf{E})$,   $\mathsf{inv_5}    \equiv \negc  ( n[1]\eqc \mathsf{C} \andc n[2] \eqc \mathsf{C})$.  \footnote{The names $\mathsf{mutualEx}$ and $\mathsf{invOnX1}$ in
   this work are just for easy-reading, their
  index here is generated  in some order by {\sf invFinder}}.
 
 
-%\vspace{-0.5cm}
+\vspace{-0.5cm}
 \section{Generalization}\label{sec:generalization}
-%\vspace{-0.5cm}%From this section, our modelling language has been extended to HOL (Higher-order Logic) provided by Isabelle, which not only include the language in Section \ref{sec:protocolSyntax}, but also higher-order logic features. This is not surprising because our formal theory for a parameterized instance of a protocol is done in HOL/Isabelle.  In order to include the theory formally in section \ref{sec:protocolSyntax} and \ref{sec:causal_rel}, we define a Isabelle theory {\tt cache.thy}.
+\vspace{-0.5cm}%From this section, our modelling language has been extended to HOL (Higher-order Logic) provided by Isabelle, which not only include the language in Section \ref{sec:protocolSyntax}, but also higher-order logic features. This is not surprising because our formal theory for a parameterized instance of a protocol is done in HOL/Isabelle.  In order to include the theory formally in section \ref{sec:protocolSyntax} and \ref{sec:causal_rel}, we define a Isabelle theory {\tt cache.thy}.
 Intuitively, generalization means that a concrete index (formula or rule) is generalized into a set of concrete indices (formulas or rules), which can be formalized  by a symbolic index (formula or rules) with side conditions  specified by   constraint formulas.     In order to do this, we  adopt a new constructor  to model symbolic index or symbolic value $\mathsf{symb}(str)$, where $str$ is   a string.  We use $\mathtt{N}$ to denote $symb("N")$, which formalizes the size of an parameterized protocol instance. A concrete index $i$ can be transformed into a symbolic one by some special strategy $g$, namely  $\mathsf{symbolize}(g,i)=\mathsf{symb}(g(i))$. In this work, two special transforming function $\mathsf{fInv}(i)="iInv"\cat \mathsf{itoa}(i)$ and $\mathsf{fIr}(i)="iR"\cat \mathsf{itoa}(i)$, where $\mathsf{itoa}(i)$ is the standard function transforming an integer $i$ into a string. We use  special symbols $\mathtt{\iInv_i}$  to denote $\mathsf{symbolize}(fInv,i)$;  and $\mathtt{\iR_i}$ to denote $\mathsf{symbolize}(fIr,i)$. The former formalizes a symbolic parameter of a parameterized   formula, and the latter    a symbolic  parameter of a parameterized rule. Accordingly, we define $\mathsf{symbolize2f}(g,inv)$ (or  $\mathsf{symbolize2r}(g,r)$), which returns the symbolic transformation result to a concrete formula $inv$ (or rule $r$) by replacing a concrete index $i$ occurring in $inv$ (or $r$) with a symbolic index $\mathsf{symbolize}(g,i)$.
 
 
@@ -957,16 +889,14 @@ Consider a line of concrete causal relation shown in Table \ref{table:groundCaus
 Let $LR$ be a permutation s.t. $|LR|>0$, which represents a list of actual parameters to instantiate a parameterized rule,    let $LI$  be a  permutation $|LI|>0$,  which  represents a list of actual parameters to instantiate a parameterized invariant, we define:
 \begin{enumerate}[noitemsep,nolistsep]
 \item symbolic comparison condition generalized from comparing $LR_{[i]}$ and $LI_{[j]}$: \\
-$ \mathsf{symbCmp}(LR,LI,i,j)\equiv $
- \begin{numcases}{ }
- \mathtt{\iR_i} \eqc \mathtt{\iInv_j} &   if $LR_{[i]}=LI_{[j]}$\ \ \ \ \\
+\begin{numcases}{\mathsf{symbCmp}(LR,LI,i,j)\equiv }
+ \mathtt{\iR_i} \eqc \mathtt{\iInv_j} &   if $LR_{[i]}=LI_{[j]}$\\
 \mathtt{\iR_i} \ne \mathtt{\iInv_j} & otherwise
 \end{numcases}
 %$symbCmp(LR,LI,i,j)\equiv$ if $equality(LR,LI,i,j)$ then $\mathtt{\iR_i} = \mathtt{\iInv_j}$ else $ (\mathtt{\iR_i} \ne \mathtt{\iInv_j})$
 
 \item symbolic comparison  condition generalized from comparing   $LR_{[i]}$ and with all $LI_{[j]}$ :\\
-$\mathsf{symbCaseI}(LR,LI,i)\equiv $\\
-\begin{numcases}{ }
+\begin{numcases}{ \mathsf{symbCaseI}(LR,LI,i)\equiv }
    symbCmp(LR,LI,i,j)& if $\exists! j.  LR_{[i]}=LI_{[j]}$\\
    forallForm(|LI|,pf)& otherwise
  \end{numcases}
@@ -1027,12 +957,12 @@ $\mathsf{lookup}(LI,LR, i)$ returns the symbolic index transformed from $i$ acco
 %For convenience in generating Isabelle proofs,      %a formula $\mathsf{diffConGen}~(\mathsf{paraMumsOfInv}~cr~"iR"$ to specify with the assumptions that mutual difference between the parameters of the symbolic invariant.  Here we assume that the string $"iR"$ does not occur in $cr$.
 %a table $symbCausalTab$ is generated, which  stores causal relation between a parameterized rule and an  invariant w.r.t. a  size $N$. An entry of the table is referenced by concatation of the name of a rule and an invariant formula. Such an entry is a record containing fields {\tt symbCases} and  {\tt relationItems}, and created by collecting all the lines on the concrete relation items between the rule and the invariant. {\tt symbCases}  stores the list of symbolic cases each of which is derived by $\mathtt{symbCase}(LR, 1~\mathsf{upto}~n)$, where $LR$ is the rule parameters, and $n$ the number of parameters occurring in the invariant. relations store a list of generalized causal relation items.  For instance, for the rule $\mathsf{crit}$ and $\mathsf{inv5}$, a record $(|\mathtt{symbCases}=[\mathtt{\iR_1} = \mathtt{\iInv_1},\mathtt{\iR_1} = \mathtt{\iInv_2},(\mathtt{\iR_1} \ne \mathtt{\iInv_1}) \wedge  (\mathtt{\iR_1} \ne \mathtt{\iInv_2})]$; $\mathtt{relationItems}= [\mathsf{invHoldRule}_3(f_1')$,$\mathsf{invHoldRule_3}(f_2')$,$\mathsf{invHoldRule}_2]|)$, where $f_1'=\negc(x\eqc true \wedge n[\mathtt{\iInv_2}]\eqc C)$, and $f_2'=\negc(x\eqc true \wedge n[\mathtt{\iInv_1}]\eqc C)$.
 
-%\vspace{-0.3cm}
+\vspace{-0.3cm}
 %-------------------------------------------------------------------------
-\section{Automatical Generation of Isabelle Proof }\label{sec:prooGen}
+\section{Automatical Generation of Isabelle Proof }
 %-------------------------------------------------------------------------
 %\subsection{An  Example of Generated Isabelle/Script} \label{subsection:introOfIsabelleProof}
-%\vspace{-0.3cm}
+\vspace{-0.3cm}
 A formal model for a protocol case in a theorem prover like Isabelle
 includes the definitions of constants and rules and invariants,
 lemmas, and proofs. Readers can refer to \cite{LiCache16} for detailed illustration of the formal proof script. In this section, we focus on the generation of a lemma on the existence of causal relation between a parameterize rule and invariant formula based on the aforementioned generalization of lines of concrete causal relations. %An overview of the hierarchy  of the formal proof scripts of  is
@@ -1059,23 +989,20 @@ lemmas, and proofs. Readers can refer to \cite{LiCache16} for detailed illustrat
 %\caption{Generating a kind of proof which is according with a relation tag of $invHoldRule_{1-3}$ : rel2proof}\label{lemma:causal relation lemma}
 1lemma critVsinv1:\\
 2  assumes  a1: $\exists$ \iR1. \iR1 $\le$ N $\wedge$ r=crit \iR1 and \\
-  a2: $\exists$  \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\neq$ \iInv2 \\
-   $\wedge$ f=inv1  \iInv1 \iInv2\\
+  a2: $\exists$  \iInv1 \iInv2. \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\neq$ \iInv2 $\wedge$ f=inv1  \iInv1 \iInv2\\
 3  shows  invHoldRule s f r (invariants
   N)\\
 4  proof -\\
    from a1 obtain \iR1 where a1:\iR1 $\le$ N $\wedge$ r=crit \iR1 \\
 \twoSpaces   by blast\\
-   from a2 obtain \iInv1 \iInv2 where a2: \iInv1 $\le$ N \\
-   $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\neq$ \iInv2 $\wedge$ f=inv1  \iInv1 \iInv2\\
+   from a2 obtain \iInv1 \iInv2 where \\
+   a2: \iInv1 $\le$ N $\wedge$ \iInv2 $\le$ N $\wedge$ \iInv1 $\neq$ \iInv2 $\wedge$ f=inv1  \iInv1 \iInv2\\
 \twoSpaces   by blast \\
-5  have iR1=\iInv1 $\vee$ \iR1=\iInv2 $\vee$ (\iR1 $\ne$ \iInv1 $\wedge$  \iR1 $\ne$ \iInv2) \\
-  by auto\\
+5  have iR1=\iInv1 $\vee$ \iR1=\iInv2 $\vee$ (\iR1 $\ne$ \iInv1 $\wedge$  \iR1 $\ne$ \iInv2) by auto\\
 
 6  moreover\{assume  b1:\iR1=\iInv1\\
 7  \twoSpaces have invHoldRule3 s f r (invariants N)\\
- \twoSpaces  \twoSpaces   proof(cut\_tac a1 a2 b1, simp, \\
- rule\_tac x=$\negc$ (x=true $\andc$ n[\iInv2]=C)  in exI,auto)qed\\
+ \twoSpaces  \twoSpaces   proof(cut\_tac a1 a2 b1, simp, rule\_tac x=$\negc$ (x=true $\andc$ n[\iInv2]=C)  in exI,auto)qed\\
 8  \twoSpaces then have invHoldRule s f r
 (invariants
   N)
@@ -1083,8 +1010,7 @@ by auto\}\\
 
 9  moreover\{assume  b1:iR1=\iInv2\\
 10 \twoSpaces have invHoldRule3 s f r (invariants N)\\
- \twoSpaces \twoSpaces   proof(cut\_tac a1 a2 b1, simp, \\
- rule\_tac x=$\negc$ (x=true $\andc$ n[\iInv1]=C  in exI,auto)qed\\
+ \twoSpaces \twoSpaces   proof(cut\_tac a1 a2 b1, simp, rule\_tac x=$\negc$ (x=true $\andc$ n[\iInv1]=C  in exI,auto)qed\\
 11 \twoSpaces then have invHoldRule s f r (invariants
   N)
 by auto\}\\
@@ -1113,624 +1039,10 @@ From the conclusion at line 7, line 8 furthermore proves the causal relation $\m
 
 
 
-With the help of all the lemmas such as {\sf ruleVsinv1},  we can prove the following lemma  {\sf lemma$\_$inv$\_$1$\_$on$\_$rules} which
-specifies that for all $r \in rules ~N$, and $f$ is a formula $f$ which is generated by instantiating inv1 with some parameters $\iInv_1$ and $iInv_2$, $invHoldForRule ~s~ f~ r~ (invariants~ N)$.
-
-\begin{specification}
-lemma lemma$\_$inv1$\_$on$\_$rules:\\
-  asumes a1:
-r $\in$ rules N
- and \\
- a2:
-($\exists$ $\_$iInv1 $\_$iInv2. $\_$iInv1$\le$
-N$\wedge$$\_$iInv2$\le$\\
-N$\wedge$\iInv1$\neq$\iInv2$\wedge$f=inv1  \iInv1 \iInv2)\\
-
- shows
-invHoldForRule s f r (invariants N)\\
-
-  proof -\\
-\twoSpaces  have
-($\exists$ i. i$\le$
-N$\wedge$r=try  i)$\vee$
-    ($\exists$ i. i$\le$\\
-N$\wedge$r=crit  i)$\vee$
-    ($\exists$ i. i$\le$
-N$\wedge$r=exit  i)$\vee$\\
-    ($\exists$ i. i$\le$
-N$\wedge$r=idle  i)\\
-
-  apply (cut$\_$tac a1, auto) done\\
-    moreover $\{$      assume b1:
-($\exists$ i. i$\le$
-N$\wedge$r=try  i)\\
-
-\twoSpaces      have invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis tryVsinv1) done
-    $\}$\\
-
-
-    moreover $\{$ assume a1:
-($\exists$ i. i$\le$
-N$\wedge$r=crit  i)\\
-
-\twoSpaces      have
-invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis critVsinv1) done
-    $\}$\\
-
-
-    moreover $\{$
-      assume a1:
-($\exists$ i. i$\le$
-N$\wedge$r=exit  i)\\
-
-\twoSpaces      have
-invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis exitVsinv1) done
-    $\}$\\
-
-
-    moreover $\{$ assume a1:
-($\exists$ i. i$\le$
-N$\wedge$r=idle  i)\\
-
-\twoSpaces      have
-invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis idleVsinv1) done
-    $\}$\\
-
-
-  ultimately show invHoldForRule' s f r (invariants N)\\
-  by auto\\
-qed\\
-
-\end{specification}
-
-With the help of all the lemmas such as {\sf lemma$\_$inv$_i\_$on$\_$rules},  we can prove the following lemma  {\sf invs$\_$on$\_$rules} which
-specifies that for all $f \in invariants~ N$ and $r \in rules~ N$,   $invHoldForRule ~s~ f~ r~ (invariants~ N)$.
-
-\begin{specification}
-lemma invs$\_$on$\_$rules:
-assumes a1:
-f $\in$ invariants N \\
- and a2:
-r $\in$ rules N\\
-shows
-invHoldForRule' s f r (invariants N)\\
-
-  proof -\\
-  have b1:
-($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N$\wedge$\iInv1$\neq$\iInv2$\wedge$\\
-f=inv1  \iInv1 \iInv2)$\vee$\\
-    ($\exists$ \iInv2. \iInv2$\le$
-N$\wedge$f=inv2  \iInv2)$\vee$\\
-    ($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N$\wedge$\iInv1$\neq$\iInv2$\wedge$\\
-f=inv3  \iInv1 \iInv2)$\vee$\\
-    ($\exists$ \iInv2. \iInv2$\le$
-N$\wedge$f=inv4  \iInv2)$\vee$\\
-    ($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N$\wedge$\iInv1$\neq$\iInv2$\wedge$\\
-f=inv5  \iInv1 \iInv2)\\
-
-  apply (cut$\_$tac a1, auto) done\\
-    moreover $\{$      assume b1:
-($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$ N \\
-$\wedge$\iInv1$\neq$\iInv2
-$\wedge$f=inv1  \iInv1 \iInv2)\\
-
-\twoSpaces       have
-invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis lemma$\_$inv1$\_$on$\_$rules) done
-    $\}$\\
-
-
-    moreover $\{$ assume b1:
-($\exists$ \iInv2. \iInv2$\le$ N\\
-$\wedge$f=inv2  \iInv2)
-
-\twoSpaces       have invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis lemma$\_$inv2$\_$on$\_$rules) done
-    $\}$\\
-
-
-    moreover $\{$      assume b1:
-($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$ N\\
-$\wedge$\iInv1$\neq$\iInv2
-$\wedge$f=inv3  \iInv1 \iInv2)\\
-
-\twoSpaces       have
-invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis lemma$\_$inv3$\_$on$\_$rules) done
-    $\}$\\
-
-
-    moreover $\{$      assume b1:
-($\exists$ \iInv2. \iInv2$\le$
-N$\wedge$f=inv4  \iInv2)\\
-
-\twoSpaces       have
-invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis lemma$\_$inv4$\_$on$\_$rules) done
-    $\}$\\
-
-
-    moreover $\{$
-      assume b1:
-($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$ N\\
-$\wedge$\iInv1$\neq$\iInv2
-$\wedge$f=inv5  \iInv1 \iInv2)\\
-
-\twoSpaces       have
-invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces      apply (cut$\_$tac a2 b1, metis lemma$\_$inv5$\_$on$\_$rules) done
-    $\}$\\
-
-
-  ultimately show
-invHoldForRule' s f r (invariants N)\\
-
-\twoSpaces  apply fastforce done\\
-qed
-end\\
-\end{specification}
-
-
-
- % {\tt allSymbRecs } are all symbolic causal relation records on {\tt  invName} and {\tt  ruleName},
-% then  {\tt lenPInv} and {\tt lenPRule} which are numbers of the parameters of the invariant formula and rule, then {\tt asms} which are the assumptions part of the lemma such as line 2, {\tt allDisjuncts} the case analysis between the parameters of invariant and rule such as line 5, {\tt allSubProofs} all the proofs of the subcases such as lines 6-14, then fill all these into the blanks of the templates to generate the lemma.
-
-
-% {\tt namedAsmTrans asm i} adds a name "ai:" to a string of assumption in order to construct a named assumption. {\tt allNamedAsmsGen} generates all the aformentioned  four kinds of assumptions of the lemma in the previous paragrapgh: {\tt asmsLessOnInv} is according with (1) types of assumptions; {\tt asmsLessOnRule} (2) types of assumptions;  {\tt asmsMutualDiffOnInv} (3) types of assumptions; and {\tt asmsMutualDiffOnRule} (4) types of assumptions. After naming any one assumption with a name, {\tt allNamedAsmsGen} returns all the named assumptions which are conned by {\tt and} operator. {\tt symbCausalRec2Proof symbRec} generates a kind of proof in Isabelle according to a symbolic casual relation record {\tt symbRec}: if the tag of {\tt holdTag} is 1(2,3), then kind 1 (2,3) proof are generated accordingly. Here we list the most complex one: {\tt proof3Gen ruleName invName f}, which generates a proof which is according with {\tt invHoldType3} such as lines 6-8, and {\tt f} is another invariant formula which is needed to construct the {\tt invHoldType3} causal relation.
-%\twoSpaces  let asmsLessOnRule=asmsGen iRule sN lenPRule in \\
-%\twoSpaces  let asmsMutualDiffOnInv=asmsLookUp symbInvs invName gFldName in\\
-%\twoSpaces  let asmsMutualDiffOnRule
-\subsubsection{Lemmas on initial states}
-
-In this section, we discuss the definition on the initial state of the protocol, and the lemmas specifying that each invariant formula holds at the initial state.
-
-A typical Isabelle definition on the initial state of the protocol is as follows:
-
-\begin{specification}
-definition initSpec0::nat $\Rightarrow$ formula where [simp]:\\
-initSpec0 N $\equiv$ (forallForm (down N) \\
-(\% i . (eqn (IVar (Para (Ident ''n'') i)) (Const I))))\\
-
-definition initSpec1::formula where [simp]:\\
-initSpec1  $\equiv$ (eqn (IVar (Ident ''x'')) (Const true))\\
-
-definition allInitSpecs::nat \<Rightarrow> formula list\\
-allInitSpecs N $\equiv$ [(initSpec0 N),(initSpec1 )]\\
-
-lemma iniImply\_inv4:\\
-assumes a1: ($\exists$\iInv1. \iInv1$\le$N$\wedge$f=inv4 \iInv1)\\
-and a2: formEval (andList (allInitSpecs N)) s\\
-shows formEval f s\\
- using a1 a2 by auto\\
-\end{specification}
-
-{\tt initSpec0} and {\tt initSpec1} specifies the assignments on each variable {\tt n[i]} where {\tt i $\le$ N} and {\tt x}. The  specifications of the initial state is the list of all the specification definition on related state variables. Lemma {\tt iniImply\_inv4} simply specifies that the invariant formula {\tt inv4} holds at a state {\tt s} which satisfies the conjunction of the   specification of the initial state. Isabelle's {\tt auto} method can solve this goal automatically. Other lemmas specifying that other invariant formulas hold at the initial state are similar.
-%The generation of the above code is straightforward: definitions of the specification of initial state variables in Isabelle is a direct syntax transformation from the internal represetation of tool {\tt proofGen} to Isabelle.
-
-With the lemmas such as {\tt iniImply\_inv4}, for any invariant $inv \in (\mathsf{invariants} ~N) $,  any
-state $s$, if $ini$ is evaluated true at state $s$, then $inv$ is
-evaluated true at state $s$.
-
-\begin{specification}
-lemma on$\_$inis:
- assumes  a1:
-f $\in$ (invariants N)\\
- and a2:
-ini $\in$ $\{$
-andList (allInitSpecs N)$\}$\\
-
- and a3:
-formEval ini s\\
-
- shows formEval f s\\
-
-  proof -\\
-  have c1:
-($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N$\wedge$\iInv1$\neq$\iInv2\\
-$\wedge$f=inv$\_$$\_$1  \iInv1 \iInv2)$\vee$\\
-    ($\exists$ \iInv2. \iInv2$\le$
-N$\wedge$f=inv$\_$$\_$2  \iInv2)$\vee$\\
-    ($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N$\wedge$\iInv1$\neq$\iInv2\\
-$\wedge$f=inv$\_$$\_$3  \iInv1 \iInv2)$\vee$\\
-    ($\exists$ \iInv2. \iInv2$\le$
-N$\wedge$f=inv$\_$$\_$4  \iInv2)$\vee$\\
-    ($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N$\wedge$\iInv1$\neq$\iInv2\\
-$\wedge$f=inv$\_$$\_$5  \iInv1 \iInv2)\\
-
-\twoSpaces  apply (cut$\_$tac a1, simp) done\\
-    moreover $\{$
-      assume b1:
-($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N\\
-$\wedge$\iInv1$\neq$\iInv2$\wedge$f=inv$\_$$\_$1  \iInv1 \iInv2)\\
-
-      have
-formEval f s\\
-
-\twoSpaces      apply (rule iniImply$\_$inv$\_$$\_$1)\\
-\twoSpaces      apply (cut$\_$tac b1, assumption)\\
-\twoSpaces      apply (cut$\_$tac a2 a3, blast) done
-    $\}$\\
-
-
-    moreover $\{$
-      assume b1:
-($\exists$ \iInv2. \iInv2$\le$
-N$\wedge$f=inv$\_$$\_$2  \iInv2)\\
-
-      have
-formEval f s\\
-
-\twoSpaces      apply (rule iniImply$\_$inv$\_$$\_$2)\\
-\twoSpaces      apply (cut$\_$tac b1, assumption)\\
-\twoSpaces      apply (cut$\_$tac a2 a3, blast) done\\
-    $\}$\\
-
-
-    moreover $\{$
-      assume b1:
-($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N\\
-$\wedge$\iInv1$\neq$\iInv2$\wedge$f=inv$\_$$\_$3  \iInv1 \iInv2)\\
-
-      have
-formEval f s\\
-
-\twoSpaces      apply (rule iniImply$\_$inv$\_$$\_$3)\\
-\twoSpaces      apply (cut$\_$tac b1, assumption)\\
-\twoSpaces      apply (cut$\_$tac a2 a3, blast) done
-    $\}$\\
-
-
-    moreover $\{$
-      assume b1:
-($\exists$ \iInv2. \iInv2$\le$
-N$\wedge$f=inv$\_$$\_$4  \iInv2)\\
-
-      have
-formEval f s\\
-
-\twoSpaces      apply (rule iniImply$\_$inv$\_$$\_$4)\\
-\twoSpaces      apply (cut$\_$tac b1, assumption)\\
-\twoSpaces      apply (cut$\_$tac a2 a3, blast) done
-    $\}$\\
-
-
-    moreover $\{$
-      assume b1:
-($\exists$ \iInv1 \iInv2. \iInv1$\le$
-N$\wedge$\iInv2$\le$
-N\\
-$\wedge$\iInv1$\neq$\iInv2$\wedge$f=inv$\_$$\_$5  \iInv1 \iInv2)\\
-
-      have
-formEval f s\\
-
-\twoSpaces      apply (rule iniImply$\_$inv$\_$$\_$5)\\
-\twoSpaces      apply (cut$\_$tac b1, assumption)\\
-\twoSpaces      apply (cut$\_$tac a2 a3, blast) done
-    $\}$\\
-
-
-  ultimately show formEval f s
-  by auto\\
-qed\\
-
-
-\end{specification}
-
-The proof structure of {\sf lemma$\_$inv1$\_$on$\_$rules} and  {\sf invs$\_$on$\_$rules} and {\sf on$\_$inis} are also typical case analysis ones using {\sf moreover} blocks and {\sf ultimately} commands, therefore, a generic program of generating a typical case analysis proof will be adopted in our framework.
-
-%All can be generated by calling the generic template function {\sf doCaseAnalz} with different subproof generation functions.
-
-
-\subsubsection{The main theorem}
-
-%-------------------------------------------------------------------------
-%At last, we discuss how to create automatically the proof for the main lemma, which depends
-% on the applying the lemmas which are created in subsection \ref{sec:genOfIsabelleProof}.
-With the preparation of lemma  on$\_$inis and  invs$\_$on$\_$rules, the generation of the main lemma is quite easy. Recall that the consistency lemma is our
-main weapon to prove the main lemma, which requires proving two parts of
-obligations.
-
-
-
-\begin{description}
-\item[(1)] For any invariant $inv \in (\mathsf{invariants} ~N) $,  any
-state $s$, if $ini$ is evaluated true at state $s$, then $inv$ is
-evaluated true at state $s$. This can be solved done by applying lemma on$\_$inis.
-\item[(2)]  For any invariant $inv \in (\mathsf{invariants} ~N)$, any $r$ in rule set
-$ \mathsf{rules} ~N$ , one of the causal relations
-$\mathsf{invHoldForRule}_{1-3}$ holds. This can be solved done by  applying lemma invs$\_$on$\_$rules.
-\end{description}
-%
-%Proof of Part (1) is  simple. %%For an invariant
-%$inv=\mathsf{implyForm}~ant~cons$ in $invs$, we only need to prove
-%that either $ant$ is evaluated as false or $cons$ is evaluated true
-%at an initial state $s$ in order to prove $\models
-%~inv~s$. Such a proof  can be automatically solved by Isabelle's
-%$\mathsf{auto}$ command.
-
-
-
-\begin{specification}
-lemma main:
-  assumes  a1: 0<N and \\
-  a2: s$\in$ reachableSet \{andList (allInitSpecs N)\} (rules N)\\
-  shows $\forall$ inv. inv $\in$ (invariants N) $\longrightarrow$ formEval inv s\\
-proof(rule consistentLemma)\\
-  show consistent (invariants N) \{andList (allInitSpecs N)\}\\ (rules N)\\
- proof(cut\_tac a1, unfold consistent\_def,rule conjI)\\
-   show  $\forall$inv ini s. inv $\in$ (invariants N)
-$\longrightarrow$ ini $\in$\{andList \\
-(allInitSpecs N)\} $\longrightarrow$formEval ini s $\longrightarrow$ formEval inv s\\
-proof((rule allI)+,(rule impI)+)\\
-\twoSpaces   fix inv ini s\\
-\twoSpaces   assume b1:inv $\in$ (invariants N) and b2:formEval ini s\\
-\twoSpaces     and b3:ini $\in$ \{andList (allInitSpecs N)\}  \\
-\twoSpaces   show "formEval f s"\\
-\twoSpaces   apply (rule on\_inis, cut\_tac b1, assumption, cut\_tac b2, \\
-assumption, cut\_tac b3, assumption) done\\
-    qed\\
-
-next   show  $\forall$inv r. inv $\in$ invariants N$\longrightarrow$
- r $\in$rules N\\
- $\longrightarrow$invHoldForRule inv r (invariants N) \\
-
-   proof((rule allI)+,(rule impI)+)\\
-\twoSpaces      fix f r \\
-\twoSpaces         assume b1: f $\in$ invariants N  and b2:r $\in$ rules N\\
-
-\twoSpaces     show invHoldForRule' s f r (invariants N)\\
-  apply (rule invs\_on\_rules, cut\_tac b1, assumption, \\
-  cut\_tac b2, assumption) done\\
-qed\\
-next show s $\in$ reachableSet {andList (allInitSpecs N)} (rules N)\\
-  apply (metis a1) done\\
-qed\\
-\end{specification}
-
-The generation of the main lemma is quite easy because it is in a standard form.
-%\vspace{-0.5cm}
- %in order to verify the cache coherence protocols. Others are straightforward.
-%The proof is a typically
-%readable one in Isar style \cite{}, which uses calculation
-%reasoning such as {\tt moreover} and {\tt ultimately} to do  case analysis on
-%the form of rules and the invariants. Lines 1-5 use proper Isabelle
-%proof commands to   decompose the main proof goal of forall  and
-%implication form,    fix a rule {\tt r} and {\tt inv}, then have two
-%assumptions {\tt  b1: inv$\in$ invariants N  and b2:r $\in$ rules
-%N}, now we need show the goal {\tt invHoldForRule s f r (invariants
-%N)}. line 5 splits cases of $r$ into all possible cases according to
-%the definition of $rules~N$. %In order to save space, we adopt the following abbreaviation:
-% $\mathsf{ex1P}~ N~ P \equiv \exists i. (i \le N \wedge P~
-%i)$, $\mathsf{ex2P}~ N~ P \equiv \exists i~j. (i \le N \wedge j \le
-%N \wedge i\ne j \wedge P~ i~j)$, and $\mathsf{ex3P}~ N~ P \equiv
-%\exists i~j~k. (i \le N \wedge j \le N \wedge k \le N\wedge i\ne j
-%\wedge i\ne k \wedge j\ne k \wedge P~ i~j~k)$.
-%Line 6 starts the case analysis on
-%$r=r_0$. Line 7 again splits cases of $inv$ into all possible cases
-%according to the definition of $invariants~N$. Line 8-10 proves the
-%goal at case when $r=exit$ and $inv=inv1$. At line 10,  a  proved
-%lemma {\tt exitVsInv1}  is directly applied to solve the proof
-%goal.  Similiarly, we can do subproofs on other cases on {\tt inv},
-%and finish the proof goal accordingly.
-% After finishing the proof of the last case  of $inv=inv5$,
-% we finish the proof of the first case $r=exit$. Similarly, we can
-% finish the proof goal at
-%each subcase on {\tt r}. At  lines 19 and  20 we show we have
-%finished the proof goal formally.
-
-\subsection{Algorithms of Proof Generator {\sf proofGen}}
-
-In this subsection, we illustrate the key techniques and algorithms of generation of the lemmas and their proofs in subsection \ref{subsection:introOfIsabelleProof}. Being according with the order in which we introduce the above lemmas, we also introduce their generation in a bottom-up order. First let us introduce the generation of a subproof according to a relation tag of $invHoldForRule_{1-3}$, which is shown in Algorithm \ref{alg:proofGenOfReltag}.
-
-\begin{algorithm}
-\caption{Generating a kind of proof which is according with a relation tag of $invHoldForRule_{1-3}$ : rel2proof}\label{alg:proofGenOfReltag}
-\KwIn{A causal    relation item $relTag$}
-\KwOut{  An Isablle proof: $proof$   }
-
-{
- \If{$relTag=invHoldForRule_1$}
-  {$proof \leftarrow $ sprintf\\
-\twoSpaces"have invHoldForRule1 f r (invariants N)  \\
-\twoSpaces         by(cut\_tac a1 a2 b1, simp, auto) \\
-\twoSpaces then have invHoldForRule f r (invariants N)  by blast" \; }
- \ElseIf{ $relTag=invHoldForRule_2$}
-  {$proof \leftarrow$  sprintf\\
-\twoSpaces"have invHoldForRule2 f r (invariants N)
-\twoSpaces         by(cut\_tac a1 a2 b1, simp, auto) \\
-\twoSpaces then have invHoldForRule f r (invariants N)  by blast" \; }
- \Else{
- \label{label:getFormField}$f' \leftarrow getFormField(relTag)$\;
- $proof \leftarrow$ sprintf\\
-\twoSpaces"have invHoldForRule3 f r (invariants N)  \\
-\twoSpaces proof(cut\_tac a1 a2 b1, simp, rule\_tac x=\%s  in exI,auto)qed\\
-\twoSpaces then have invHoldForRule f r (invariants N)  by blast" (symbf2Isabelle f')"\;}
-\Return{proof}
-}
-\end{algorithm}
-
-In the body of function {\sf rel2proof},  $sprintf$ writes a formatted data to string and returns it.
-In line \ref{label:getFormField}, $getFormField(relTag)$ returns $f'$ if $relTag=invHoldForRule_3(f')$.  {\sf rel2proof} transforms a a relation tag into a paragraph of proof.% as shown in lines 7-8, 10-11, or 13-14.
-If the tag is among $invHoldForRule_{1-2}$, the transformation is rather straight-forward, else the form $f'$ is assigned by the formula $getFormField(relTag)$, and provided to tell Isabelle the formula which should be used to construct the $invHoldForRule_3$ relation.
-
-\begin{algorithm}
-\caption{Generating one sub-proof for a subcase: oneMoreOverGen}\label{alg:MoreOver}
-
-\KwIn{A formula $caseFsm$ standing for the assumption of the subcase, a relation item $relItem$ containing the information of causal relation }
-\KwOut{  An Isablle proof: $subProof$ }
-{
-%$label \leftarrow labelGen(depth) $\;
-$proof \leftarrow rel2proof(relItem)$\;
-$  subProof \leftarrow$  sprintf\\
-%\twoSpaces sprintf\\
-\twoSpaces "moreover\{assume  b1:\%s  \\
-           \%s    \} "\\
-\twoSpaces ( asm, proof)\;
-\Return{subproof}
-}
-\end{algorithm}
-
-In Algorithm \ref{alg:MoreOver}, {\sf oneMoreOverGen} generates a subproof for a subcase in a proof of case analysis. It returns a subproof which is composed by filling an assumption of the subcase such as "\iR1=\iInv1" and a paragraph of proof generated by $rel2proof(relItem)$ into a format of block {\tt morover \{ ...\}}.  %the input $depth$ shows the  the depth of the current proof. Recalling that proof is recursively composed by subproofs. Each level of proofs are tagged with some depth. {\sf labelGen(depth)} returns a label such as $a1:$. {\sf oneMoreOverGen} generates a subproof which is
-
-Due to the common use of case analysis proof of using {\sf moreover} and {\sf ultimately} commands, we design a generic program of generating  doing case analysis {\sf doCaseAnalz}. In algorithm \ref{alg:doCaseAnalz}, %generates a typical proof of doing case analyis.
- formulas standing for case-splitting $partition$, subproofs $subproofs$, and the conclusion $concluding$ are needed  in case analysis to fill the format.
-\begin{algorithm}
-
-\caption{Generating a whole proof of doing case analysis: doCaseAnalz}\label{alg:doCaseAnalz}
-\KwIn{A formula $partition$ standing for case-splittings, a proof list $subproofs$ standing  all the subproofs of each subcases, concluding parts $concluding$}%, the depth of proof $depth$ }
-\KwOut{  An Isablle proof: $proof$ }
-{
-
-%\If{$depth=1$}
-%{$showOrHave \leftarrow$ "show"\;}
-%\Else {$showOrHave \leftarrow$ "have"\;}
-$proof \leftarrow $sprintf\\
-\twoSpaces \twoSpaces  " have \%s  by auto\\
-\twoSpaces \twoSpaces         \%s\\
-\twoSpaces \twoSpaces        ultimately show \%s by auto"\\
-\twoSpaces     (partition, subproofs,  concluding) \;
-\Return{proof}
-}
-\end{algorithm}
-
-
-In algorithm \ref{alg:doCaseAnalzI}, {\sf caseAnalzI} generates a typical proof of doing case analysis to  prove some causal relation hold between some rule and invariant. oneMoreOverGenI(case,rel) formula comes from the disjunction of formulas in the {\tt symbCases} field of $rec$, which is returned by $caseField(rec)$, subproofs $subproofs$ are generated by concatenation of all the subproofs, each of which is generated by $oneMoreOverGenI(case,rel)$. The proof is simply composed by  calling $doCaseAnalz(partition,subproofs,concluding)$.
-
-\begin{algorithm}
-
-\caption{Generating a whole proof of doing case analysis on parameters of rule and invariant: caseAnalzI}\label{alg:doCaseAnalzI}
-\KwIn{A record $rec$ fetched from $symbCausal$ }
-\KwOut{  An Isablle proof: $proof$ }
-{
-$cases \leftarrow caseField(rec)$\;
-$rels \leftarrow relItems(rec)$;
-$partition \leftarrow \bigvee cases$\;
-$subproofs \leftarrow ""$\;
-\While{$(cases \ne [])$}
-{ $ case \leftarrow hd(cases)$ \;
-  $cases \leftarrow tl(cases)$ \;
-  $ rel \leftarrow hd(rels)$ \;
-  $rels \leftarrow tl(rels)$ \;
-  $subproofs \leftarrow subproofs \cat oneMoreOverGenI(case,rel)$\;
-  }
-$ concluding \leftarrow $"invHoldForRule s f r (invariants N) "\;
-$proof \leftarrow doCaseAnalz(partition,subproofs,concluding)$\;
-\Return $proof$
-}
-\end{algorithm}
-
-Next we discuss how to generate assumptions on an invariant formula of an lemma such as $critVsInv1$. In the body of algorithm \ref{alg:asmGenOnInv}, $tbl\_element(symbInvs,  invName)$  retrieves the record on a invariant formula from $symbInvs$ to $invItem$ by its name $invName$, $invParaNum(invItem  )$ and $constrOfInv(invItem))$ return the field {\tt invNumFld} and {\tt constr} of  $invItem$ respectively. $invParasGen(lenPInv)$ generates a string of a list of actual parameters such as $iInv_1 ... iInv_{lenPInv}$ if $lenPInv>0$, else an empty string "".  At last, the assumption on the invariant is created by filling $invParas$,  $constrOnInv$, and $invName$ into a proper place in the format if needed.
-
-\begin{algorithm}
-  \caption{Generating an assumption on an invariant formula: asmGenOnInv}\label{alg:asmGenOnInv}
-  \KwIn{An invariant name $invName$,    a table $symInvs$ storing invariant formulas   }
-
-\KwOut{  An assumption on an invariant formula: $asm$   }
-
- $invItem   \leftarrow tbl\_element( symbInvs,  invName)$\;
-  $lenPInv \leftarrow invParaNum(invItem  )$\;
-  $invParas \leftarrow invParasGen(lenPInv)$\;
- % $constrOfInv \leftarrow constr(N,lenPInv)$\;
- $constrOnInv \leftarrow symbForm2Isabelle(constrOfInv(invItem))  $\;
- \If {lenPInv = 0}
-  {$asm  \leftarrow  "a1: f="\cat invName   $\;}
-  \Else{$asm  \leftarrow$ sprintf "a1: $\exists$ \%s. \%s $\wedge$ f=\%s \%s" (invParas,  constrOnInv, invName, invParas)\;}
-  \Return{asm}
-\end{algorithm}
-
-Similar to {\sf asmGenOnInv}, {\sf obtainGenOnInv}, which is shown in algorithm \ref{alg:obtainGenOnInv}, generates a proof command of {\sf obtain} by retrieving and generating the related information and filling them in a format on {\sf obtain}.  Similar to {\sf asmGenOnInv} and  {\sf obtainGenOnInv}, {\sf asmGenOnRule} and  {\sf obtainGenOnRule} generate an  assumption and {\sf obtain} proof command   on a rule.
-
-\begin{algorithm}
-  \caption{Generating an {\sf obtain} proof command on an invariant formula: obtainGenOnInv}\label{alg:obtainGenOnInv}
-  \KwIn{An invariant name $invName$,    a table $symInvs$ storing rules    }
-  $invItem   \leftarrow tbl\_element( symbInvs,  invName)$\;
-  $lenPInv \leftarrow invParaNum(invItem  )$\;
-  $invParas \leftarrow invParasGen(lenPInv)$\;
-\If {$  lenPInv = 0 $}
-    {$obtain \leftarrow  ""$\;}
- \Else {$obtain \leftarrow$ sprintf "from a1 obtain  \%s where a1:\%s $\wedge$ f=\%s \%s by auto"\\
- \twoSpaces           $(invParas,  constrOnInv, invName, invParas)$\;}
- \Return{obtain}
-\end{algorithm}
-
-
-
-After the above preparing functions, now the generation of a lemma on the causal relation such as    $critVsInv1$ is rather easy, which is shown in algorithm \ref{alg:lemmaOnCausalRuleInv}. After generating an assumption on invariant formula $asm1$,  $asm2$ on a rule, an obtain command  $obtain1$ on the invariant, and  $obtain2$ on the rule,  $symRelItem$ is retrieved from $symCausalTab$ by $ruleName\cat invName$, and a proof $proof$ is generated by calling $caseAnalzI(symRelItem)$. At last these parts are filled into proper places in the lemma format.
-
-\begin{algorithm}
-\caption{Generating a lemma on a causal relation: lemmaOnCausalRuleInv}\label{alg:lemmaOnCausalRuleInv}
-
-\KwIn{A parameterized rule name $ruleName$,   a formula name $invName$, a table $symRules$ storing rules , a table $symInvs$ storing invariant formulas,   a table $symCausalTab$  storing causal relation  }
-
-\KwOut{  An Isablle proof script for a lemma: $lemmaWithProof$   }
-
-{
-
-
- $asm1 \leftarrow asmGenOnInv(symbInvs,invName)$\;
- $asm2 \leftarrow asmGenOnRule(symbRules,ruleName)$\;
- $obtain1 \leftarrow obtainGenOnInv(symbInvs,invName)$\;
- $obtain2\leftarrow obtainGenOnRule(symbRules,ruleName)  $\;
-  $symRelItem \leftarrow tbl\_element( symCausalTab,(ruleName\cat invName))$\;
- $proof \leftarrow caseAnalzI(symRelItem)$\;
-
-$lemmaWithProof \leftarrow$ sprintf \\
-\twoSpaces"lemma \%sVs\%s:\\
-%2  assumes  a2: iR $\le$ N and a3: i1 $\le$ N and a4: i2 $\le$ N\\ generations assumptions
-\twoSpaces assumes \%s and \%s\\
-\twoSpaces  shows  invHoldForRule s f r (invariants   N)\\
-\twoSpaces  proof -
-\twoSpaces \%s~ \%s~  \%s
-
-\twoSpaces qed"\\
-
-\twoSpaces $(ruleName, invName, asm1,asm2, obtain1, obtain2, proof)$ \;
-    \Return $lemmaWithProof$
-}
-
-
-
-\end{algorithm}
-
-
-
-
 %\paragraph*{Algorithms of Proof Generator {\sf proofGen}}
 %A lemma such as {\tt critVsinv1}  is generated by collecting all the information on   {\tt inv1} and   {\tt crit} in the generalization step discussed in Section \ref{sec:generalization}.
 Due to length limitation, we illustrate the algorithm  for generating  a key part of the proof of the lemma {\tt critVsinv1}: the generation of a subproof (e.g., lines 7-8) according to a symbolic  relation tag of $\mathsf{invHoldRule}_{1-3}$, which is shown in Algorithm \ref{alg:proofGenOfReltag}. Input $relTag$ is the result of the   generalization step, which is discussed in Section \ref{sec:generalization}.
-%\vspace{-0.8cm}
+\vspace{-0.8cm}
 \begin{algorithm}
 \caption{Generating a kind of proof which is according with a relation tag of $invHoldRule_{1-3}$ : rel2proof}\label{alg:proofGenOfReltag}
 \KwIn{A symbolic causal    relation item $relTag$}
@@ -1756,7 +1068,7 @@ Due to length limitation, we illustrate the algorithm  for generating  a key par
 \Return{proof}
 }
 \end{algorithm}
-%\vspace{-0.8cm}
+\vspace{-0.8cm}
 In the body of function {\sf rel2proof},  $\mathsf{sprintf}$ writes a formatted data to string and returns it.
 In line \ref{label:getFormField}, $\mathsf{getFormField}(relTag)$ returns the field of formula $f'$ if $relTag=\mathsf{invHoldRule_3}(f')$.  {\sf rel2proof} transforms a symbolic relation tag into a paragraph of proof, as shown in lines 7-8, 10-11, or 13-14.  %stored as an element in {\tt relationTags} field of an entry of $symbCausalTable$ on $\mathsf{crit}$ and $\mathsf{inv1}$.
 If the tag is among $\mathsf{invHoldRule_{1-2}}$, the transformation is rather straight-forward, else the form $f'$ is assigned by the formula $\mathsf{getFormField(relTag)}$, and provided to tell Isabelle the formula which is used to construct the $\mathsf{invHoldRule_3}$ relation.
@@ -1765,10 +1077,10 @@ If the tag is among $\mathsf{invHoldRule_{1-2}}$, the transformation is rather s
 
 
 %=========================================
-%\vspace{-0.5cm}
-\section{Experiments}\label{sec:experiments}
+\vspace{-0.5cm}
+\section{Experiments}
 %=========================================
-%\vspace{-0.5cm}
+\vspace{-0.5cm}
 We implement our tool in Ocaml. %\cite{ocamlRef}.
  Experiments are
 done with typical bus-snoopy benchmarks such as MESI and MOESI, as well as
@@ -1786,7 +1098,7 @@ scripts.  Experiment results are summarized in Table \ref{Summarization of exper
 %To the best of our knowledge, few people but us give a complete proof to verify
 %the mutual exclusion  property of the German protocol
  %in a theorem prover.
-  %As Chou, Mannava, Park pointed out in \cite{Chou2004}, FLASH is a good benchmark for any proposed method for parameterized verification: ��if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols ��. Therefore, our approach has reached this most important landmark. %From the line on the statistics on the FLASH, we can see the huge resource consumed by this case study. Such a big proof project is also a great challenge to a theorem prover like Isabelle. The total size of the proof scripts for FLASH verification is about 16M, which cann't be directly processed by Isabelle if we put all the proof scripts in a file. A file with 5000k is too large to be processed by Isabelle. Instead we have to divided   the proofs into small pieces, which are processed in some order. Therefore we work out a proof project control script in a {\tt ROOT} file to control the proof sessions. The proof consumptions of resources are according with the complexity of the problems. By the FLASH experiment, we demonstrate that ITP combined with automatic proof generation can handle industry-scale case like FLASH.
+  %As Chou, Mannava, Park pointed out in \cite{Chou2004}, FLASH is a good benchmark for any proposed method for parameterized verification: ��if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols��. Therefore, our approach has reached this most important landmark. %From the line on the statistics on the FLASH, we can see the huge resource consumed by this case study. Such a big proof project is also a great challenge to a theorem prover like Isabelle. The total size of the proof scripts for FLASH verification is about 16M, which cann't be directly processed by Isabelle if we put all the proof scripts in a file. A file with 5000k is too large to be processed by Isabelle. Instead we have to divided   the proofs into small pieces, which are processed in some order. Therefore we work out a proof project control script in a {\tt ROOT} file to control the proof sessions. The proof consumptions of resources are according with the complexity of the problems. By the FLASH experiment, we demonstrate that ITP combined with automatic proof generation can handle industry-scale case like FLASH.
 
 
 %There have been a lot of research papers in the field of  parameterized
@@ -1818,7 +1130,7 @@ The invariants-searching  algorithm used in our work differs from that in Cubeic
 \begin{table}[!t]
 \centering
 \caption{\label{Summarization of experiment results}Verification results on benchmarks.}
-%\vspace{-2mm}
+\vspace{-2mm}
 \begin{tabular}{|c|r|r|r|r|}
 \hline
 Protocols &  \#rules & \#invariants & time (seconds) & Memory (MB) \\
@@ -1840,13 +1152,13 @@ FLASH\_nodata & 60 & 152 & 280 & 26  \\
 FLASH\_data & 62 & 162 & 510 & 26  \\
 \hline
 \end{tabular}
-%\vspace{-5mm}
+\vspace{-5mm}
 \end{table}
 
 %=========================================
-%\vspace{-0.5cm}
-\section{Conclusion }\label{sec:conclusion}
-%\vspace{-0.5cm}
+\vspace{-0.5cm}
+\section{Conclusion }
+\vspace{-0.5cm}
 %=========================================
 %Within {\sf paraVerifier},
 %our automatic framework for parameterized verification of cache coherence protocol,
@@ -1862,9 +1174,9 @@ automatic proof generation is promising in the field of formal
 verification of industrial protocols. Theorem proving can guarantee the rigorousness of the verification results,
 while automatic proof generation can release the burden of human interaction.
 
-%\vspace{-0.5cm}
-%\bibliographystyle{splncsnat}
-\bibliographystyle{plain}
+\vspace{-0.5cm}
+\bibliographystyle{splncsnat}
+%\bibliographystyle{plain}
 \bibliography{gste,cache,refer,bib-proanyIsabelle,lvyi}
 
 \end{document}

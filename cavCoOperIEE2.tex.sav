@@ -20,7 +20,7 @@
 \usepackage{multicol}
 %\usepackage{program}
 \usepackage{cases}
-%\usepackage{enumitem}
+\usepackage{enumitem}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %For Isabelle code
 \newlength{\fminilength}
@@ -630,7 +630,7 @@ In order to  apply the consistency lemma to prove that a given property $inv$ (e
 \end{figure}
 %\vspace{-0.8cm}
 
-Our solutions to the two problems are shown in Fig. \ref{fig:arch}:
+Our solutions to the two problems are shown in Fig. \ref{fig:arch}: 
 Given a protocol,  \texttt{invFinder} finds all the necessary ground auxiliary invariants from a small instance of the protocol in Murphi. This step solves the first  problem.
  A table {\tt protocol.tbl} is worked out  to store the set of ground invariants and
  causal relations, which are then  used by {\tt proofGen} to
@@ -653,7 +653,7 @@ Given a protocol $\mathcal{P}$ and a property set $F$ containing invariant formu
 
 %\vspace{-0.8cm}
 
-\begin{algorithm}
+\begin{algorithm} 
 
 \caption{Algorithm: $invFinder$}\label{alg:invfinder}
 
@@ -1786,7 +1786,7 @@ scripts.  Experiment results are summarized in Table \ref{Summarization of exper
 %To the best of our knowledge, few people but us give a complete proof to verify
 %the mutual exclusion  property of the German protocol
  %in a theorem prover.
-  %As Chou, Mannava, Park pointed out in \cite{Chou2004}, FLASH is a good benchmark for any proposed method for parameterized verification: ��if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols ��. Therefore, our approach has reached this most important landmark. %From the line on the statistics on the FLASH, we can see the huge resource consumed by this case study. Such a big proof project is also a great challenge to a theorem prover like Isabelle. The total size of the proof scripts for FLASH verification is about 16M, which cann't be directly processed by Isabelle if we put all the proof scripts in a file. A file with 5000k is too large to be processed by Isabelle. Instead we have to divided   the proofs into small pieces, which are processed in some order. Therefore we work out a proof project control script in a {\tt ROOT} file to control the proof sessions. The proof consumptions of resources are according with the complexity of the problems. By the FLASH experiment, we demonstrate that ITP combined with automatic proof generation can handle industry-scale case like FLASH.
+  %As Chou, Mannava, Park pointed out in \cite{Chou2004}, FLASH is a good benchmark for any proposed method for parameterized verification: ��if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols��. Therefore, our approach has reached this most important landmark. %From the line on the statistics on the FLASH, we can see the huge resource consumed by this case study. Such a big proof project is also a great challenge to a theorem prover like Isabelle. The total size of the proof scripts for FLASH verification is about 16M, which cann't be directly processed by Isabelle if we put all the proof scripts in a file. A file with 5000k is too large to be processed by Isabelle. Instead we have to divided   the proofs into small pieces, which are processed in some order. Therefore we work out a proof project control script in a {\tt ROOT} file to control the proof sessions. The proof consumptions of resources are according with the complexity of the problems. By the FLASH experiment, we demonstrate that ITP combined with automatic proof generation can handle industry-scale case like FLASH.
 
 
 %There have been a lot of research papers in the field of  parameterized
