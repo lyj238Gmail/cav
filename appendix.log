@@ -1,0 +1,774 @@
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.12.9)  15 MAY 2016 21:42
+entering extended mode
+**appendix.tex
+(C:\Users\lyj\Documents\git\cav\appendix.tex
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for loaded.
+(C:\Users\lyj\Documents\git\cav\llncs.cls
+Document Class: llncs 2010/07/12 v2.17 
+ LaTeX document class for Lecture Notes in Computer Science
+(C:\CTEX\MiKTeX\tex\latex\base\article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(C:\CTEX\MiKTeX\tex\latex\base\size10.clo
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(C:\CTEX\MiKTeX\tex\latex\tools\multicol.sty
+Package: multicol 2011/06/27 v1.7a multicolumn formatting (FMi)
+\c@tracingmulticols=\count87
+\mult@box=\box26
+\multicol@leftmargin=\dimen103
+\c@unbalance=\count88
+\c@collectmore=\count89
+\doublecol@number=\count90
+\multicoltolerance=\count91
+\multicolpretolerance=\count92
+\full@width=\dimen104
+\page@free=\dimen105
+\premulticols=\dimen106
+\postmulticols=\dimen107
+\multicolsep=\skip43
+\multicolbaselineskip=\skip44
+\partial@page=\box27
+\last@line=\box28
+\mult@rightbox=\box29
+\mult@grightbox=\box30
+\mult@gfirstbox=\box31
+\mult@firstbox=\box32
+\@tempa=\box33
+\@tempa=\box34
+\@tempa=\box35
+\@tempa=\box36
+\@tempa=\box37
+\@tempa=\box38
+\@tempa=\box39
+\@tempa=\box40
+\@tempa=\box41
+\@tempa=\box42
+\@tempa=\box43
+\@tempa=\box44
+\@tempa=\box45
+\@tempa=\box46
+\@tempa=\box47
+\@tempa=\box48
+\@tempa=\box49
+\c@columnbadness=\count93
+\c@finalcolumnbadness=\count94
+\last@try=\dimen108
+\multicolovershoot=\dimen109
+\multicolundershoot=\dimen110
+\mult@nat@firstbox=\box50
+\colbreak@box=\box51
+\multicol@sort@counter=\count95
+)
+(C:\CTEX\MiKTeX\tex\latex\oberdiek\aliascnt.sty
+Package: aliascnt 2009/09/08 v1.3 Alias counter (HO)
+
+(C:\CTEX\MiKTeX\tex\latex\carlisle\remreset.sty))
+\c@chapter=\count96
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 363.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 364.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 365.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 366.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 367.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 368.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 369.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 370.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 371.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 372.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 373.
+\tocchpnum=\dimen111
+\tocsecnum=\dimen112
+\tocsectotal=\dimen113
+\tocsubsecnum=\dimen114
+\tocsubsectotal=\dimen115
+\tocsubsubsecnum=\dimen116
+\tocsubsubsectotal=\dimen117
+\tocparanum=\dimen118
+\tocparatotal=\dimen119
+\tocsubparanum=\dimen120
+\@tempcntc=\count97
+\fnindent=\dimen121
+\c@@inst=\count98
+\c@@auth=\count99
+\c@auco=\count100
+\instindent=\dimen122
+\authrun=\box52
+\authorrunning=\toks14
+\tocauthor=\toks15
+\titrun=\box53
+\titlerunning=\toks16
+\toctitle=\toks17
+\c@theorem=\count101
+\c@case=\count102
+\c@conjecture=\count103
+\c@corollary=\count104
+\c@definition=\count105
+\c@example=\count106
+\c@exercise=\count107
+\c@lemma=\count108
+\c@note=\count109
+\c@problem=\count110
+\c@property=\count111
+\c@proposition=\count112
+\c@question=\count113
+\c@solution=\count114
+\c@remark=\count115
+\headlineindent=\dimen123
+)
+(C:\CTEX\MiKTeX\tex\latex\base\makeidx.sty
+Package: makeidx 2000/03/29 v1.0m Standard LaTeX package
+)
+(C:\CTEX\MiKTeX\tex\latex\ams\math\amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip45
+
+For additional information on amsmath, use the `?' option.
+(C:\CTEX\MiKTeX\tex\latex\ams\math\amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(C:\CTEX\MiKTeX\tex\latex\ams\math\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks18
+\ex@=\dimen124
+))
+(C:\CTEX\MiKTeX\tex\latex\ams\math\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen125
+)
+(C:\CTEX\MiKTeX\tex\latex\ams\math\amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count116
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count117
+\leftroot@=\count118
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count119
+\DOTSCASE@=\count120
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box54
+\strutbox@=\box55
+\big@size=\dimen126
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+
+
+Package amsmath Warning: Unable to redefine math accent \vec.
+
+\macc@depth=\count121
+\c@MaxMatrixCols=\count122
+\dotsspace@=\muskip10
+\c@parentequation=\count123
+\dspbrk@lvl=\count124
+\tag@help=\toks19
+\row@=\count125
+\column@=\count126
+\maxfields@=\count127
+\andhelp@=\toks20
+\eqnshift@=\dimen127
+\alignsep@=\dimen128
+\tagshift@=\dimen129
+\tagwidth@=\dimen130
+\totwidth@=\dimen131
+\lineht@=\dimen132
+\@envbody=\toks21
+\multlinegap=\skip46
+\multlinetaggap=\skip47
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+) (C:\CTEX\MiKTeX\tex\latex\amsfonts\amssymb.sty
+Package: amssymb 2009/06/22 v3.00
+
+(C:\CTEX\MiKTeX\tex\latex\amsfonts\amsfonts.sty
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
+))
+(C:\CTEX\MiKTeX\tex\latex\stmaryrd\stmaryrd.sty
+Package: stmaryrd 1994/03/03 St Mary's Road symbol package
+\symstmry=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `stmry' in version `bold'
+(Font)                  U/stmry/m/n --> U/stmry/b/n on input line 89.
+)
+(C:\CTEX\MiKTeX\tex\latex\graphics\graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(C:\CTEX\MiKTeX\tex\latex\graphics\keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks23
+)
+(C:\CTEX\MiKTeX\tex\latex\graphics\graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(C:\CTEX\MiKTeX\tex\latex\graphics\trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(C:\CTEX\MiKTeX\tex\latex\00miktex\graphics.cfg
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(C:\CTEX\MiKTeX\tex\latex\pdftex-def\pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(C:\CTEX\MiKTeX\tex\generic\oberdiek\infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
+)
+(C:\CTEX\MiKTeX\tex\generic\oberdiek\ltxcmds.sty
+Package: ltxcmds 2011/04/18 v1.20 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count128
+))
+\Gin@req@height=\dimen133
+\Gin@req@width=\dimen134
+)
+(C:\CTEX\MiKTeX\tex\latex\subfigure\subfigure.sty
+Package: subfigure 2002/07/30 v2.1.4 subfigure package
+\subfigtopskip=\skip48
+\subfigcapskip=\skip49
+\subfigcaptopadj=\dimen135
+\subfigbottomskip=\skip50
+\subfigcapmargin=\dimen136
+\subfiglabelskip=\skip51
+\c@subfigure=\count129
+\c@lofdepth=\count130
+\c@subtable=\count131
+\c@lotdepth=\count132
+
+****************************************
+* Local config file subfigure.cfg used *
+****************************************
+(C:\CTEX\MiKTeX\tex\latex\subfigure\subfigure.cfg)
+\subfig@top=\skip52
+\subfig@bottom=\skip53
+)
+(C:\CTEX\MiKTeX\tex\latex\base\latexsym.sty
+Package: latexsym 1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
+\symlasy=\mathgroup7
+LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
+(Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
+)
+(C:\CTEX\MiKTeX\tex\latex\ltxmisc\url.sty
+\Urlmuskip=\muskip11
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+(C:\CTEX\MiKTeX\tex\latex\graphics\color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(C:\CTEX\MiKTeX\tex\latex\00miktex\color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+(C:\Users\lyj\Documents\git\cav\isabelle.sty
+\isa@parindent=\dimen137
+\isa@parskip=\dimen138
+
+(C:\CTEX\MiKTeX\tex\latex\comment\comment.sty
+\CommentStream=\write3
+ Excluding comment 'comment')
+Including comment 'isadelimtheory' Including comment 'isatagtheory'
+Including comment 'isadelimproof' Including comment 'isatagproof'
+Including comment 'isadelimML' Including comment 'isatagML'
+Including comment 'isadelimvisible' Including comment 'isatagvisible'
+Excluding comment 'isadeliminvisible' Excluding comment 'isataginvisible')
+(C:\Users\lyj\Documents\git\cav\isabellesym.sty)
+(C:\CTEX\MiKTeX\tex\latex\tools\theorem.sty
+Package: theorem 1995/11/23 v2.2c Theorem extension package (FMi)
+\theorem@style=\toks24
+\theorem@bodyfont=\toks25
+\theorempreskipamount=\skip54
+\theorempostskipamount=\skip55
+
+(C:\CTEX\MiKTeX\tex\latex\tools\thp.sty
+File: thp.sty 1995/11/23 v2.2c Theorem extension package (FMi)
+))
+(C:\CTEX\MiKTeX\tex\latex\algorithms\algorithmic.sty
+Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
+
+(C:\CTEX\MiKTeX\tex\latex\base\ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\c@ALC@unique=\count133
+\c@ALC@line=\count134
+\c@ALC@rem=\count135
+\c@ALC@depth=\count136
+\ALC@tlm=\skip56
+\algorithmicindent=\skip57
+)
+(C:\CTEX\MiKTeX\tex\latex\algorithm2e\algorithm2e.sty
+Package: algorithm2e 2008/00/00 v3.10 algorithms environments
+\c@AlgoLine=\count137
+
+(C:\CTEX\MiKTeX\tex\latex\tools\xspace.sty
+Package: xspace 2009/10/20 v1.13 Space after command names (DPC,MH)
+)
+(C:\CTEX\MiKTeX\tex\latex\ltxmisc\relsize.sty
+Package: relsize 2003/07/04 ver 3.1
+)
+********************************************************
+Package `algorithm2e' Release 4.01 -- december 14 2009 --
+- algorithm2e-announce@lirmm.fr mailing list for announcement about releases
+- algorithm2e-discussion@lirmm.fr mailing list for discussion about package
+subscribe by emailing sympa@lirmm.fr with 'subscribe <list> <firstname name>'
+- Author: Christophe Fiorio (fiorio@lirmm.fr)
+********************************************************
+\skiptotal=\skip58
+\skiplinenumber=\skip59
+\skiprule=\skip60
+\skiphlne=\skip61
+\skiptext=\skip62
+\skiplength=\skip63
+\algomargin=\skip64
+\skipalgocfslide=\skip65
+\algowidth=\dimen139
+\inoutsize=\dimen140
+\inoutline=\dimen141
+\interspacetitleruled=\dimen142
+\interspacealgoruled=\dimen143
+\interspacetitleboxruled=\dimen144
+\algocf@inoutbox=\box56
+\algocf@inputbox=\box57
+\AlCapSkip=\skip66
+\AlCapHSkip=\skip67
+\algocf@nlbox=\box58
+\algocf@hangingbox=\box59
+\algocf@capbox=\box60
+\algoheightruledefault=\skip68
+\algoheightrule=\skip69
+\algotitleheightruledefault=\skip70
+\algotitleheightrule=\skip71
+\c@algocfline=\count138
+\c@algocfproc=\count139
+\c@algocf=\count140
+\algocf@algoframe=\box61
+\algocf@algobox=\box62
+) (C:\CTEX\MiKTeX\tex\latex\cases\cases.sty
+Package: cases 2002/05/02 ver 2.5 
+)
+\fminilength=\skip72
+\fminibox=\box63
+
+(C:\Users\lyj\Documents\git\cav\tcilatex.tex
+TCILATEX Macros for Scientific Word 2.5 <22 Dec 95>.
+NOTICE: This macro file is NOT proprietary and may be freely copied and distrib
+uted.
+\@hour=\count141
+\@minute=\count142
+\GRAPHICSTYPE=\count143
+\draft=\count144
+\dispkind=\count145
+\theight=\dimen145
+LaTeX Info: Redefining \rm on input line 557.
+LaTeX Info: Redefining \sf on input line 558.
+LaTeX Info: Redefining \tt on input line 559.
+LaTeX Info: Redefining \bf on input line 560.
+LaTeX Info: Redefining \it on input line 561.
+LaTeX Info: Redefining \sl on input line 562.
+LaTeX Info: Redefining \sc on input line 563.
+\c@axiom=\count146
+\c@equationnumber=\count147
+amsgen already loaded)
+No file appendix.aux.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+(C:\CTEX\MiKTeX\tex\context\base\supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count148
+\scratchdimen=\dimen146
+\scratchbox=\box64
+\nofMPsegments=\count149
+\nofMParguments=\count150
+\everyMPshowfont=\toks26
+\MPscratchCnt=\count151
+\MPscratchDim=\dimen147
+\MPnumerator=\count152
+\makeMPintoPDFobject=\count153
+\everyMPtoPDFconversion=\toks27
+)
+LaTeX Font Info:    Try loading font information for U+msa on input line 62.
+ (C:\CTEX\MiKTeX\tex\latex\amsfonts\umsa.fd
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 62.
+
+(C:\CTEX\MiKTeX\tex\latex\amsfonts\umsb.fd
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+)
+LaTeX Font Info:    Try loading font information for U+stmry on input line 62.
+
+(C:\CTEX\MiKTeX\tex\latex\stmaryrd\ustmry.fd)
+LaTeX Font Info:    Try loading font information for U+lasy on input line 62.
+
+(C:\CTEX\MiKTeX\tex\latex\base\ulasy.fd
+File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
+)
+
+LaTeX Warning: Reference `table-semantics-exp-formula' on page 1 undefined on i
+nput line 66.
+
+
+LaTeX Font Warning: Font shape `U/stmry/b/n' undefined
+(Font)              using `U/stmry/m/n' instead on input line 87.
+
+LaTeX Font Info:    Font shape `U/lasy/b/n' in size <8> not available
+(Font)              Font shape `U/lasy/m/n' tried instead on input line 87.
+LaTeX Font Info:    Font shape `U/lasy/b/n' in size <6> not available
+(Font)              Font shape `U/lasy/m/n' tried instead on input line 87.
+
+LaTeX Warning: Reference `alg:computeSemiPerms' on page 1 undefined on input li
+ne 89.
+
+
+Overfull \hbox (3.17215pt too wide) in paragraph at lines 137--138
+\OT1/cmr/m/n/10 [3\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 1]\OML/cmm/m/it/10 ; \OT1/
+cmr/m/n/10 [3\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 2]\OML/cmm/m/it/10 ; \OT1/cmr/m
+/n/10 [3\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 4]]$, which is a true sub-set of $[]
+[] = [[1\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 2]\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10
+ [1\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 3]\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 [1\O
+ML/cmm/m/it/10 ; \OT1/cmr/m/n/10 4]\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 [2\OML/cm
+m/m/it/10 ; \OT1/cmr/m/n/10 1]\OML/cmm/m/it/10 ;$
+ []
+
+[1
+
+{C:/CTEX/UserData/pdftex/config/pdftex.map{Unicode.sfd}{UGBK.sfd}}]
+Underfull \hbox (badness 10000) in paragraph at lines 151--153
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 154--160
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 161--184
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 161--184
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 161--184
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 161--184
+
+ []
+
+[2]
+LaTeX Font Info:    Font shape `U/lasy/b/n' in size <7> not available
+(Font)              Font shape `U/lasy/m/n' tried instead on input line 184.
+LaTeX Font Info:    Font shape `U/lasy/b/n' in size <5> not available
+(Font)              Font shape `U/lasy/m/n' tried instead on input line 184.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 186.
+
+ (C:\CTEX\MiKTeX\tex\latex\base\omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 186.
+
+Underfull \hbox (badness 10000) in paragraph at lines 185--190
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--212
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--212
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--212
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--212
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--212
+
+ []
+
+[3]
+Overfull \hbox (24.48692pt too wide) in paragraph at lines 214--231
+\OT1/cmr/m/n/10 ($\OMS/cmsy/m/n/10 9$ \OT1/cmr/m/n/10 p[][]Inv3 p[][]Inv4. p[][
+]Inv3$\OMS/cmsy/m/n/10 $\OT1/cmr/m/n/10 N$\OMS/cmsy/m/n/10 ^$\OT1/cmr/m/n/10 p
+[][]Inv4$\OMS/cmsy/m/n/10 $\OT1/cmr/m/n/10 N$\OMS/cmsy/m/n/10 ^$\OT1/cmr/m/n/1
+0 p[][]Inv3$\OMS/cmsy/m/n/10 6\OT1/cmr/m/n/10 =$p[][]Inv4$\OMS/cmsy/m/n/10 ^$\O
+T1/cmr/m/n/10 f=inv[][]1 p[][]Inv3 p[][]Inv4)
+ []
+
+
+Overfull \hbox (24.48692pt too wide) in paragraph at lines 214--231
+\OT1/cmr/m/n/10 ($\OMS/cmsy/m/n/10 9$ \OT1/cmr/m/n/10 p[][]Inv3 p[][]Inv4. p[][
+]Inv3$\OMS/cmsy/m/n/10 $\OT1/cmr/m/n/10 N$\OMS/cmsy/m/n/10 ^$\OT1/cmr/m/n/10 p
+[][]Inv4$\OMS/cmsy/m/n/10 $\OT1/cmr/m/n/10 N$\OMS/cmsy/m/n/10 ^$\OT1/cmr/m/n/1
+0 p[][]Inv3$\OMS/cmsy/m/n/10 6\OT1/cmr/m/n/10 =$p[][]Inv4$\OMS/cmsy/m/n/10 ^$\O
+T1/cmr/m/n/10 f=inv[][]3 p[][]Inv3 p[][]Inv4)
+ []
+
+
+Overfull \hbox (24.48692pt too wide) in paragraph at lines 214--231
+\OT1/cmr/m/n/10 ($\OMS/cmsy/m/n/10 9$ \OT1/cmr/m/n/10 p[][]Inv3 p[][]Inv4. p[][
+]Inv3$\OMS/cmsy/m/n/10 $\OT1/cmr/m/n/10 N$\OMS/cmsy/m/n/10 ^$\OT1/cmr/m/n/10 p
+[][]Inv4$\OMS/cmsy/m/n/10 $\OT1/cmr/m/n/10 N$\OMS/cmsy/m/n/10 ^$\OT1/cmr/m/n/1
+0 p[][]Inv3$\OMS/cmsy/m/n/10 6\OT1/cmr/m/n/10 =$p[][]Inv4$\OMS/cmsy/m/n/10 ^$\O
+T1/cmr/m/n/10 f=inv[][]5 p[][]Inv3 p[][]Inv4)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 214--231
+
+ []
+
+[4]
+Overfull \hbox (4.58609pt too wide) in paragraph at lines 253--254
+[]\OT1/cmr/m/it/10 difference con-strain-t be-tween pa-ram-e-ter $[][]$ and $[]
+[]$: $\OML/cmm/m/it/10 diff\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 i; j\OT1/cmr/m/n/1
+0 ) \OMS/cmsy/m/n/10  \OT1/cmr/m/n/10 ([][] \OMS/cmsy/m/n/10 6\OT1/cmr/m/n/10 
+=
+ []
+
+
+LaTeX Warning: Reference `subsec:formalinvariant formulas ' on page 5 undefined
+ on input line 259.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 267--268
+
+ []
+
+
+LaTeX Warning: Reference `subsec:invariant formula instances ' on page 5 undefi
+ned on input line 286.
+
+[5]
+
+LaTeX Warning: Reference `fig:thyHierarchy' on page 6 undefined on input line 2
+94.
+
+
+Overfull \hbox (9.6182pt too wide) in paragraph at lines 294--295
+\OT1/cmtt/m/n/10 invs$[]$on$[]$rules \OT1/cmr/m/n/10 and \OT1/cmtt/m/n/10 on$[]
+$inis\OT1/cmr/m/n/10 . The proof \OT1/cmtt/m/n/10 invs$[]$on$[]$rules \OT1/cmr/
+m/n/10 need-s \OT1/cmtt/m/n/10 lemma$[]$invi$[]$on$[]$rules\OT1/cmr/m/n/10 ,
+ []
+
+
+Overfull \hbox (31.11479pt too wide) in paragraph at lines 294--295
+\OT1/cmr/m/n/10 where $1 \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 i \OMS/cmsy/m/n/10
+  \OT1/cmr/m/n/10 5$; and the proof of \OT1/cmtt/m/n/10 lemma$[]$invInst$[]$on
+$[]$rules \OT1/cmr/m/n/10 such as \OT1/cmtt/m/n/10 lemma$[]$inv1$[]$on$[]$rules
+
+ []
+
+
+LaTeX Warning: File `thy.pdf' not found on input line 299.
+
+
+! Package pdftex.def Error: File `thy.pdf' not found.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.299 ...udegraphics[width=1.0\textwidth]{thy.pdf}
+                                                  
+? 
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 327
+.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 327.
+
+LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbraceleft' on input line 327.
+
+
+LaTeX Warning: Citation `Wen99' on page 6 undefined on input line 359.
+
+[6]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [7]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [8]
+Overfull \hbox (3.99416pt too wide) in paragraph at lines 576--579
+[]\OT1/cmr/m/n/10 With the lem-mas such as \OT1/cmtt/m/n/10 iniImply[]inv4\OT1/
+cmr/m/n/10 , for any in-vari-ant $\OML/cmm/m/it/10 inv \OMS/cmsy/m/n/10 2 \OT1/
+cmr/m/n/10 ([] []\OML/cmm/m/it/10 N\OT1/cmr/m/n/10 )$,
+ []
+
+
+Underfull \vbox (badness 6893) has occurred while \output is active []
+
+ [9]
+Overfull \hbox (65.46002pt too wide) in paragraph at lines 725--757
+ [] 
+ []
+
+
+Underfull \vbox (badness 5245) has occurred while \output is active []
+
+ [10]
+
+LaTeX Warning: Reference `subsection:introOfIsabelleProof' on page 11 undefined
+ on input line 791.
+
+
+LaTeX Warning: Reference `alg:proofGenOfReltag' on page 11 undefined on input l
+ine 791.
+
+
+LaTeX Warning: Reference `label:getFormField' on page 11 undefined on input lin
+e 820.
+
+
+Overfull \hbox (37.16129pt too wide) in paragraph at lines 819--822
+\OT1/cmr/m/n/10 re-turn-s it. In line [], $\OML/cmm/m/it/10 getFormField\OT1/cm
+r/m/n/10 (\OML/cmm/m/it/10 relTag\OT1/cmr/m/n/10 )$ re-turn-s $\OML/cmm/m/it/10
+ f[]$ \OT1/cmr/m/n/10 if $\OML/cmm/m/it/10 relTag \OT1/cmr/m/n/10 = \OML/cmm/m/
+it/10 invHoldForRule[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 f[]\OT1/cmr/m/n/10 )$.
+ []
+
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <9> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 833.
+
+LaTeX Warning: Reference `alg:MoreOver' on page 11 undefined on input line 840.
+
+
+
+LaTeX Warning: Reference `alg:doCaseAnalz' on page 11 undefined on input line 8
+42.
+
+
+LaTeX Warning: Reference `alg:doCaseAnalzI' on page 11 undefined on input line 
+864.
+
+
+Overfull \hbox (79.73022pt too wide) in paragraph at lines 864--865
+\OT1/cmr/m/n/10 ed by con-cate-na-tion of al-l the sub-proof-s, each of which i
+s gen-er-at-ed by $\OML/cmm/m/it/10 oneMoreOverGenI\OT1/cmr/m/n/10 (\OML/cmm/m/
+it/10 case; rel\OT1/cmr/m/n/10 )$.
+ []
+
+
+Overfull \hbox (31.78857pt too wide) in paragraph at lines 864--865
+\OT1/cmr/m/n/10 The proof is sim-ply com-posed by call-ing $\OML/cmm/m/it/10 do
+CaseAnalz\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 partition; subproofs; concluding\OT1
+/cmr/m/n/10 )$. 
+ []
+
+[11] [12]
+
+LaTeX Warning: Reference `alg:asmGenOnInv' on page 13 undefined on input line 8
+89.
+
+
+Overfull \hbox (37.538pt too wide) in paragraph at lines 889--890
+\OT1/cmr/m/n/10 lem-ma such as $\OML/cmm/m/it/10 critVsInv\OT1/cmr/m/n/10 1$. I
+n the body of al-go-rith-m [], $\OML/cmm/m/it/10 tbl[]element\OT1/cmr/m/n/10 (\
+OML/cmm/m/it/10 symbInvs; invName\OT1/cmr/m/n/10 )$
+ []
+
+
+LaTeX Warning: Reference `alg:obtainGenOnInv' on page 13 undefined on input lin
+e 908.
+
+
+LaTeX Warning: Reference `alg:lemmaOnCausalRuleInv' on page 13 undefined on inp
+ut line 925.
+
+No file appendix.bbl.
+[13] [14] [15] (C:\Users\lyj\Documents\git\cav\appendix.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ )
+(\end occurred when \ifx on line 678 was incomplete) 
+Here is how much of TeX's memory you used:
+ 4988 strings out of 495354
+ 61106 string characters out of 3183859
+ 150824 words of memory out of 3000000
+ 8036 multiletter control sequences out of 15000+200000
+ 23858 words of font info for 97 fonts, out of 3000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 29i,15n,26p,1104b,445s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/CTEX/MiKTeX/fonts/type1
+/public/amsfonts/cm/cmbx10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/c
+mbx12.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx7.pfb><C:/CTEX/MiK
+TeX/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/CTEX/MiKTeX/fonts/type1/public
+/amsfonts/cm/cmex10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cmextra/cme
+x9.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/CTEX/MiKTe
+X/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/CTEX/MiKTeX/fonts/type1/public/a
+msfonts/cm/cmmi7.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><
+C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmmib10.pfb><C:/CTEX/MiKTeX/fonts
+/type1/public/amsfonts/cmextra/cmmib8.pfb><C:/CTEX/MiKTeX/fonts/type1/public/am
+sfonts/cm/cmr10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:
+/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/CTEX/MiKTeX/fonts/type
+1/public/amsfonts/cm/cmr9.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cm
+ss10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmss9.pfb><C:/CTEX/MiKT
+eX/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/CTEX/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmsy10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.
+pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/CTEX/MiKTeX/fo
+nts/type1/public/amsfonts/cm/cmsy9.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmti10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmti9.pfb><C:/
+CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/CTEX/MiKTeX/fonts/typ
+e1/public/amsfonts/cm/cmtt8.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/
+cmtt9.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/CT
+EX/MiKTeX/fonts/type1/public/amsfonts/symbols/msam7.pfb><C:/CTEX/MiKTeX/fonts/t
+ype1/public/amsfonts/symbols/msbm10.pfb>
+Output written on appendix.pdf (15 pages, 393230 bytes).
+PDF statistics:
+ 175 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+
