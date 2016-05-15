@@ -516,8 +516,6 @@ In the following discussion, we assume that $inv=\mathsf{mutual} (i_1,i_2)$, $r=
 
 % \item
 
-\item     $\mathsf{invHoldRule_2 }(s,inv,r)$, where   $i_1 \neq iR_1$, and $i_2 \neq iR_1$, since $\mathsf{preCond}(\mathsf{act}(r),inv)=inv$.
-
 
  \item   $\mathsf{invHoldRule_3 }(s,inv,r,invs)$, where  $i_1 = iR_1$.
   Since
@@ -525,7 +523,13 @@ In the following discussion, we assume that $inv=\mathsf{mutual} (i_1,i_2)$, $r=
 
 
 \item   $\mathsf{invHoldRule_3 }(s,inv,r,invs)$, where $i_2 = iR_1$.  Since
- $\mathsf{invOnXC}( i_1) \in invs$, $\mathsf{preCond}$\ $(\mathsf{act}(r),inv)=\negc (n[i_1]\eqc\mathsf{C}\andc \mathsf{C}\eqc\mathsf{C})$, and $s \models (\mathsf{invOnXC}( i_2) \andc \mathsf{pre}(\mathsf{crit}(iR_1)))$ implies  $s \models \negc ( n[i_1]\eqc\mathsf{C}\andc \mathsf{C}\eqc\mathsf{C})$. %Since
+ $\mathsf{invOnXC}( i_1) \in invs$, $\mathsf{preCond}$\ $(\mathsf{act}(r),inv)=\negc (n[i_1]\eqc\mathsf{C}\andc \mathsf{C}\eqc\mathsf{C})$, and $s \models (\mathsf{invOnXC}( i_2) \andc \mathsf{pre}(\mathsf{crit}(iR_1)))$ implies  $s \models \negc ( n[i_1]\eqc\mathsf{C}\andc \mathsf{C}\eqc\mathsf{C})$.
+
+
+
+\item     $\mathsf{invHoldRule_2 }(s,inv,r)$, where   $i_1 \neq iR_1$, and $i_2 \neq iR_1$, since $\mathsf{preCond}(\mathsf{act}(r),inv)=inv$.
+
+%Since
  %$\mathsf{invOnXC}( i_1) \in \mathsf{pinvs} (N)$, $\mathsf{preCond}(\mathsf{act}(\mathsf{crit}(iR_1)),
 % \mathsf{mutual} (i_1,i_2))=\negc (\mathsf{C}\eqc\mathsf{C}\andc n[i_1]\eqc\mathsf{C})$.
 % where $i_1 \neq i_2$,  $i_1 \neq iR_1$, and $i_2 \neq iR_1$.
@@ -559,7 +563,7 @@ The following lemma formalizes the essence of the aforementioned causal relation
 
 
 \lyj{
-Theorem \ref{consistentLemma} is our main weapon  to prove. Let us recall the proof goal set in \ref{example1}:  the mutual exclusion property holds for each reachable state of the mutual-exclusion protocol. %Let us recall example \ref{example1} and  \ref{example2}.
+Theorem \ref{consistentLemma} is our main weapon  to prove. Let us recall the proof goal set in Example \ref{example1}:  the mutual exclusion property holds for each reachable state of the mutual-exclusion protocol. %Let us recall example \ref{example1} and  \ref{example2}.
 In order to prove the goal, we prove a more general result:}
 \begin{lemma} \label{caseSimp}
   If $ P=(pini(N),prules(N))$ is the protocol listed in example \ref{example1},  $s \in \mathsf{reachableSet}(P)$, and $0<N$, and $pinvs(N)$ is the set of formulas in example \ref{example2},   then for any $inv$ s.t. $inv \in pinvs(N)$, $s\models inv $.
@@ -671,7 +675,7 @@ auxiliary invariants in example \ref{example2} and causal relations used in Lemm
 
 
 \subsection{Parameter Generation Policy}\label{sec:parameterGenPolicy}
-\lyj{Let $r=\mathsf{crit}(i)$, which is a parameterized rule. How many groups of rule parameters  are needed to instantiate $r$ into concrete rules in order to compute more auxiliary invariants and causal relations between these concrete rules and $f$. For instance, [1], [2], and [3] are three groups to instantiate $r$ into $\mathsf{crit}(1)$, $\mathsf{crit}(2)$, and $\mathsf{crit}(3)$. However, a natural question is: is it enough for our parameter generation policy to generate only these three groups of concrete rules. Do we need another group parameter [4] to instantiate $r$? Roughly speaking, after the generation of concrete rules according to the policy, enough auxiliary invariants and causal relations should be computed to generate  a proof a shown in Lemma \ref{caseSimp}. In detail, through the computation of $\mathsf{coreFinder}(cr,  f, A)$ by using $\mathsf{crit}(1)$, $\mathsf{crit}(2)$ and $\mathsf{crit}(3)$ with $f$, adopting the information generated from the generated auxiliary invariants and causal relations should derive a proof of case on $f$ and $\mathsf{crit}$ in Example \ref{example2} which also involves three subcases. Here [4] is not necessary because [3] and [4] are ``equivalent" by our $\mathsf{Policy}$.}
+\lyj{Let $r=\mathsf{crit}(i)$, which is a parameterized rule. How many groups of rule parameters  are needed to instantiate $r$ into concrete rules in order to compute more auxiliary invariants and causal relations between these concrete rules and $f$. For instance, [1], [2], and [3] are three groups to instantiate $r$ into $\mathsf{crit}(1)$, $\mathsf{crit}(2)$, and $\mathsf{crit}(3)$. However, a natural question is: is it enough for our parameter generation policy to generate only these three groups of concrete rules. Do we need another group parameter [4] to instantiate $r$? Roughly speaking, after the generation of concrete rules according to the policy, enough auxiliary invariants and causal relations should be computed to generate  a proof a shown in Lemma \ref{caseSimp}. In detail, through the computation of $\mathsf{coreFinder}(cr,  f, A)$ by using $\mathsf{crit}(1)$, $\mathsf{crit}(2)$ and $\mathsf{crit}(3)$ with $f$, adopting the information generated from the generated auxiliary invariants and causal relations should derive a proof of case on $f$ and $\mathsf{crit}$ in Example \ref{example2} which also involves three subcases. Here [4] is not necessary because [3] and [4] are ``equivalent" by our $\mathsf{Policy}$. Let us explain the reason as follows. }
 
 In order to formulate the main ideas of our parameter generation policy, we introduce the concept of permutation modulo to symmetry relation $\simeq_m^n$,  and a quotient set of $\mathsf{perms}_{m}^{n}$ (the set of all $n$-permutations of $m$) under the  relation.  Here an $n$-permutation of $m$ is ordered arrangement of  an $n$--element subset of an $m$-element set $I=\{i. 0<i\le m\}$. We use a list $xs$ with size $n$ to stand for an $n$-permutation of $m$. For instance, $[1,2]$ is a 2-permutation of 3. $xs_{[i]}$ and $|xs|$  denote  the $i-$th element and the length of $xs$ respectively. If $xs_{[i]}=i$ for all $i \le |xs|$, we call it identical permutation. %, and sometimes is denoted by $1~ \mathsf{upto}~ n$ if $n=|xs|$.
 
@@ -726,11 +730,11 @@ Let $m=3$, $n=1$, $S=\{[1],[2],[3]\}$ and  $\mathsf{semiP}(m,n,S)$,  let $LR$ be
 \item $LR=[1]$: it is a special case where $LR_{[1]}=1 $;
 \item $LR=[2]$: it is a special case where $LR_{[1]}=2 $;
 \item $LR=[3]$: it is a special case where $LR_{[1]}\ne 1$ and $LR_{[1]}\ne 2$;
-\item \lyj{$[3] \simeq_3^1 [4]$, they are both the special cases where $LR_{[1]}\ne 1$ and $LR_{[1]}\ne 2$.}
+%\item \lyj{$[3] \simeq_3^1 [4]$, they are both the special cases where $LR_{[1]}\ne 1$ and $LR_{[1]}\ne 2$.}
 %\end{itemize}
 \end{enumerate}
 \end{example}
-Note that the above cases are mutually disjoint and their disjunction  is true.
+Note that the above cases are mutually disjoint and their disjunction  is true. Besides, \lyj{$[3] \simeq_3^1 [4]$ and  they are both the special cases where $LR_{[1]}\ne 1$ and $LR_{[1]}\ne 2$. This is the reason why [4] is not needed to chosen to instantiate $\mathsf{crit}$.}
 
 %Consider  natural numbers $m$ and $n$, computing a quotient of $\mathsf{perms}_{m}^{n}$ can be implemented by an algorithm $\mathsf{cmpSemiperm}$. Roughly speaking, $\mathsf{cmpSemiperm}$ firstly computes the set $\mathsf{perms}_m^n$, and push elements of it into a queue $S_0$, and select elements of $S_0$ into a set $S$. Initially $S$ is set empty. the head element of $S_0$ is pop into $L$, then $L$ will be checked whether there is an element $L'$ in $S$ s.t. $L\simeq_m^n L'$. If  yes, then $L$ will be discarded, else $L$ is inserted into $S$. This procedure is repeated until $S$ is empty. Finally $S$ will be returned. The detail of $\mathsf{cmpSemiperm}$ can be found in \cite{}.
 
@@ -745,7 +749,7 @@ A  concrete invariant formula $cinv$ is normalized w.r.t a parameterized invaria
 
 \end{definition}
 
-Any normalized $cinv$ containing array variables is obtained by instantiating a parameterized invariant $pinv$ with a parameter list which is an identical permutation $LI$ (i.e., the $j^{th}$ parameter is $j$ itself $LI_{[j]}=j$). \lyj{ For instance, the concrete formula $\negc (n[1]\eqc C \andc n[2]\eqc C)$ is obtained by instantiating $mutualInv(i_1,i_2)$ with $[1,2]$.}  Thus, consider a list of parameter $LR$ which is used to instantiate a parameterized rule $pr$, we  have $LR_{[i]}=j$ (or $LR_{[i]}\ne j$) is equivalent to $LR_{[i]}=LI_{[j]}$ (or $LR_{[i]}\ne LI_{[j]}$), %\lyj{my correction}{\bf[what is LR, you only use it in an example, need to define it clearly in this paragraph] },
+Any normalized $cinv$ containing array variables is obtained by instantiating a parameterized invariant $pinv$ with a parameter list which is an identical permutation $LI$ (i.e., the $j^{th}$ parameter is $j$ itself $LI_{[j]}=j$). \lyj{ For instance, the concrete formula $\negc (n[1]\eqc C \andc n[2]\eqc C)$ is obtained by instantiating $\mathsf{mutualInv}(i_1,i_2)$ with $[1,2]$.}  Thus, consider a list of parameter $LR$ which is used to instantiate a parameterized rule $pr$, we  have $LR_{[i]}=j$ (or $LR_{[i]}\ne j$) is equivalent to $LR_{[i]}=LI_{[j]}$ (or $LR_{[i]}\ne LI_{[j]}$), %\lyj{my correction}{\bf[what is LR, you only use it in an example, need to define it clearly in this paragraph] },
 which is a factor to specify a case by comparing $LR_{[i]}$ with $LI_{[j]}$. This will be the key idea used to  generalize the concrete  invariants and causal relations computed by {\sf invFinder}.  %All the auxiliary invariant formulas will be in a normalized form, and checked with any parameterized rule whether some kind of causal relation hold between them.
 
 
@@ -861,9 +865,9 @@ $\mathsf{mutualInv}(2,1)$ in a symmetry view. % Let $ invs=\emptyset$, $ r=\math
 \hline
   rule& ruleParas&inv&causal relation &   f'  \\
 \hline
-  .. & ..&.. &..&.. \\
+ % .. & ..&.. &..&.. \\
 
-\hline
+%\hline
   crit  & [1]&mutualInv(1,2)& invHoldRule3 &invOnXC(2) \\
 \hline
   crit &[2]& mutualInv(1,2)& invHoldRule3 &invOnXC(1)  \\
@@ -882,12 +886,15 @@ $\mathsf{mutualInv}(2,1)$ in a symmetry view. % Let $ invs=\emptyset$, $ r=\math
 
 %\vspace{-0.8cm}
 
-Let us continue the example in the end of subsection \ref{sec:parameterGenPolicy}. After the three iterations of computations of {\sf coreFinder} on $\mathsf{crit}(1)$, $\mathsf{crit}(2)$, $\mathsf{crit}(3)$ and $mutualInv(1,2)$, the according output of the {\sf invFinder}, which is stored in file {\tt mutual.tbl},  is shown in Table
+\lyj{Let us continue the example in the end of subsection \ref{sec:parameterGenPolicy}. After the three iterations of computations of {\sf coreFinder} on $\mathsf{crit}(1)$, $\mathsf{crit}(2)$, $\mathsf{crit}(3)$ with  $mutualInv(1,2)$, the according output of the {\sf invFinder}, which is stored in file {\tt mutual.tbl},  is shown in Table
 \ref{table:groundCausalRelation}. In the table,  each line records the    index of a normalized   invariant, name of a parameterized rule, the rule
   parameters to instantiate the rule, a causal relation between
   the ground invariant and a kind of causal relation which involves the kind and proper formulas
   $f'$   in need (which are used to construct
-      causal relations $\mathsf{invHoldRule}_3$). $\mathsf{mutualInv}(1,2)$. 
+      causal relations $\mathsf{invHoldRule}_3$).}
+
+\lyj{Notice that there is a close correspondence between the three lines in table \ref{table:groundCausalRelation} and the three case analysis in example \ref{example2}. Each line in table \ref{table:groundCausalRelation} is a special one of the cooresponding case in Example \ref{example2} if we instantiate $iR_1$ with $LR_{1}$, and $i_1$ with $1$, and $i_2$ with $2$ respectively. Can we generalize the information in the lines on concrete invariants and causal relations into symbolic ones which are key to generate proofs as shown in Example \ref{example2}. }
+
 
 \forget{For instance, let $PR=\{try, crit, exit, idle\}$, $invs=\{mutualInv(1,2)\}$,    the output of the {\sf invFinder}, which is stored in file {\tt mutual.tbl},  is shown in Table
 \ref{table:groundCausalRelation}. In the table,  each line records the    index of a normalized   invariant, name of a parameterized rule, the rule
