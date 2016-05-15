@@ -1,0 +1,92 @@
+\begin{thebibliography}{10}
+
+\bibitem{Pnueli1996}
+Pnueli, A., Shahar, E.:
+\newblock A platform for combining deductive with algorithmic verification.
+\newblock In Alur, R., Henzinger, T., eds.: Computer Aided Verification. Volume
+  1102 of Lecture Notes in Computer Science.
+\newblock Springer Berlin Heidelberg (1996)  184--195
+
+\bibitem{Bjørner1997}
+Bj\"orner, N., Browne, A., Manna, Z.:
+\newblock Automatic generation of invariants and intermediate assertions.
+\newblock Theoretical Computer Science \textbf{173}(1) (1997)  49 -- 87
+
+\bibitem{Arons2001}
+Arons, T., Pnueli, A., Ruah, S., Xu, Y., Zuck, L.:
+\newblock Parameterized verification with automatically computed inductive
+  assertions?
+\newblock In: Proc.\ 13th International Conference on Computer Aided
+  Verification. Volume 2102 of LNCS.
+\newblock Springer (2001)  221--234
+
+\bibitem{Pnueli2001}
+Pnueli, A., Ruah, S., Zuck, L.:
+\newblock Automatic deductive verification with invisible invariants.
+\newblock In: 7th International Conference on Tools and Algorithms for the
+  Construction and Analysis of Systems. Volume 2031 of LNCS.
+\newblock Springer (2001)  82--97
+
+\bibitem{Tiwari2001}
+Tiwari, A., Rue\ss, H., Sa\"idi, H., Shankar, N.:
+\newblock A technique for invariant generation.
+\newblock In: Proc.\ 7th International Conference on Tools and Algorithms for
+  the Construction and Analysis of Systems. Volume 2031 of LNCS.
+\newblock Springer (2001)  113--127
+
+\bibitem{Chou2004}
+Chou, C.T., Mannava, P., Park, S.:
+\newblock A simple method for parameterized verification of cache coherence
+  protocols.
+\newblock In: Proc.\ 5th International Conference on Formal Methods in
+  Computer-Aided Design. Volume 3312 of LNCS.
+\newblock Springer (2004)  382--398
+
+\bibitem{Pandav2005}
+Pandav, S., Slind, K., Gopalakrishnan, G.:
+\newblock Counterexample guided invariant discovery for parameterized cache
+  coherence verification.
+\newblock In: Proc.\ 13th IFIP Advanced Research Working Conference on Correct
+  Hardware Design and Verification Methods. Volume 3725 of LNCS.
+\newblock Springer (2005)  317--331
+
+\bibitem{Lv2007}
+Lv, Y., Lin, H., Pan, H.:
+\newblock Computing invariants for parameter abstraction.
+\newblock In: Proc.\ the 5th IEEE/ACM International Conference on Formal
+  Methods and Models for Codesign, IEEE CS (2007)  29--38
+
+\bibitem{cubicle2011}
+Conchon, S., Goel, A., Krstic, S., Mebsout, A., Za\"idi, F.:
+\newblock Cubicle: A parallel smt-based model checker for parameterized
+  systems.
+\newblock In Madhusudan, P., Seshia, S., eds.: Proc.\ 24th International
+  Conference on Computer Aided Verification. Volume 7358 of LNCS.
+\newblock Springer (2012)  718--724
+
+\bibitem{Park1996a}
+Park, S., Dill, D.L.:
+\newblock Verification of flash cache coherence protocol by aggregation of
+  distributed transactions.
+\newblock In: Proceedings of the eighth annual ACM symposium on Parallel
+  algorithms and architectures, Padua, Italy, ACM (1996)  288--296
+
+\bibitem{McMillan2001}
+Mcmillan, K.L., Labs, C.B.:
+\newblock Parameterized verification of the flash cache coherence protocol by
+  compositional model checking.
+\newblock In: In CHARME 01: IFIP Working Conference on Correct Hardware Design
+  and Verification Methods, Lecture Notes in Computer Science 2144, Springer
+  (2001)  179--195
+
+\bibitem{LiCache16}
+Y.~Li, K.d.:
+\newblock paraverifier (2016)
+  \url{https://github.com/paraVerifier/paraVerifier}.
+
+\bibitem{Conchon2013}
+Conchon, S., Goel, A., Krstic, S., Mebsout, A., Zaidi, F.:
+\newblock Invariants for finite instances and beyond.
+\newblock In: FMCAD, Portland, Oregon, USA (October 2013)
+
+\end{thebibliography}

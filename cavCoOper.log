@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.4)  20 MAR 2016 22:42
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.4)  7 MAY 2016 21:37
 entering extended mode
 **cavCoOper.tex
 (D:\git\cav\cav\cavCoOper.tex
@@ -574,10 +574,6 @@ $\OML/cmm/m/it/10 inv$\OT1/cmr/m/n/10 , \OT1/cmtt/m/n/10 invFinder
  []
 
 [2]
-
-LaTeX Warning: Citation `LiCache16' on page 3 undefined on input line 276.
-
-
 Overfull \hbox (9.82193pt too wide) in paragraph at lines 291--293
 $\OT1/cmr/m/n/10 1)\OML/cmm/m/it/10 ; pf\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10  []
 \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 n; pf\OT1/cmr/m/n/10 ) \U/msa/m/n/10 Z \OML/c
@@ -662,17 +658,13 @@ Overfull \hbox (6.50656pt too wide) in paragraph at lines 512--523
 m/it/10 invs$\OT1/cmr/m/n/10 , $[]$
  []
 
-[5] [6] [7]
-
-LaTeX Warning: Citation `LiCache16' on page 8 undefined on input line 728.
-
-[8]
+[5] [6] [7] [8]
 Overfull \hbox (1.08876pt too wide) in paragraph at lines 801--805
 \OT1/cmr/m/n/10 vari-ant is cre-at-ed, and new causal re-la-tion item marked wi
 th tag \OT1/cmtt/m/n/10 invHoldRule$[]$
  []
 
-
+[9]
 Overfull \hbox (14.83542pt too wide) in paragraph at lines 814--825
 \OT1/cmr/m/n/10 The can-di-date set is $\OML/cmm/m/it/10 subsets\OT1/cmr/m/n/10
  (\OML/cmm/m/it/10 decompose\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 dualNeg\OT1/cmr/m
@@ -681,7 +673,7 @@ Overfull \hbox (14.83542pt too wide) in paragraph at lines 814--825
 mm/m/it/10 f\OT1/cmr/m/n/10 )$
  []
 
-[9] [10]
+[10]
 Underfull \hbox (badness 10000) in paragraph at lines 891--892
 
  []
@@ -736,31 +728,12 @@ mm/m/it/10 LI$ \OT1/cmr/m/n/10 or in $\OML/cmm/m/it/10 LR$\OT1/cmr/m/n/10 . The
  in-dex $\OML/cmm/m/it/10 i$ \OT1/cmr/m/n/10 will be trans-formed in-to $[]$
  []
 
-
-LaTeX Warning: Citation `LiCache16' on page 12 undefined on input line 968.
-
-[12]
-Underfull \vbox (badness 1648) has occurred while \output is active []
-
- [13]
-
-LaTeX Warning: Citation `LiCache16' on page 14 undefined on input line 1088.
-
-
-LaTeX Warning: Citation `Conchon2013' on page 14 undefined on input line 1118.
-
-[14]
-
-LaTeX Warning: Citation `Conchon2013' on page 15 undefined on input line 1123.
-
-
-LaTeX Warning: Citation `Conchon2013' on page 15 undefined on input line 1123.
-
-(D:\git\cav\cav\cavCoOper.bbl [15])
+[12] [13] [14] (D:\git\cav\cav\cavCoOper.bbl [15])
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1182.
  [16]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 1182.
- (D:\git\cav\cav\cavCoOper.aux)
+
+(D:\git\cav\cav\cavCoOper.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1182.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1182.
 
@@ -779,13 +752,13 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
  )
 (\end occurred when \ifx on line 678 was incomplete) 
 Here is how much of TeX's memory you used:
- 8903 strings out of 495354
- 120679 string characters out of 3183860
+ 8901 strings out of 495354
+ 120655 string characters out of 3183860
  239246 words of memory out of 3000000
- 11788 multiletter control sequences out of 15000+200000
+ 11786 multiletter control sequences out of 15000+200000
  16794 words of font info for 68 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
- 31i,21n,27p,1619b,685s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 31i,21n,27p,1620b,685s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/CTEX/MiKTeX/fonts/type1
 /public/amsfonts/cm/cmbx10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/c
 mbx12.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx7.pfb><C:/CTEX/MiK
@@ -808,9 +781,9 @@ fb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt8.pfb><C:/CTEX/MiKTeX/fon
 ts/type1/public/amsfonts/cm/cmtt9.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfon
 ts/symbols/msam10.pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/symbols/msam7
 .pfb><C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on cavCoOper.pdf (16 pages, 442503 bytes).
+Output written on cavCoOper.pdf (16 pages, 443424 bytes).
 PDF statistics:
- 419 PDF objects out of 1000 (max. 8388607)
+ 432 PDF objects out of 1000 (max. 8388607)
  136 named destinations out of 1000 (max. 500000)
  9 words of extra memory for PDF output out of 10000 (max. 10000000)
 
