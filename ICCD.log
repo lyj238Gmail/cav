@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.12.9)  15 MAY 2016 20:56
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.4)  16 MAY 2016 12:05
 entering extended mode
 **ICCD.tex
-(C:\Users\lyj\Documents\git\cav\ICCD.tex
+(D:\git\cav\cav\ICCD.tex
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for loaded.
-(C:\Users\lyj\Documents\git\cav\IEEEtran.cls
+(D:\git\cav\cav\IEEEtran.cls
 Document Class: IEEEtran 2007/03/05 V1.7a by Michael Shell
 -- See the "IEEEtran_HOWTO" manual for usage information.
 -- http://www.michaelshell.org/tex/ieeetran/
@@ -234,8 +234,7 @@ Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 130.
-)
-(C:\Users\lyj\Documents\git\cav\isabelle.sty
+) (D:\git\cav\cav\isabelle.sty
 \isa@parindent=\dimen130
 \isa@parskip=\dimen131
 
@@ -247,8 +246,7 @@ Including comment 'isadelimproof' Including comment 'isatagproof'
 Including comment 'isadelimML' Including comment 'isatagML'
 Including comment 'isadelimvisible' Including comment 'isatagvisible'
 Excluding comment 'isadeliminvisible' Excluding comment 'isataginvisible')
-(C:\Users\lyj\Documents\git\cav\isabellesym.sty)
-(C:\CTEX\MiKTeX\tex\latex\tools\theorem.sty
+(D:\git\cav\cav\isabellesym.sty) (C:\CTEX\MiKTeX\tex\latex\tools\theorem.sty
 Package: theorem 1995/11/23 v2.2c Theorem extension package (FMi)
 \theorem@style=\toks21
 \theorem@bodyfont=\toks22
@@ -476,7 +474,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip74
 )
-(C:\Users\lyj\Documents\git\cav\tcilatex.tex
+(D:\git\cav\cav\tcilatex.tex
 TCILATEX Macros for Scientific Word 2.5 <22 Dec 95>.
 NOTICE: This macro file is NOT proprietary and may be freely copied and distrib
 uted.
@@ -500,7 +498,7 @@ LaTeX Info: Redefining \sc on input line 563.
 \c@exercise=\count144
 \c@definition=\count145
 \c@equationnumber=\count146
-amsgen already loaded) (C:\Users\lyj\Documents\git\cav\ICCD.aux)
+amsgen already loaded) (D:\git\cav\cav\ICCD.aux)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 79.
 LaTeX Font Info:    ... okay on input line 79.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 79.
@@ -544,8 +542,7 @@ LaTeX Info: Redefining \ref on input line 79.
 LaTeX Info: Redefining \pageref on input line 79.
 LaTeX Info: Redefining \nameref on input line 79.
 
-(C:\Users\lyj\Documents\git\cav\ICCD.out)
-(C:\Users\lyj\Documents\git\cav\ICCD.out)
+(D:\git\cav\cav\ICCD.out) (D:\git\cav\cav\ICCD.out)
 \@outlinefile=\write4
 LaTeX Font Info:    Try loading font information for OT1+phv on input line 108.
 
@@ -598,16 +595,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 386--389
 
 
 Underfull \hbox (badness 2922) in paragraph at lines 386--389
-[] \OT1/cmr/m/n/10 :: \OML/cmm/m/it/10 state \OMS/cmsy/m/n/10  \OML/cmm/m/it/1
-0 formula \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule \OMS/cmsy/m/n/10 ) \OML/cmm/
-m/it/10 bool$\OT1/ptm/m/it/10 ,
+$[] \OT1/cmr/m/n/10 :: \OML/cmm/m/it/10 state \OMS/cmsy/m/n/10  \OML/cmm/m/it/
+10 formula \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule \OMS/cmsy/m/n/10 ) \OML/cmm
+/m/it/10 bool$\OT1/ptm/m/it/10 ,
  []
 
 
 Underfull \hbox (badness 2922) in paragraph at lines 386--389
-[] \OT1/cmr/m/n/10 :: \OML/cmm/m/it/10 state \OMS/cmsy/m/n/10  \OML/cmm/m/it/1
-0 formula \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule \OMS/cmsy/m/n/10 ) \OML/cmm/
-m/it/10 bool$\OT1/ptm/m/it/10 ,
+$[] \OT1/cmr/m/n/10 :: \OML/cmm/m/it/10 state \OMS/cmsy/m/n/10  \OML/cmm/m/it/
+10 formula \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule \OMS/cmsy/m/n/10 ) \OML/cmm
+/m/it/10 bool$\OT1/ptm/m/it/10 ,
  []
 
 
@@ -615,7 +612,7 @@ Underfull \hbox (badness 2478) in paragraph at lines 389--390
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
 0 $$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/
 10 r\OT1/cmr/m/n/10 ) [][]\OMS/cmsy/m/n/10 ! \OML/cmm/m/it/10 s \OMS/cmsy/m/n/1
-0 j[]\OT1/cmr/m/n/10 =
+0 j[]\OT1/cmr/m/n/10 =$
  []
 
 
@@ -623,33 +620,33 @@ Underfull \hbox (badness 6125) in paragraph at lines 390--391
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
 0 $$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = \OML/cmm/m/it/10 
 f \OMS/cmsy/m/n/10  []! \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 
-=
+=$
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 393--396
-\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/10 s;
- f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 _ \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j
-[]\OT1/cmr/m/n/10 =
+$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/10 s
+; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 _ \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 
+j[]\OT1/cmr/m/n/10 =$
  []
 
 [2]
 Underfull \hbox (badness 10000) in paragraph at lines 449--453
 []\OT1/ptm/m/it/10 We de-fine a re-la-tion $\OML/cmm/m/it/10 consistent \OT1/cm
-r/m/n/10 ::
+r/m/n/10 ::$
  []
 
 
 Underfull \hbox (badness 3503) in paragraph at lines 449--453
-\OML/cmm/m/it/10 formula []set \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 formula []se
-t \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule []set \OMS/cmsy/m/n/10 ) \OML/cmm/m/
-it/10 bool$\OT1/ptm/m/it/10 .
+$\OML/cmm/m/it/10 formula []set \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 formula []s
+et \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule []set \OMS/cmsy/m/n/10 ) \OML/cmm/m
+/it/10 bool$\OT1/ptm/m/it/10 .
  []
 
 
 Underfull \hbox (badness 1629) in paragraph at lines 498--499
 []\OT1/ptm/m/it/10 In the fol-low-ing dis-cus-sion, we as-sume that $\OML/cmm/m
-/it/10 inv \OT1/cmr/m/n/10 =
+/it/10 inv \OT1/cmr/m/n/10 =$
  []
 
 ** ATTENTION: \proof is deprecated (line 572). Use \IEEEproof instead.
@@ -666,10 +663,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 572--575
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 572--575
-[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 pinvs\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT
-1/cmr/m/n/10 )\OML/cmm/m/it/10 ; pini\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/cm
-r/m/n/10 )\OML/cmm/m/it/10 ; prules\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/cmr/
-m/n/10 ))$ \OT1/ptm/m/n/10 hold. Part
+$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 pinvs\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\O
+T1/cmr/m/n/10 )\OML/cmm/m/it/10 ; pini\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/c
+mr/m/n/10 )\OML/cmm/m/it/10 ; prules\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/cmr
+/m/n/10 ))$ \OT1/ptm/m/n/10 hold. Part
  []
 
 [3]
@@ -687,15 +684,15 @@ Underfull \hbox (badness 3449) in paragraph at lines 846--857
 
 
 Underfull \hbox (badness 7704) in paragraph at lines 846--857
-[][]$ \OT1/ptm/m/n/10 to hold. The can-di-date set is
+$[][]$ \OT1/ptm/m/n/10 to hold. The can-di-date set is
  []
 
 
 Underfull \hbox (badness 1496) in paragraph at lines 846--857
-\OML/cmm/m/it/10 subsets\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 decompose\OT1/cmr/m/n
-/10 (\OML/cmm/m/it/10 dualNeg\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 inv[]\OT1/cmr/m/
-n/10 ) \U/msa/m/n/10 Z \OML/cmm/m/it/10 g\OT1/cmr/m/n/10 ))$\OT1/ptm/m/n/10 , w
-here
+$\OML/cmm/m/it/10 subsets\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 decompose\OT1/cmr/m/
+n/10 (\OML/cmm/m/it/10 dualNeg\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 inv[]\OT1/cmr/m
+/n/10 ) \U/msa/m/n/10 Z \OML/cmm/m/it/10 g\OT1/cmr/m/n/10 ))$\OT1/ptm/m/n/10 , 
+where
  []
 
 [6]
@@ -754,13 +751,13 @@ Underfull \hbox (badness 3792) in paragraph at lines 954--959
 Underfull \hbox (badness 3019) in paragraph at lines 954--959
 \OT1/ptm/m/n/10 par-i-son be-tween $\OML/cmm/m/it/10 LR[]$ \OT1/ptm/m/n/10 and 
 al-l $\OML/cmm/m/it/10 LI[]$ \OT1/ptm/m/n/10 such that $\OML/cmm/m/it/10 j \OMS
-/cmsy/m/n/10 
+/cmsy/m/n/10 $
  []
 
 
 Underfull \hbox (badness 4416) in paragraph at lines 972--973
-[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 
-symbCaseI\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI; \OT1/cmr/m/n/10 1) =
+$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10
+ symbCaseI\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI; \OT1/cmr/m/n/10 1) =$
  []
 
 
@@ -782,10 +779,10 @@ Overfull \hbox (9.05424pt too wide) in paragraph at lines 1182--1204
  [][] 
  []
 
-(C:\Users\lyj\Documents\git\cav\ICCD.bbl
+(D:\git\cav\cav\ICCD.bbl
 Underfull \hbox (badness 3646) in paragraph at lines 83--86
 []\OT1/ptm/m/n/8 Y. Li, K.d.:  par-aver-i-fi-er (2016) [][]$https : / / github 
-. com / paraVerier /
+. com / paraVerier /$
  []
 
 )
@@ -803,7 +800,7 @@ Before submitting the final camera ready copy, remember to:
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1230.
 [9]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 1230.
- (C:\Users\lyj\Documents\git\cav\ICCD.aux)
+ (D:\git\cav\cav\ICCD.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1230.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1230.
 
@@ -820,7 +817,7 @@ Package rerunfilecheck Info: Checksums for `ICCD.out':
 (\end occurred when \ifx on line 678 was incomplete) 
 Here is how much of TeX's memory you used:
  9188 strings out of 495354
- 128512 string characters out of 3183859
+ 128176 string characters out of 3183860
  254989 words of memory out of 3000000
  12059 multiletter control sequences out of 15000+200000
  63318 words of font info for 140 fonts, out of 3000000 for 9000
@@ -849,7 +846,7 @@ fonts/type1/urw/courier/ucrr8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/helvetic/uhv
 r8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/CTEX/MiKTeX/fonts/
 type1/urw/times/utmbi8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C
 :/CTEX/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on ICCD.pdf (9 pages, 409760 bytes).
+Output written on ICCD.pdf (9 pages, 409738 bytes).
 PDF statistics:
  419 PDF objects out of 1000 (max. 8388607)
  127 named destinations out of 1000 (max. 500000)
