@@ -245,7 +245,7 @@ The second one is the rigorousness  of the verification. %The theory foundation 
 %guaranteed without conditions.
 It is preferable to formulate all the verification in a publicly-recognized trust-worthy framework like a theorem prover \cite{Chou2004}.
 
-It is not difficult to  formalize the model and properties of a protocol in a theorem prover like Isabelle, however, it is too hard to construct a  proof. Because the most creative choices in a formal proof are done by human and hard to be automated. These choices mainly lie in: (1) the induction scheme; (2) the case analysis: different subproofs are done in different cases. (3) the quantifier instantiations. Up to now, the main efforts are made in searching invariants automatically. Few people have considered how to link  the invariant searching with proof checking. The invariants found  automatically from   a concrete instance of the protocol in \cite{Arons2001, Conchon2013, Lv2007} without consideration how to use them in a theorem proving, thus, it is still hard to automate the above three kinds of intelligent choices. In detail, the invariants and rules are usually in concrete form in the procedure of invariant searching, but not in a parameterized form which are required in theorem proving. The generalization from a result obtained in the concrete protocol instance  to that in the parameterized instance  is not fully considered. Therefore, much human intervention is still needed. The complexity of parameterized verification is usually beyond  huamn's power. This is the reason why a theorem prover is still selodomly  used in parameterized verification.
+It is not difficult to  formalize the model and properties of a protocol in a theorem prover like Isabelle, however, it is too hard to construct a  proof to prove the properties. Because the most creative choices in a formal proof are done by human and hard to be automated. These choices mainly lie in: (1) the induction scheme; (2) the case analysis: different subproofs are done in different cases. (3) the quantifier instantiations. Up to now, the main efforts are made in searching invariants automatically. Few people have considered how to link  the invariant searching with proof checking. The invariants found  automatically from   a concrete instance of the protocol in \cite{Arons2001, Conchon2013, Lv2007} without consideration how to use them in a theorem proving, thus, it is still hard to automate the above three kinds of intelligent choices. In detail, the invariants and rules are usually in concrete form in the procedure of invariant searching, but not in a parameterized form which are required in theorem proving. The generalization from a result obtained in the concrete protocol instance  to that in the parameterized instance  is not fully considered. Therefore, much human intervention is still needed to prove that the properties are invariance. Usually the complexity of the proof is  beyond  human's power. This is the reason why a theorem prover is still seldom  used in parameterized verification.
 
 In order to solve the parameterized
 verification %of cache coherence protocols
@@ -534,16 +534,16 @@ each formula in $fs$ holds at each inductive protocol rule cases.
 \end{lemma}
 
 
- 
+
 
 With the $\mathsf{invHoldRule}$ relation, we define a consistency relation $\mathsf{consistent}( invs,inis, rs)$ between a protocol $(inis,rs)$ and a set of invariants $invs=\{inv_1,\ldots, inv_n\}$.
 
 \begin{definition}
 A relation  $\mathsf{consistent}( invs,inis, rs)$ holds if the following conditions hold:
 \begin{enumerate}
-\item for all formulas $inv\in invs$ and $ini\in inis$ and all states $s$,
+\item for any formula $inv\in invs$ and $ini\in inis$ and any state $s$,
 $s \models ini$ implies $s \models inv$;
-\item for all formulas $inv\in invs$ and rules  $r \in rs$ and all states $s$,  $\mathsf{invHoldRule}(s, inv, r, invs   )$
+\item for any formula $inv\in invs$ and rule  $r \in rs$ and any state $s$,  $\mathsf{invHoldRule}(s, inv, r, invs   )$
 \end{enumerate}
 \end{definition}
 
@@ -564,7 +564,7 @@ $s \models ini$ implies $s \models inv$;
 Let us use some examples to illustrate the above definitions. Next example gives a set of auxiliary invariants, in which the initially invariant $mutualInv$ is.
 
 \begin{example}\label{example2}
-Let us define 
+Let us define
 
 \begin{specification}
 invOnXC(i)  $\equiv$ $\negc$(x $\doteq$ true $\andc$ n[i]$\doteq$ C)   \\
@@ -633,15 +633,17 @@ Example \ref{example3} illustrates the three kinds of causal relations (or induc
 % $ s \models \negc (\mathsf{C}\eqc\mathsf{C}\andc n[2]\eqc\mathsf{C})$. Notice that  the guard condition of
 % $\mathsf{crit}(1)$ is $n[1]\eqc T \andc x\eqc\mathsf{true}$.
  \end{itemize}
+
+ From the above discussion, we can conclude $\mathsf{invHoldRule_3 }(s,inv,r,invs)$.
 \end{example}
 
-Note that checking the above three kinds of causal relations can assisted by a theorem prover, which is the cornerstone of our work.
+In example \ref{example3},  $\mathsf{invHoldRule_1 }(s,inv,r)$ and   $\mathsf{invHoldRule_2 }(s,inv,r)$ can be checked \emph{automatically} by a theorem prover. $\mathsf{invHoldRule_3 }(s,inv,r,invs)$ can also be checked \emph{automatically}  if the proper formula $f'$ such as $\mathsf{invOnXC}( i_2) $ can be provided for the instantiation for the existence quantifier. Here two things are needed to be done to guide a theorem prover to automatically assist us to check  $\mathsf{invHoldRule }(s,inv,r,invs)$: (1) the case splitting which is decided by comparison between rule parameter $iR_1$ and invariant parameters $i_1$ and $i_2$; (2) the choice among the three kinds of causal relations to prove in each subcase.
 
   %It is not diffcult to verify
 %$\mathsf{consistent}~ (\mathsf{pinvs}~ N) ~(\mathsf{pini}~N)~
 %(\mathsf{prules}~N)$ also holds.
 We can check the consistent relation holds between the auxiliary invariant set example \ref{example1} and the protocol initial predicate and rules of the mutual exclusion protocol.
-\begin{lemma} \label{pinvsetIs}
+\begin{lemma} \label{pinvsetIsConsistent}
   If $ P=(pini(N),prules(N))$ is the protocol listed in example \ref{example1},  and $pinvs$ is the set of formulas in example \ref{example2},   then $\mathsf{consistent}(pinvs,pini(N),prules(N))$.
 \end{lemma}
 \begin{proof} By unfolding the definition of $\mathsf{consistency}$, we need
@@ -654,9 +656,20 @@ consider the case where $inv= \mathsf{mutualInv}( i_1, i_2)$ for some $i_1$ and 
 thus $s\models inv$ holds. The other invariants can be
 proved similarly.
 
-\noindent For (2), we do case analysis on the form of a formula $f$ in $pinvs$, and then on the form of $r$ in $prules(N)$, note that both $f$ and $r$ are parameterized, then we do case analysis by comparing indices in $f$ and $r$, we need show $\mathsf{invHoldRule{1-3}}$ holds. Example \ref{example3} has shown a typical case where $inv=\mathsf{mutualInv} (\iInv_1, \iInv_2)$, and $r=\mathsf{crit }(iR)$, where $iR\le N$, $\iInv_1 \le N$, and $\iInv_2 \le N$.
-%\qed  
+\noindent For (2), we do case analysis on the form of a formula $f$ in $pinvs$, and then on the form of $r$ in $prules(N)$, notice that both $f$ and $r$ are parameterized, then we do case analysis by comparing indices in $f$ and $r$, we need show $\mathsf{invHoldRule_{1-3}}$ holds. Example \ref{example3} has shown a typical case where $inv=\mathsf{mutualInv} (\iInv_1, \iInv_2)$, and $r=\mathsf{crit }(iR)$, where $iR\le N$, $\iInv_1 \le N$, and $\iInv_2 \le N$.
+%\qed
 \end{proof}
+
+Let us     analyze the complexity of part (2) of the proof in Lemma \ref{pinvsetIsConsistent}.  For one rule, we need to analyze three  cases for each invariant $inv$ in
+$\mathsf{mutualInv}$, $\mathsf{aux_1}$, and
+$\mathsf{aux_2}$, and two cases for the others. There are four rules,
+%in $\mathsf{invOnX1}$ and $\mathsf{invOnX2} $.
+thus we need in total
+$4\times (3 \times 3 +2\times 2)=52$ cases. Note that the  protocol
+is simple because it has only 4 rules. Let alone a moderate
+protocol such as German (15-rules) and FLASH with about 50 rules. This complexity illustrates the difficulty of parameterized verification of
+cache coherence protocols, which also accounts for the reason why there is seldom successful case study in applying a general theorem
+ prover to verify even a moderate protocol such as German protocol.
 
 For any invariant $inv \in invs$, $inv$ holds at a reachable state $s$  of a protocol $P=(ini,rs)$  if the consistency relation
 $\mathsf{consistent}( invs, inis, rs)$ holds. % and $s$ is a reachable state of the protocol $P=(ini,rs)$, \cai{then?}
@@ -669,7 +682,7 @@ The following lemma formalizes the essence of the aforementioned causal relation
  then   for all $inv$ s.t. $inv \in invs$, $s \models inv $.
 \end{theorem}
 
-
+Theorem \ref{consistentLemma} is our main tool to prove that any property $f$ in a formula set $invs$ is an invariant for a protocol $(ini,rs)$. It has eliminated the need of directly use of usual induction proof method. We only check the causal relation between $f$ and $r\in rs$ by case analysing on $f$ and $r$.
 
 Now we apply the consistence lemma to prove that the mutual exclusion property holds for each reachable state of the mutual-exclusion protocol. %Let us recall example \ref{example1} and  \ref{example2}.
 In order to prove the mutual-exclusion property, we prove a more general result:
@@ -678,13 +691,17 @@ In order to prove the mutual-exclusion property, we prove a more general result:
 \end{lemma}
 
 \begin{proof} By theorem\ref{consistentLemma}, we only need
-to check that parts (1) and (2) of
- the $\mathsf{consistency}$ relation  hold.
+to check that   $\mathsf{consistent}(pins(N),pini(N),prules(N))$ relation  holds. This can be immediately obtained by lemma \ref{pinvsetIsConsistent}.
  \end{proof}
 
-In order to  apply the consistency lemma to prove that a given property $inv$ (e.g., the mutual exclusion property) holds for each reachable state of a protocol $P=(inis,rs)$ (e.g., mutual-exclusion protocol), we need to solve two problems. First, we need to construct a set of auxiliary invariants $invs$ which contains $inv$ and satisfies  $\mathsf{consistent}( invs, inis, rs)$.  By applying the consistency lemma, we  decompose the original problem of invariant checking into that of checking the causal relation between some $f\in invs$ and $r \in rs$. The latter needs three levels of case analysis: the first is on the form of $inv$, the second is on  and $r$, and the last is on the rule parameters $iR$ and invariant parameters such as $i_1$.  Only if a proof script contains sufficient information on the case splitting and  the kind of causal relation to be checked in each subcase, Isabelle can help us to automatically  check it. How to  generate automatically such a proof is the second problem.
+In order to  apply   theorem \ref{consistentLemma} to prove that a given parameterized property $f$ (e.g., the mutual exclusion property) is an invariant for a parameterized  protocol (e.g., mutual-exclusion protocol), we need to solve two problems.
+\begin{enumerate}
+\item We need to construct a set of auxiliary invariants $invs$ which contains $f$ and satisfies  $\mathsf{consistent}( invs, inis, rs)$.  Constructing a set of auxiliary invariants is the central problem in the filed of parameter verification.
 
-\begin{figure}[htbp]
+\item   After applying  theorem \ref{consistentLemma}, we  decompose the original problem of invariant checking into that of checking that some  causal relation between some $f\in invs$ and $r \in rs$. Then we need three levels of case analysis: the first is on the form of $f$, the second is on  and $r$, and the last is  case analysis by comparing on the rule parameters in $r$ and invariant parameters in $f$, which has been illustrated in the proof of Lemma \ref{pinvsetIsConsistent} and Example \ref{example3}, at last the choice among the three kinds of causal relations is needed in each subcase.  How to generate enough information to construct a proof which consists of the above case analysis and choices is our second problem.
+\end{enumerate}
+
+\forget{\begin{figure}[htbp]
 \centering %
 %\vspace{-0.8cm}
 \includegraphics[width=0.5\textwidth]{paraVerifier.pdf}
@@ -692,8 +709,9 @@ In order to  apply the consistency lemma to prove that a given property $inv$ (e
 \caption{The workflow of {\sf paraVerifier} \label{fig:arch}
 }
 \end{figure}
-%\vspace{-0.8cm}
+}%\vspace{-0.8cm}
 
+Notice that the two problems are w.r.t. a parameterized property and a parameterized protocol. Our solution
 Our solutions to the two problems are shown in Fig. \ref{fig:arch}:
 Given a protocol,  \texttt{invFinder} finds all the necessary ground auxiliary invariants from a small instance of the protocol in Murphi. This step solves the first  problem.
  A table {\tt protocol.tbl} is worked out  to store the set of ground invariants and
