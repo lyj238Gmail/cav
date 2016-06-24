@@ -711,7 +711,12 @@ In order to  apply   theorem \ref{consistentLemma} to prove that a given paramet
 \end{figure}
 }%\vspace{-0.8cm}
 
-Notice that the two problems are w.r.t. a parameterized property and a parameterized protocol. Our solution
+Notice that the two problems are w.r.t. a parameterized property and a parameterized protocol instance. Now we first turn to a simpler concrete property and a concrete protocol instance, and try to solve the two problems w.r.t. concrete ones. Here the concrete property is obtained by instantiating the parameters with concrete indices, and by fixing the parameterized size with concrete value. For instance,   Namely, $mutualInv(i,j)$ (
+  $\negc$ (n[i]$\eqc$ C $\andc$ n[j]$\eqc$ C) and $(pinit(3),prules(3))$ are concrete. If we can find answers to the two problems for the concrete ones, then we generalize them into  answers to the two problems for the parameterized ones.
+
+
+
+\forget{ Our solution
 Our solutions to the two problems are shown in Fig. \ref{fig:arch}:
 Given a protocol,  \texttt{invFinder} finds all the necessary ground auxiliary invariants from a small instance of the protocol in Murphi. This step solves the first  problem.
  A table {\tt protocol.tbl} is worked out  to store the set of ground invariants and
@@ -722,7 +727,7 @@ are generalized into a parameterized form, and accordingly
 ground causal relations are adopted to create parameterized
 proof commands which essentially proves the existence of the
 parameterized causal relations. This solves the second problem.  At last, the Isabelle proof script is
-fed into Isabelle to check the correctness of the protocol.
+fed into Isabelle to check the correctness of the protocol.}
 %Consistency lemma has eliminated the need of directly use of usual induction proof method. Applying it, we  decompose the problem of invariant checking into that of checking the causal relation between $f$ and $r$ by case analysing parameters of a rule and an invariant. As shown in  and such a causal relation checking is within the ability of an automatical tactic provided by a theorem prover like Isabelle. Due to the uniform style of checking causal relation, it is also feasible to generate a proof of such a style by an external proof generator. However, as shown in Example \ref{example2}, the   three items shows that there are three subcases where we compare rule parameter $iR_1$ with formula parameters $i_1$ and $i_2$, different kinds of causal relations hold between rule $\mathsf{crit}~iR_1$ and invariant $\mathsf{mutualInv}~i_1~i_2$. Only if a proof script contains enough information on the case splitting and  which kind of causal relation to be checked in each case, Isabelle can help us to automatically  check whether the kind of causal relation hold in the case. How to provide these key proof information is a central problem in work of both {\sf invFinder} and {\sf proofGen}.
 %\vspace{-0.6cm}
 

@@ -714,8 +714,10 @@ In order to  apply   theorem \ref{consistentLemma} to prove that a given paramet
 Notice that the two problems are w.r.t. a parameterized property and a parameterized protocol instance. Now we first turn to a simpler concrete property and a concrete protocol instance, and try to solve the two problems w.r.t. concrete ones. Here the concrete property is obtained by instantiating the parameters with concrete indices, and by fixing the parameterized size with concrete value. For instance,   Namely, $mutualInv(i,j)$ (
   $\negc$ (n[i]$\eqc$ C $\andc$ n[j]$\eqc$ C) and $(pinit(3),prules(3))$ are concrete. If we can find answers to the two problems for the concrete ones, then we generalize them into  answers to the two problems for the parameterized ones.
 
+\section{}
+Due to  theorem \ref{consistentLemma}, the original problem of invariant checking boils down to  checking causal relation   some  causal relation between some $f\in invs$ and $r \in rs$, and different kinds of cuasal relation among hold in different cases which are splitted by comparison scheme. Notice that the comparison scheme is only determined by the number of rule parameters and formula parameters.
 
-
+In order to know which kind of , we can select a special instance of the generalized symbolic case, and 
 \forget{ Our solution
 Our solutions to the two problems are shown in Fig. \ref{fig:arch}:
 Given a protocol,  \texttt{invFinder} finds all the necessary ground auxiliary invariants from a small instance of the protocol in Murphi. This step solves the first  problem.
