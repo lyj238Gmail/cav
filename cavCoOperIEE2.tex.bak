@@ -213,7 +213,7 @@ The verification of real-world parameterized systems is, however,  rarely  both 
 {For instance, FLASH protocol is the cache coherence protocol of the Stanford FLASH mutlitprocessor \cite{FLASHCache}. This protocol is so complex that only a few approaches  \cite{Park1996a,McMillan2001,Chou2004,Conchon2013} have successfully verified it so far. Furthermore, all existing  successful verification approaches have their downsides.  \cite{Park1996a} is a theorem proving based approach which requires
 to construct inductive invariants by hand. The cases of \cite{McMillan2001} and \cite{Chou2004} are similar to \cite{Park1996a} that hand-crafted invariants are required to
 provide by human experts. As a contrast, \cite{Conchon2013} is a model checking based approach which can be carried out automatically. However, the formal proof can not be obtained from the work of \cite{Conchon2013}.
-%: ��if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols�� \cite{Chou2004}. However, the existing approaches, which have verified FLASH, need too much human intervention. The first full verification of safety properties of FLASH is done by work in \cite{Park1996a}. Park and Dill  proved the safety properties of FLASH using  PVS \cite{cade92-pvs}. %They introduce the aggressioned FLASH protocol, which
+%: ��if the method works on FLASH, then there is a good chance that it will also work on many real-world cache coherence protocols �� \cite{Chou2004}. However, the existing approaches, which have verified FLASH, need too much human intervention. The first full verification of safety properties of FLASH is done by work in \cite{Park1996a}. Park and Dill  proved the safety properties of FLASH using  PVS \cite{cade92-pvs}. %They introduce the aggressioned FLASH protocol, which
 %is in fact an abstracted transaction version of FLASH,   need prove
 %the correspondence between the abstract and the original FLASH
 %protocol, and then prove the correctness of the abstracted protocol, and subsequently derive the correctness of  the
@@ -339,6 +339,11 @@ $\mathsf{reachableSet}(\mathcal{P})$ if there exists a formula $f \in I$, and $s
 $\mathsf{reachableSet}(\mathcal{P})$ if there exists a  state $s_0$  and a rule $r \in R$ such that $s_0 \in \mathsf{reachableSet}(\mathcal{P})$ and $s_0\overset{r}{\rightarrow } s$.
 
 
+\noindent{\bf Parameterized formulas, statemets, rules, and protocols}
+For simplicity, a
+A parameterized formula(statement, rule, and protocol) is a function $f(x_1,x_2,...,x_n)$ from a list of  to such an object. Without losing the generality, we require that parameters to instantiate a parameterized object are disjoint. For instance, $mutualInv(i,j)\equiv
+  \negc (n[i]\eqc C \andc n[j]\eqc C)$ is a parameterized formula with two disjoint parameters.
+
 \forget{There are three kinds of $variables$:
 1) simple identifier, denoted by a string;
 2) element of an array, denoted by a string followed by a natural inside a square bracket. E.g., $arr[i]$ indicates the $i$th element of the array $arr$;
@@ -409,7 +414,7 @@ $\mathsf{forallForm}(1,pf)\equiv~pf(1)$, and $\mathsf{forallForm}((n+1),pf)\equi
 
 
 Now we use a simple example to illustrate the above definitions by a simple mutual exclusion protocol with $N$ nodes. Let $\mathsf{I(dle)}$, $\mathsf{T(rying)}$,
- $\mathsf{C(ritical)}$, and  $\mathsf{E(xiting)}$  be enumerating values to indicate the state of a node, $x$,    $n$ are  simple and array variables, $N$ a natural number. $x$ is a flag to indicate ?   $\mathsf{pini}(N)$   the predicate to specify the inial state, prules(N) the four rules of the protocol, $\mathsf{mutualInv}(i,j)$ a property that $n[i]$ and $ n[j]$ cannot be in a critical state at the same time. We want to verify that $\mathsf{mutualInv}(i,j)$ holds at any reachable state for any $i\le N$, $j \le N$ s.t. $i \neq j$.
+ $\mathsf{C(ritical)}$, and  $\mathsf{E(xiting)}$  be enumerating values to indicate the state of a node, $x$,    $n$ are  simple and array variables, $N$ a natural number. $x$ is a flag to indicate ?   $\mathsf{pini}(N)$   the predicate to specify the inial state, prules(N) the four rules of the protocol, $\mathsf{mutualInv}(i,j)$ a property that $n[i]$ and $ n[j]$ cannot be in a critical state at the same time. We want to verify that $\mathsf{mutualInv}(i,j)$ holds at any reachable state of the parameterized protocol $mutualEx(N)$ for any $i\le N$, $j \le N$ s.t. $i \neq j$.
 \vspace{-0.3cm}
 \begin{example}\label{example1}Mutual-exclusion example.
 
@@ -714,7 +719,27 @@ In order to  apply   theorem \ref{consistentLemma} to prove that a given paramet
 Notice that the two problems are w.r.t. a parameterized property and a parameterized protocol instance. Now we first turn to a simpler concrete property and a concrete protocol instance, and try to solve the two problems w.r.t. concrete ones. Here the concrete property is obtained by instantiating the parameters with concrete indices, and by fixing the parameterized size with concrete value. For instance,   Namely, $mutualInv(i,j)$ (
   $\negc$ (n[i]$\eqc$ C $\andc$ n[j]$\eqc$ C) and $(pinit(3),prules(3))$ are concrete. If we can find answers to the two problems for the concrete ones, then we generalize them into  answers to the two problems for the parameterized ones.
 
+\section{An Overview of Our Verification Strategy}
+Due to  theorem \ref{consistentLemma}, the original problem of invariant checking boils down to  checking causal relation   some  causal relation between some $f\in invs$ and $r \in rs$, and different kinds of causal relation among hold in different cases which are split by parameter comparison scheme between rule parameters and formula parameters. Notice that the comparison scheme is only determined by the number of rule parameters and formula parameters. For instance, if the number of rule parameters and formula parameters are 1 and 2 respectively, the splitted cases are $iR_1=i_1$, or $iR_1 =i_2$, and $iR_1 \neq i_1 \wedge iR_1 \neq i_2$.
 
+In order to know which kind of causal relation hold, we can select a special instance of the generalized symbolic case, and compute the precondition of $f$ w.r.t. $act(r)$, then test in a concrete protocol instance which kind of causal relation hold among $f$, $r$, and the current set of invariant formulas $invs$. For instance, we can instantiate both  $iR_1$ and  $i_1$ with 1, $i_2$  with 2 test the case $iR_1=i_1$. If the one of causal relation $invHoldRule_{1-2}$ holds, then only the causal relation is recorded. Otherwise, we need consider two cases: (1) there is a formula in $invs$ to make $invHoldRule_{1-2}$ to hold; (2) there is not a formula in $invs$  $invHoldRule_{1-2}$ to hold. In the second case, we   need construct a new invariant formula $f'$ which   makes the relation $invHoldRule_3(f,r,invs \cup \{f'\})$ to hold. The coupling process of checking causal relation and generating new invariants is not finished until no new invariant formula can be found. The returned result is a table which records all the causal relation among the newly found invariant formulas and concrete rules and the set of auxiliary invariant formulas.
+
+Basing on the table recording the information on causal relation, we generalize it into a parameterized version. Each line of table is associated with a symbolic formula to indicate a case by comparison between the symbolic parameters of a parameterized rule  and those of a parameterized invariant formula. Furthermore, a formal proof script is generated according the table on the generalized information.
+
+
+
+In short,
+\begin{enumerate}
+\item Due to symmetry, we can check in a concrete protocol instance the causal relation between a concrete rule and a concrete invariant formula whose concrete parameters.
+
+\item For each cases, we select a   special instance of the case to check.
+
+\item Checking the causal relation is naturally coupled with finding new auxiliary invariants.
+
+\item Generalization is needed to extend the searching results.
+
+\item
+\end{enumerate}
 
 \forget{ Our solution
 Our solutions to the two problems are shown in Fig. \ref{fig:arch}:
@@ -731,10 +756,13 @@ fed into Isabelle to check the correctness of the protocol.}
 %Consistency lemma has eliminated the need of directly use of usual induction proof method. Applying it, we  decompose the problem of invariant checking into that of checking the causal relation between $f$ and $r$ by case analysing parameters of a rule and an invariant. As shown in  and such a causal relation checking is within the ability of an automatical tactic provided by a theorem prover like Isabelle. Due to the uniform style of checking causal relation, it is also feasible to generate a proof of such a style by an external proof generator. However, as shown in Example \ref{example2}, the   three items shows that there are three subcases where we compare rule parameter $iR_1$ with formula parameters $i_1$ and $i_2$, different kinds of causal relations hold between rule $\mathsf{crit}~iR_1$ and invariant $\mathsf{mutualInv}~i_1~i_2$. Only if a proof script contains enough information on the case splitting and  which kind of causal relation to be checked in each case, Isabelle can help us to automatically  check whether the kind of causal relation hold in the case. How to provide these key proof information is a central problem in work of both {\sf invFinder} and {\sf proofGen}.
 %\vspace{-0.6cm}
 
-\section{  Searching Auxiliary Invariants}\label{sec:invFinder}
-Given a protocol $\mathcal{P}$ and a property set $F$ containing invariant formulas we want to verify, {\tt invFinder} in Algorithm \ref{alg:invfinder} aims to find useful auxiliary invariants and causal relations which are capable of proving any element in $F$.  A set $A$ is used to store all the invariants found up to now, and is initialized as  $F$. A queue  $newInvs$ is used to store new invariants which have not been checked,  and  is initialized as  $F$.  A relation table $tuples$ is used to record the causal relation between a parameterized rule in some parameter setting and a concrete invariant. Initially $tuples$ is set as NULL.
-{\sf invFinder}  works iteratively in a semi-proving and semi-searching way. In each iteration, the head element $f$ of $newInvs$ is popped,  then $\mathsf{Policy}(r,f)$  generates groups of parameters $paras$  according to $r$ and $f$ by some policy. For each parameter $para$ in $paras$,   it is applied to instantiate $r$ into a concrete rule $cr$.  Here  $\mathsf{apply}(r,para)=r$ if $r$ contains no array-variables and $para=[]$; otherwise $\mathsf{apply}(r,para)=r(para_{[1]},..., para_{[|para|]})$. Then $coreFinder(cr,  f, A)$ is called to check
- whether  a causal relation exists between $cr$ and $f$; if there is such one relation item, the relation item $rel$ and a  formula option $newInvOpt$ is returned; otherwise a run-time error occurs in  $coreFinder$, which indicates no proof can be found. In the first case, a tuple $<r, para, f, rel>$ will be inserted into $tuples$; If the formula option $newInvOpt$ is $\mathsf{NONE}$, then no new invariant formula is generated; otherwise $newInvOpt=\mathsf{Some}(f')$ for some formula $f'$, then  $\mathsf{get}(newInvOpt)$ returns $f'$, and the new invariant formula $f'$ will be pushed into the queue $newInvs$ and inserted into the invariant set $A$.  The above searching process is executed until $newInvs$ becomes empty.  At last, the table $tuples$ is returned.
+\section{Searching Concrete Auxiliary Invariants with Causal Relations}\label{sec:invFinder}
+Given a parameterized protocol $P$ and a property set $F$ containing concrete invariant formulas each which is an instantiation of a parameterized invariant formula we want to initially verify,  $\mathsf{invFinder}$ in Algorithm \ref{alg:invfinder} aims to find useful auxiliary invariants and causal relations which are capable of proving any element in $F$. For instance, let $ P=(pini(N),prules(N))$ to be the mutual exclusion protocol listed in example \ref{example1}, $f=\mathsf{mutualInv}(1,2)$, and $F=\{f\}$.
+
+ A set $A$ is used to store all the invariants found up to now, and is initialized as  $F$.  A relation table $tbl$ is used to record the causal relation between a parameterized rule in some parameter setting and a concrete invariant. Initially $tbl$ is set as NULL. A queue  $newInvs$ is used to store new invariants which have not been checked,  and  is initialized as  $F$.
+$\mathsf{invFinder}$  works iteratively in a semi-proving and semi-searching way. In each iteration, the head element $cf$ of $newInvs$ is popped,  then $\mathsf{Policy}(r,cf)$  generates groups of parameters $paras$  according to $r$ and $cf$ by some policy. For each parameter $para$ in $paras$,   it is applied to instantiate $r$ into a concrete rule $cr$. This policy should guarantee that each case split by the aforementioned parameter comparison scheme should be sampled.  Here  $\mathsf{apply}(r,para)=r$ if $r$ contains no parameters and $para=[]$; otherwise $\mathsf{apply}(r,para)=r(para_{[1]},..., para_{[|para|]})$. Then $\mathsf{coreFinder}(cr,  cf, A)$ is called to check
+ which kinds of causal relation exists between $cr$ and $f$; if there is such one relation item, the relation item $rel$ and a  formula option $newInvOpt$ is returned; otherwise a run-time error occurs in  $coreFinder$, which indicates no proof can be found. A tuple $<r, para, cf, rel>$ will be inserted into $tbl$ to indicate some causal relation $rel$ exits among $cr$ and $cf$and $f \cup A$; If the formula option $newInvOpt$ is $\mathsf{NONE}$, then no new invariant formula is generated; otherwise $newInvOpt=\mathsf{Some}(cf')$ for some formula $cf'$, then  $\mathsf{get}(newInvOpt)$ returns $cf'$, and the new invariant formula $cf'$ will be pushed into the queue $newInvs$ and inserted into the invariant set $A$.  The above searching process is executed until $newInvs$ becomes empty.  At last, the table $tbl$ and the augment invariant set $A$ are returned.
+
 
 \SetAlFnt{\small}
 
@@ -746,44 +774,46 @@ Given a protocol $\mathcal{P}$ and a property set $F$ containing invariant formu
 
 \KwIn{Initially given invariants $F$, a protocol $\mathcal{P}=<I,R>$ }
 
-\KwOut{A set of tuples which represent causal relations between concrete rules and invariants: }
+\KwOut{$tbl$ : a table which represent causal relations between concrete rules and invariants: $A$: a set of concrete invariant formulas}
 
 {
     $A\leftarrow F$;
 
-    $tuples \leftarrow []$;
+    $tbl \leftarrow []$;
 
     $newInvs \leftarrow F$;
 
     \While{$newInvs$ is not empty}
     {
-   $ f \leftarrow newInvs.dequeue$;
+   $ cf \leftarrow dequeue(newInvs)$;
 
    \For {$r \in R$}
-   { $paras \leftarrow \mathsf{Policy}(r,f)$;
+   { $paras \leftarrow \mathsf{Policy}(r,cf)$;
 
       \For {$para \in paras$}
      {$cr \leftarrow \mathsf{apply}(r,para)$;
 
-       $newInvOpt,rel \leftarrow \mathsf{coreFinder}(cr,  f, A)$;
+       $newInvOpt,rel \leftarrow \mathsf{coreFinder}(cr,  cf, A)$;
 
-        $tuples \leftarrow tuples @[<r, para, f, rel>]$;
+        $tbl \leftarrow tbl @[<r, para, cf, rel>]$;
 
        \If{$newInvOpt \neq NONE$}
         {$newInv \leftarrow \mathsf{get}(newInvOpt)$\;
-         newInvs.enqueue(newInv)\;
-        $A \leftarrow A \cup \{newInv\}$\;
+        $newInvs\leftarrow enqueue(newInvs,newInv)$\;
+        $A\leftarrow A \cup \{{newInv}\}$\;
         }
 
      }
    }
   }
-\Return $tuples$\;
+\Return $A$, $tbl$\;
 }
 
 %}
 
 \end{algorithm}
+%\vspace{-0.8cm}
+
 %\vspace{-0.8cm}
 
 
@@ -798,12 +828,15 @@ Given a protocol $\mathcal{P}$ and a property set $F$ containing invariant formu
 %Whenever a new invariant is generated, it is pushed into $newInvs$.  The above searching process is executed until $newInvs$ becomes empty. This searching process is a core algorithm of {\sf invFinder}, and we will describe it in Section 4.2, after introducing the parameter instantiation policy.
 
 
-In Algorithm \ref{alg:invfinder}, the parameter generation policy $\mathsf{Policy}$  and the core invariant searching function $\mathsf{coreFinder}$ will be illustrated in Section \ref{sec:parameterGenPolicy} and \ref{sec:coresearchingAlgorithm}.
+In Algorithm \ref{alg:invfinder}, the parameter generation policy $\mathsf{Policy}(r,cf)$ analyzes the number of the formal parameters of $r$ and that of actual parameters $cf$ respectively, and generates groups of concrete parameters, each of which will be used to instantiate $r$ into a concrete rule $cr$. The core invariant searching function $\mathsf{coreFinder}(cr,cf,A)$ returns the causal relation among $cr$ and $cf$and $A$. They will be illustrated in Section \ref{sec:parameterGenPolicy} and \ref{sec:coresearchingAlgorithm}.
 
 %\caicomment{The algorithm pseudo code is good. Try to make the description of invFinder consistent with pseudo code, and as simple as possible.}
 
 \vspace{-0.5cm}
+
 \subsection{Parameter Generation Policy}\label{sec:parameterGenPolicy}
+Let $cf$ to be a special instance of some parameterized formula $f$ s.t. $cf=apply(f,idp(|apOfCForm(f)|))$.  Recall that the aim of our policy is to compute groups of rule parameters to instantiate a parameterized rule into a set of concrete rules.  Combination of  any group of the above generated rule parameters with the actual parameters occurring in the concrete invariant formula $cf$ will be a special instantiation of some case where we compare symbolic parameters in $r$ and those in $f$. Furthermore, each of the subcases should be sampled, which are partitioned by the aforementioned parameter comparison scheme.
+
 In order to formulate our parameter generation policy, we introduce the concept of permutation modulo to symmetry relation $\simeq_m^n$,  and a quotient set of $\mathsf{perms}_{m}^{n}$ (the set of all $n$-permutations of $m$) under the  relation.  Here an $n$-permutation of $m$ is ordered arrangement of  an $n$--element subset of an $m$-element set $I=\{i. 0<i\le m\}$. We use a list $xs$ with size $n$ to stand for a $n$-permutation of $m$. For instance, $[1,2]$ is a 2-permutation of 3. $xs_{[i]}$ and $|xs|$  denote  the $i-$th element and the length of $xs$ respectively. If $xs_{[i]}=i$ for all $i \le |xs|$, we call it identical permutation. %, and sometimes is denoted by $1~ \mathsf{upto}~ n$ if $n=|xs|$.
 
 \begin{definition}
