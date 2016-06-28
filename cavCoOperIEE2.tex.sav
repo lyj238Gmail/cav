@@ -837,7 +837,7 @@ In Algorithm \ref{alg:invfinder}, the parameter generation policy $\mathsf{Polic
 \subsection{Parameter Generation Policy}\label{sec:parameterGenPolicy}
 Let $cf$ to be a special instance of some parameterized formula $f$ s.t. $cf=apply(f,idp(|apOfCForm(cf)|))$.  Recall that the aim of our policy is to compute groups of rule parameters to instantiate a parameterized rule into a set of concrete rules.  Combination of  any group of the above generated rule parameters with the actual parameters occurring in the concrete invariant formula $cf$ will be a special instantiation of some case where we compare symbolic parameters in $r$ and those in $f$. Furthermore, each of the subcases should be sampled, which are partitioned by the aforementioned parameter comparison scheme.
 
-Suppose that the number of actual parameters occurring in $cf$ is $n$, and that of formal parameters occurring in $r$ is $n'$, we choose $n'$--element subset among $\{1,...,(n+n')\}$ to instantiate $r$. Namely a $n'$-permutation of $n+n'$, $para$ will be regarded as a group of rule parameters to instantiate $r$.  Furthermore, if $n'>0$ and $i<n'$, and $para[i]>n$, then $para[i]$ will not equal to any actual parameters in $cf$. Thus we don't care which value $para[i]$ is if we can guranttee $para[i]$ is. In the sense of sampling cases, $para $  is the equivalent to $para' $ if $para' $ is the updated result by only replacing $para[i]$ with another index $j$ s.t. $j>n$. For instance, let $n=n'=2$, then $[1,2]$, $[2,3]$, $[2,4]$ are groups of rule parameters to instantiate $r$. $[2,3]$ and  $[2,4]$ are the same. Thus, if we have used $[2,3]$ to instantiate $r$, we need not use $[2,4]$ to do so.
+Suppose that the number of actual parameters occurring in $cf$ is $n$, and that of formal parameters occurring in $r$ is $n'$, we choose $n'$--element subset among $\{1,...,(n+n')\}$ to instantiate $r$. Namely a $n'$-permutation of $n+n'$, $para$ will be regarded as a group of rule parameters to instantiate $r$.  Furthermore, if $n'>0$ and $i<n'$, and $para[i]>n$, then $para[i]$ will not equal to any actual parameters in $cf$. Thus we don't care which value $para[i]$ is if we can guranttee $para[i]$ is. In the sense of sampling cases, $para $  is the equivalent to $para' $ if $para' $ is the updated result by only replacing $para[i]$ with another index $j$ s.t. $j>n$. For instance, let $n=n'=2$, then $[1,2]$, $[2,3]$, $[2,4]$ are groups of rule parameters to instantiate $r$. $[2,3]$ and  $[2,4]$ are the same. Thus, if we have used $[2,3]$ to instantiate $r$, we need not use $[2,4]$ to do so. 
 
 %In order to formulate our parameter generation policy, we introduce the concept of permutation modulo to symmetry relation $\simeq_m^n$,  and a quotient set of $\mathsf{perms}_{m}^{n}$ (the set of all $n$-permutations of $m$) under the  relation.  Here an $n$-permutation of $m$ is ordered arrangement of  an $n$--element subset of an $m$-element set $I=\{i. 0<i\le m\}$. We use a list $xs$ with size $n$ to stand for a $n$-permutation of $m$. For instance, $[1,2]$ is a 2-permutation of 3. $xs_{[i]}$ and $|xs|$  denote  the $i-$th element and the length of $xs$ respectively. If $xs_{[i]}=i$ for all $i \le |xs|$, we call it identical permutation. %, and sometimes is denoted by $1~ \mathsf{upto}~ n$ if $n=|xs|$.
 
@@ -846,23 +846,19 @@ In order to formulate our parameter generation policy, we define:
 \begin{definition}\label{defFormulationPolicy}
 Let $m$ and $n$ be two natural numbers, where $n \le m$,  $para$ and $para'$ are two lists which stand for two  $n$-permutations of $m$,
 \begin{enumerate}
-%\item
+%\item 
 %$L \sim_m^n L' \equiv (|L| =|L'|=n) \wedge (\forall i. i<|L| \wedge L_{[i]} \le m-n \longrightarrow L_{[i]}=L'_{[i]}) $.
 
 %\item $L \simeq_m^n L' \equiv L \sim_m^n L' \wedge   L' \sim_m^n L$.
 
 %\item$[[L]]_{m}^{n} \equiv \{L'. L \in \mathsf{perms}_{m}^{n} \wedge L \sim_m^n L'\}$.
 
-\item \label{defNormPara}$normPara(para,n)[i]=$\\ 
-   \begin{numcases}{ }
-   $para[i]$ &   if $para[i] \le n$ \\
-   $n +1$    & otherwise
-\end{numcases}  
+\item \label{defNormPara}$normPara(para,n)[i]= para[i]$, if $para[i] \le n$; $normPara(para,n)[i]=n+1$ otherwise
 
 \item  \label{defBisimilar} $para\sim_m^n para' \equiv$ $normPara(para,n)=normPara(para',n)$
 
 \item $\mathsf{semiP}(m,n,S)\equiv (\forall  para \in \mathsf{perms}_{m}^{n} \exists  para' \in S. para \simeq_m^n para' ) \wedge (\forall  para\in S. \forall para'\in S. para \neq para' \longrightarrow \neg  (para \simeq_m^n para' )$.   A set $S$ is called a quotient of the set $\mathsf{perms}_{m}^{n}$ under the relation $\simeq_m^n$ if    $\mathsf{semiP}(m,n,S)$.
-
+    
 \end{enumerate}
 \end{definition}
 
@@ -892,7 +888,7 @@ we can analyze a group of concrete parameters by analyzing only one of them as a
 \begin{lemma}\label{lemma:simeqQuotinent}  Let $S $ be a set s.t.  $\mathsf{semiP}(m,n,S)$,
 \begin{enumerate}
 \item \label{complete}  for any $L \in \mathsf{perms}_{m}^{n}$, there exists a $L' \in S$ s.t. $L \simeq_m^n L'$.
-\item \label{distinct} let $L \in S$, $L' \in S$, if $L \ne L'$, then there exists two indices $i \le m$ and $j \le n$ such that $L_{[i]}=j$ and $L'_{[i]}\ne j$.
+\item \label{distinct} let $L \in S$, $L' \in S$, if $L \ne L'$, then there exists two indice $i \le m$ and $j \le n$ such that $L_{[i]}=j$ and $L'_{[i]}\ne j$.
 \end{enumerate}
 \end{lemma}
 
@@ -924,21 +920,10 @@ Note that the above cases are mutually disjoint, and their disjunction  is true.
 
 In Algorithm \ref{alg:invfinder}, a concrete formula $cinv$ is poped from the queue $newInvs$, which can be seen as a normalized instantiation of some parameterized formula $pinv$. % A normalized instantiation can be seen as a representative of all instantiations of $pinv$.  For a parameterized rule $r$ and the  parameterized invariant $pinv$, we only probe  causal relations between some rule instances of $r$  and $cinv$.  Here a rule instance is obtained by instantiating $r$ with a parameter group $para$    in $paras$, which is generated according to the parameter generation policy.  A symbolic causal relation between $r$ and $pinv$ in a symbolic case can be generalized from a concrete causal relation existing between a concrete rule instance and the normalized invariant $cinv$.  Therefore $para$  can be used to derive a symbolic predicate such as  $i_1 \neq iR_1$, and $i_2 \neq iR_1$,  as shown in Example \ref{example2}.  Such a predicate  formulates a case  of comparing between rule parameters and invariant formula parameters. %A good parameter generation policy should guarantee the completeness. Namely, each of subcases in the needed case-splitting of the above parameters  comparing should be covered by the derivation of an element in the generated paramter groups $paras$.
 
+
 \begin{definition}
 A  concrete invariant formula $cinv$ is normalized w.r.t a parameterized invariant $pinv$ if  there exists no array variable in $cinv$ and $pinv=cinv$ or there exits an identical permutation $LI$ with $|LI|>0$ such that $cinv=pinv(1,...~|LI|)$;
 
-\end{definition}
-
-\begin{definition}
-Let $para$ be a permutation, $0<n$, we define:
-
-$caseGen([],n,pos)$= []
-$caseGen(i#para£¬n,pos)$= 
-   \begin{numcases}{ }
-   $(\iR_{pos}=\iInv_i)\wedge caseGen(para£¬n,pos+1)$  &   if i\le n \\
- $(\bigwedge^n_1\iR_{pos} \neq \iInv_j)\wedge caseGen(para£¬n,pos+1)$   & otherwise
-\end{numcases}  
-  
 \end{definition}
 
 Any normalized $cinv$ containing array variables is obtained by instantiating a parameterized invariant $pinv$ with a parameter list which is an identical permutation $LI$ (i.e., the $j^{th}$ parameter is $j$ itself $LI_{[j]}=j$). Thus, consider a list of parameter $LR$ which is used to instantiate a parameterized rule $pr$, we  have $LR_{[i]}=j$ (or $LR_{[i]}\ne j$) is equivalent to $LR_{[i]}=LI_{[j]}$ (or $LR_{[i]}\ne LI_{[j]}$), %\lyj{my correction}{\bf[what is LR, you only use it in an example, need to define it clearly in this paragraph] },

@@ -837,26 +837,38 @@ In Algorithm \ref{alg:invfinder}, the parameter generation policy $\mathsf{Polic
 \subsection{Parameter Generation Policy}\label{sec:parameterGenPolicy}
 Let $cf$ to be a special instance of some parameterized formula $f$ s.t. $cf=apply(f,idp(|apOfCForm(cf)|))$.  Recall that the aim of our policy is to compute groups of rule parameters to instantiate a parameterized rule into a set of concrete rules.  Combination of  any group of the above generated rule parameters with the actual parameters occurring in the concrete invariant formula $cf$ will be a special instantiation of some case where we compare symbolic parameters in $r$ and those in $f$. Furthermore, each of the subcases should be sampled, which are partitioned by the aforementioned parameter comparison scheme.
 
-Suppose that the number of actual parameters occurring in $cf$ is $n$, and that of formal parameters occurring in $r$ is $n'$, we choose $n'$--element subset among $\{1,...,(n+n')\}$ to instantiate $r$. Namely a $n'$-permutation of $n+n'$ will be regarded as a group of rule parameters to instantiate $r$. For instance, let $n=n'=2$, then [1,2], [2,3], [2,4] are groups of rule parameters to instantiate $r$. 
+Suppose that the number of actual parameters occurring in $cf$ is $n$, and that of formal parameters occurring in $r$ is $n'$, we choose $n'$--element subset among $\{1,...,(n+n')\}$ to instantiate $r$. Namely a $n'$-permutation of $n+n'$, $para$ will be regarded as a group of rule parameters to instantiate $r$.  Furthermore, if $n'>0$ and $i<n'$, and $para[i]>n$, then $para[i]$ will not equal to any actual parameters in $cf$. Thus we don't care which value $para[i]$ is if we can guranttee $para[i]$ is. In the sense of sampling cases, $para $  is the equivalent to $para' $ if $para' $ is the updated result by only replacing $para[i]$ with another index $j$ s.t. $j>n$. For instance, let $n=n'=2$, then $[1,2]$, $[2,3]$, $[2,4]$ are groups of rule parameters to instantiate $r$. $[2,3]$ and  $[2,4]$ are the same. Thus, if we have used $[2,3]$ to instantiate $r$, we need not use $[2,4]$ to do so.
 
-In order to formulate our parameter generation policy, we introduce the concept of permutation modulo to symmetry relation $\simeq_m^n$,  and a quotient set of $\mathsf{perms}_{m}^{n}$ (the set of all $n$-permutations of $m$) under the  relation.  Here an $n$-permutation of $m$ is ordered arrangement of  an $n$--element subset of an $m$-element set $I=\{i. 0<i\le m\}$. We use a list $xs$ with size $n$ to stand for a $n$-permutation of $m$. For instance, $[1,2]$ is a 2-permutation of 3. $xs_{[i]}$ and $|xs|$  denote  the $i-$th element and the length of $xs$ respectively. If $xs_{[i]}=i$ for all $i \le |xs|$, we call it identical permutation. %, and sometimes is denoted by $1~ \mathsf{upto}~ n$ if $n=|xs|$.
+%In order to formulate our parameter generation policy, we introduce the concept of permutation modulo to symmetry relation $\simeq_m^n$,  and a quotient set of $\mathsf{perms}_{m}^{n}$ (the set of all $n$-permutations of $m$) under the  relation.  Here an $n$-permutation of $m$ is ordered arrangement of  an $n$--element subset of an $m$-element set $I=\{i. 0<i\le m\}$. We use a list $xs$ with size $n$ to stand for a $n$-permutation of $m$. For instance, $[1,2]$ is a 2-permutation of 3. $xs_{[i]}$ and $|xs|$  denote  the $i-$th element and the length of $xs$ respectively. If $xs_{[i]}=i$ for all $i \le |xs|$, we call it identical permutation. %, and sometimes is denoted by $1~ \mathsf{upto}~ n$ if $n=|xs|$.
 
-\begin{definition}
-Let $m$ and $n$ be two natural numbers, where $n \le m$,  $L$ and $L'$ are two lists which stand for two  $n$-permutations of $m$,
+In order to formulate our parameter generation policy, we define:
+
+\begin{definition}\label{defFormulationPolicy}
+Let $m$ and $n$ be two natural numbers, where $n \le m$,  $para$ and $para'$ are two lists which stand for two  $n$-permutations of $m$,
 \begin{enumerate}
-\item
-$L \sim_m^n L' \equiv (|L| =|L'|=n) \wedge (\forall i. i<|L| \wedge L_{[i]} \le m-n \longrightarrow L_{[i]}=L'_{[i]}) $.
+%\item
+%$L \sim_m^n L' \equiv (|L| =|L'|=n) \wedge (\forall i. i<|L| \wedge L_{[i]} \le m-n \longrightarrow L_{[i]}=L'_{[i]}) $.
 
-\item $L \simeq_m^n L' \equiv L \sim_m^n L' \wedge   L' \sim_m^n L$.
+%\item $L \simeq_m^n L' \equiv L \sim_m^n L' \wedge   L' \sim_m^n L$.
 
 %\item$[[L]]_{m}^{n} \equiv \{L'. L \in \mathsf{perms}_{m}^{n} \wedge L \sim_m^n L'\}$.
 
-\item $\mathsf{semiP}(m,n,S)\equiv (\forall  L \in \mathsf{perms}_{m}^{n} \exists  L' \in S. L \simeq_m^n L' ) \wedge (\forall  L\in S. \forall L'\in S. L \neq L' \longrightarrow \neg  (L \simeq_m^n L' )$.
+\item \label{defNormPara}$normPara(para,n)[i]=$\\ 
+   \begin{numcases}{ }
+   para[i] &   if $para[i] \le n$ \\
+   n +1    & otherwise
+\end{numcases}  
 
-\item    A set $S$ is called a quotient of the set $\mathsf{perms}_{m}^{n}$ under the relation $\simeq_m^n$ if    $\mathsf{semiP}(m,n,S)$.
+\item  \label{defBisimilar} $para\sim_m^n para' \equiv$ $normPara(para,n)=normPara(para',n)$
+
+\item $\mathsf{semiP}(m,n,S)\equiv (\forall  para \in \mathsf{perms}_{m}^{n} \exists  para' \in S. para \simeq_m^n para' ) \wedge (\forall  para\in S. \forall para'\in S. para \neq para' \longrightarrow \neg  (para \simeq_m^n para' )$.   A set $S$ is called a quotient of the set $\mathsf{perms}_{m}^{n}$ under the relation $\simeq_m^n$ if    $\mathsf{semiP}(m,n,S)$.
+
 \end{enumerate}
 \end{definition}
 
+In definition \ref{defFormulationPolicy}, \ref{defNormPara}  defines a   function $normPara(para,n)$ to normalize a group of parameters by uniformly replacing the $i$-th element with $n+1$ if it is greater than $n$. Naturally the aforementioned equivalence between two groups of parameters $para$ and $para'$ w.r.t. sampling is defined by the normalized form of them are the same. Basing on the relation $\sim_m^n$, we can define  a quotient of the set $\mathsf{perms}_{m}^{n}$ under the relation $\simeq_m^n$. Here a quotient of $\mathsf{perms}_{n+n'}^{n'}$ is the set of all groups of parameters to instantiate $r$ to check the causal relation between $r$ and $cf$ in the above paragraph.
+
+\forget{
 The definition of of relation $\simeq_m^n$ (item 1 and 2 in Definition 3) directly leads to the following lemma. %\caicomment{(Original version has a paragraph here to explain $L \simeq_{m+n}^n L' $. But the explanation is just a repetition of the below lemma while the lemma is more clear, from my viewpoint. So I delete them, and move the example downwards.)}
 
 %According to the definition of of the relation $\simeq_m^n$, $L \simeq_{m+n}^n L' $ means that for any $0<i\le |L|$ and $0<j \le m$,
@@ -880,21 +892,55 @@ we can analyze a group of concrete parameters by analyzing only one of them as a
 \begin{lemma}\label{lemma:simeqQuotinent}  Let $S $ be a set s.t.  $\mathsf{semiP}(m,n,S)$,
 \begin{enumerate}
 \item \label{complete}  for any $L \in \mathsf{perms}_{m}^{n}$, there exists a $L' \in S$ s.t. $L \simeq_m^n L'$.
-\item \label{distinct} let $L \in S$, $L' \in S$, if $L \ne L'$, then there exists two indice $i \le m$ and $j \le n$ such that $L_{[i]}=j$ and $L'_{[i]}\ne j$.
+\item \label{distinct} let $L \in S$, $L' \in S$, if $L \ne L'$, then there exists two indices $i \le m$ and $j \le n$ such that $L_{[i]}=j$ and $L'_{[i]}\ne j$.
 \end{enumerate}
 \end{lemma}
 
+
+
 Lemma \ref{lemma:simeqQuotinent} shows \ref{complete}) completeness of $S$ w.r.t. the set $\mathsf{perms}_{m}^{n}$ under the relation $\simeq$, \ref{distinct})  the distinction between two different elements in $S$. Therefore, $S$ has covered all analysing patterns according to the aforementioned comparing scheme between elements of $L$ with numbers $j<n-m$. Moreover, the case patterns represented by different elements in $S$ are different from each other. This fact can be illustrated by the following example.
-\begin{example}
-Let $m=2$, $n=1$, $S=\{[1],[2],[3]\}$ and  $\mathsf{semiP}(m,n,S)$,  let $LR$ be an element in $S$, there are three cases:
-\begin{enumerate}
+
 %\begin{itemize}
 \item $LR=[1]$: it is a special case where $LR_{[1]}=1 $;
 \item $LR=[2]$: it is a special case where $LR_{[1]}=2 $;
 \item $LR=[3]$: it is a special case where $LR_{[1]}\ne 1$ and $LR_{[1]}\ne 2$.
+
+}
+
+\begin{example}
+Recall that the number of actual parameters occurring in $cf$ is $n$, and that of formal parameters occurring in $r$ is $n'$,
+\begin{enumerate}
+\item Let $n=2$, $n'=1$, $paras=\{[1],[2],[3]\}$, and $paras$ is the quotinent set of  parameter groups to instantiate $r$;
+\item Let $n=2$, $n'=2$, $paras=\{[1,2],[1,3],[2,1],[2,3],[3,4]\}$, and $paras$ is the quotinent set of  parameter groups to instantiate $r$;
 %\end{itemize}
 \end{enumerate}
 \end{example}
+
+Now we formally define the symbolic case which is generalized from a group of rule parameters if we compare it with an identical permutation with length $n$ which represents a group of invariant formula parameters. 
+
+\begin{definition}
+Let $para$ be a permutation, $0<n$, we define:
+
+\noindent $caseGen([],n,pos)$= []\\
+$caseGen(i\#para£¬n,pos)$=
+   \begin{numcases}{ }
+   (\iR_{pos}=\iInv_i)\wedge caseGen(para£¬n,pos+1)  &   if $i\le n$ \\
+ (\bigwedge^n_{j=1}\iR_{pos} \neq \iInv_j)\wedge caseGen(para£¬n,pos+1)   & otherwise
+\end{numcases}
+
+\end{definition}
+
+\begin{example}
+Recall that the number of actual parameters occurring in $cf$ is $n$, and that of formal parameters occurring in $r$ is $n'$,
+\begin{enumerate}
+\item $caseGen([1],2,1)=\iR_{1}=\iInv_1$
+\item $caseGen([3],2,1)=\bigwedge^2_{j=1}\iR_{i} \neq \iInv_j)$
+\item  $caseGen([1,3],2,1)=\iR_{1}=\iInv_1\bigwedge^2_{j=1}\iR_{2} \neq \iInv_j)$
+%\end{itemize}
+\end{enumerate}
+\end{example}
+
+\forget{
 Note that the above cases are mutually disjoint, and their disjunction  is true.
 
 %Consider  natural numbers $m$ and $n$, computing a quotient of $\mathsf{perms}_{m}^{n}$ can be implemented by an algorithm $\mathsf{cmpSemiperm}$. Roughly speaking, $\mathsf{cmpSemiperm}$ firstly computes the set $\mathsf{perms}_m^n$, and push elements of it into a queue $S_0$, and select elements of $S_0$ into a set $S$. Initially $S$ is set empty. the head element of $S_0$ is pop into $L$, then $L$ will be checked whether there is an element $L'$ in $S$ s.t. $L\simeq_m^n L'$. If  yes, then $L$ will be discarded, else $L$ is inserted into $S$. This procedure is repeated until $S$ is empty. Finally $S$ will be returned. The detail of $\mathsf{cmpSemiperm}$ can be found in \cite{}.
@@ -904,20 +950,32 @@ Note that the above cases are mutually disjoint, and their disjunction  is true.
 
 In Algorithm \ref{alg:invfinder}, a concrete formula $cinv$ is poped from the queue $newInvs$, which can be seen as a normalized instantiation of some parameterized formula $pinv$. % A normalized instantiation can be seen as a representative of all instantiations of $pinv$.  For a parameterized rule $r$ and the  parameterized invariant $pinv$, we only probe  causal relations between some rule instances of $r$  and $cinv$.  Here a rule instance is obtained by instantiating $r$ with a parameter group $para$    in $paras$, which is generated according to the parameter generation policy.  A symbolic causal relation between $r$ and $pinv$ in a symbolic case can be generalized from a concrete causal relation existing between a concrete rule instance and the normalized invariant $cinv$.  Therefore $para$  can be used to derive a symbolic predicate such as  $i_1 \neq iR_1$, and $i_2 \neq iR_1$,  as shown in Example \ref{example2}.  Such a predicate  formulates a case  of comparing between rule parameters and invariant formula parameters. %A good parameter generation policy should guarantee the completeness. Namely, each of subcases in the needed case-splitting of the above parameters  comparing should be covered by the derivation of an element in the generated paramter groups $paras$.
 
-
 \begin{definition}
 A  concrete invariant formula $cinv$ is normalized w.r.t a parameterized invariant $pinv$ if  there exists no array variable in $cinv$ and $pinv=cinv$ or there exits an identical permutation $LI$ with $|LI|>0$ such that $cinv=pinv(1,...~|LI|)$;
 
 \end{definition}
 
+
+\begin{definition}
+Let $para$ be a permutation, $0<n$, we define:
+
+\noindent $caseGen([],n,pos)$= []\\
+$caseGen(i\#para£¬n,pos)$= 
+   \begin{numcases}{ }
+   (\iR_{pos}=\iInv_i)\wedge caseGen(para£¬n,pos+1)  &   if $i\le n$ \\
+ (\bigwedge^n_1\iR_{pos} \neq \iInv_j)\wedge caseGen(para£¬n,pos+1)   & otherwise
+\end{numcases}  
+  
+\end{definition}
+
 Any normalized $cinv$ containing array variables is obtained by instantiating a parameterized invariant $pinv$ with a parameter list which is an identical permutation $LI$ (i.e., the $j^{th}$ parameter is $j$ itself $LI_{[j]}=j$). Thus, consider a list of parameter $LR$ which is used to instantiate a parameterized rule $pr$, we  have $LR_{[i]}=j$ (or $LR_{[i]}\ne j$) is equivalent to $LR_{[i]}=LI_{[j]}$ (or $LR_{[i]}\ne LI_{[j]}$), %\lyj{my correction}{\bf[what is LR, you only use it in an example, need to define it clearly in this paragraph] },
 which is a factor to specify a case by comparing $LR_{[i]}$ with $LI_{[j]}$ .  %All the auxiliary invariant formulas will be in a normalized form, and checked with any parameterized rule whether some kind of causal relation hold between them.
-
+}
 
 %{\bf Our Parameter Instantiation Policy:}
 Let $cinv$  be a normalized concrete invariant w.r.t. a parameterized invariant $pinv$, $pr$ be a parameterized rule, $m$ be the number of actual parameters occurring in $cinv$, and $n$  be the number of formal parameters occurring in $pr$,  our policy is to compute a quotient of $\mathsf{perms}_{m}^{n}$, denoted as $\mathsf{cmpSemiperm}(m+n,n )$, and use elements of it as a group of parameters to instantiate $pr$ into a set $crs$ of concrete rules, which is shown in Algorithm \ref{alg:computeSemiPerms}.%\footnote{the details of computing $\mathsf{cmpSemiperm}(m+n,n )$ can be found in \cite{LiCache16}.}
 \begin{algorithm}
-\caption{Computing quotient of $\mathsf{perms}_{m}^{n}$: $cmpSemiperm$ \label{alg:computeSemiPerms}}%\label{alg:invfinderII}
+\caption{Computing a quotient of $\mathsf{perms}_{m}^{n}$: $cmpSemiperm$ \label{alg:computeSemiPerms}}%\label{alg:invfinderII}
 
 \KwIn{$m$, $n$     }
 
