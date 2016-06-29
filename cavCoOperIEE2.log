@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.4)  28 JUN 2016 22:40
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.12.9)  29 JUN 2016 23:22
 entering extended mode
 **cavCoOperIEE2.tex
-(D:\git\cav\cav\cavCoOperIEE2.tex
+(C:\Users\lyj\Documents\git\cav\cavCoOperIEE2.tex
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for loaded.
-(D:\git\cav\cav\IEEEtran.cls
+(C:\Users\lyj\Documents\git\cav\IEEEtran.cls
 Document Class: IEEEtran 2007/03/05 V1.7a by Michael Shell
 -- See the "IEEEtran_HOWTO" manual for usage information.
 -- http://www.michaelshell.org/tex/ieeetran/
@@ -234,7 +234,8 @@ Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 130.
-) (D:\git\cav\cav\isabelle.sty
+)
+(C:\Users\lyj\Documents\git\cav\isabelle.sty
 \isa@parindent=\dimen130
 \isa@parskip=\dimen131
 
@@ -246,7 +247,8 @@ Including comment 'isadelimproof' Including comment 'isatagproof'
 Including comment 'isadelimML' Including comment 'isatagML'
 Including comment 'isadelimvisible' Including comment 'isatagvisible'
 Excluding comment 'isadeliminvisible' Excluding comment 'isataginvisible')
-(D:\git\cav\cav\isabellesym.sty) (C:\CTEX\MiKTeX\tex\latex\tools\theorem.sty
+(C:\Users\lyj\Documents\git\cav\isabellesym.sty)
+(C:\CTEX\MiKTeX\tex\latex\tools\theorem.sty
 Package: theorem 1995/11/23 v2.2c Theorem extension package (FMi)
 \theorem@style=\toks21
 \theorem@bodyfont=\toks22
@@ -475,7 +477,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip74
 )
-(D:\git\cav\cav\tcilatex.tex
+(C:\Users\lyj\Documents\git\cav\tcilatex.tex
 TCILATEX Macros for Scientific Word 2.5 <22 Dec 95>.
 NOTICE: This macro file is NOT proprietary and may be freely copied and distrib
 uted.
@@ -499,7 +501,7 @@ LaTeX Info: Redefining \sc on input line 563.
 \c@exercise=\count144
 \c@definition=\count145
 \c@equationnumber=\count146
-amsgen already loaded) (D:\git\cav\cav\cavCoOperIEE2.aux
+amsgen already loaded) (C:\Users\lyj\Documents\git\cav\cavCoOperIEE2.aux
 
 LaTeX Warning: Label `alg:proofGenOfReltag' multiply defined.
 
@@ -549,7 +551,8 @@ LaTeX Info: Redefining \ref on input line 81.
 LaTeX Info: Redefining \pageref on input line 81.
 LaTeX Info: Redefining \nameref on input line 81.
 
-(D:\git\cav\cav\cavCoOperIEE2.out) (D:\git\cav\cav\cavCoOperIEE2.out)
+(C:\Users\lyj\Documents\git\cav\cavCoOperIEE2.out)
+(C:\Users\lyj\Documents\git\cav\cavCoOperIEE2.out)
 \@outlinefile=\write4
 LaTeX Font Info:    Try loading font information for OT1+phv on input line 110.
 
@@ -611,170 +614,143 @@ LaTeX Font Info:    Try loading font information for OT1+pcr on input line 288.
 
 (C:\CTEX\MiKTeX\tex\latex\psnfss\ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-) [2 <D:/git/cav/cav/paraVerifier.pdf>]
-LaTeX Font Info:    Try loading font information for OMS+pcr on input line 437.
+) [2 <C:/Users/lyj/Documents/git/cav/paraVerifier.pdf>]
+LaTeX Font Info:    Try loading font information for OMS+pcr on input line 443.
 
  (C:\CTEX\MiKTeX\tex\latex\psnfss\omspcr.fd
 File: omspcr.fd 
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <7> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 437.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 443.
 
-Underfull \hbox (badness 2478) in paragraph at lines 471--472
+Underfull \hbox (badness 2478) in paragraph at lines 477--478
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
 0 $$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/
 10 r\OT1/cmr/m/n/10 ) [][]\OMS/cmsy/m/n/10 ! \OML/cmm/m/it/10 s \OMS/cmsy/m/n/1
-0 j[]\OT1/cmr/m/n/10 =$
+0 j[]\OT1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 6125) in paragraph at lines 472--473
+Underfull \hbox (badness 6125) in paragraph at lines 478--479
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
 0 $$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = \OML/cmm/m/it/10 
 f \OMS/cmsy/m/n/10  []! \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 
-=$
+=
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 475--478
-$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/10 s
-; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 _ \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 
-j[]\OT1/cmr/m/n/10 =$
+Underfull \hbox (badness 10000) in paragraph at lines 481--484
+\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/10 s;
+ f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 _ \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j
+[]\OT1/cmr/m/n/10 =
  []
 
 [3]
-Underfull \hbox (badness 10000) in paragraph at lines 529--530
+Underfull \hbox (badness 10000) in paragraph at lines 535--536
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; f; r\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/1
 0 if and on-ly if $\OMS/cmsy/m/n/10 f[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 r\OT1/
-cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^$
+cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^
  []
 
 
-Underfull \hbox (badness 2608) in paragraph at lines 600--601
+Underfull \hbox (badness 2608) in paragraph at lines 606--607
 []\OT1/ptm/m/it/10 Suppose that $\OML/cmm/m/it/10 inv \OT1/cmr/m/n/10 = [](\OML
 /cmm/m/it/10 i[]; i[]\OT1/cmr/m/n/10 )$\OT1/ptm/m/it/10 , $\OML/cmm/m/it/10 r \
-OT1/cmr/m/n/10 =$
+OT1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 2318) in paragraph at lines 629--640
+Underfull \hbox (badness 2318) in paragraph at lines 635--646
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; inv; r; invs\OT1/cmr/m/n/10 )$\OT1/pt
 m/m/it/10 , where $\OML/cmm/m/it/10 i[] \OT1/cmr/m/n/10 = \OML/cmm/m/it/10 iR[]
 $\OT1/ptm/m/it/10 . S-
  []
 
 
-Underfull \hbox (badness 3039) in paragraph at lines 629--640
-$\OMS/cmsy/m/n/10 :\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 n\OT1/cmr/m/n/10 [\OML/cmm
-/m/it/10 i[]\OT1/cmr/m/n/10 ] = \OT1/cmss/m/n/10 C \OMS/cmsy/m/n/10 ^ \OT1/cmss
-/m/n/10 C \OT1/cmr/m/n/10 = \OT1/cmss/m/n/10 C\OT1/cmr/m/n/10 )$\OT1/ptm/m/it/1
-0 , and $[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 i[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n
-/10 ^$
+Underfull \hbox (badness 3039) in paragraph at lines 635--646
+\OMS/cmsy/m/n/10 :\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 n\OT1/cmr/m/n/10 [\OML/cmm/
+m/it/10 i[]\OT1/cmr/m/n/10 ] = \OT1/cmss/m/n/10 C \OMS/cmsy/m/n/10 ^ \OT1/cmss/
+m/n/10 C \OT1/cmr/m/n/10 = \OT1/cmss/m/n/10 C\OT1/cmr/m/n/10 )$\OT1/ptm/m/it/10
+ , and $[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 i[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/
+10 ^
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 642--643
+Underfull \hbox (badness 10000) in paragraph at lines 648--649
 []\OT1/ptm/m/it/10 From the above dis-cus-sion, we can con-clude
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 645--646
+Underfull \hbox (badness 10000) in paragraph at lines 651--652
 []\OT1/ptm/m/n/10 In ex-am-ple [][]3[][], $[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 
 s; inv; r\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/10 and
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 645--646
-$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; inv; r\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/1
-0 can be checked \OT1/ptm/m/it/10 au-to-mat-i-cal-ly
+Underfull \hbox (badness 10000) in paragraph at lines 651--652
+[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; inv; r\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/10
+ can be checked \OT1/ptm/m/it/10 au-to-mat-i-cal-ly
  []
 
 
-Underfull \hbox (badness 1648) in paragraph at lines 645--646
-$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; inv; r; invs\OT1/cmr/m/n/10 )$\OT1/ptm/
-m/n/10 : (1) the case s-plit-ting which
+Underfull \hbox (badness 1688) in paragraph at lines 651--652
+\OT1/ptm/m/n/10 s-plit-ting which is de-cid-ed by com-par-i-son be-tween rule
  []
 
-** ATTENTION: \proof is deprecated (line 654). Use \IEEEproof instead.
 [4]
-** ATTENTION: \proof is deprecated (line 698). Use \IEEEproof instead.
+** ATTENTION: \proof is deprecated (line 660). Use \IEEEproof instead.
+** ATTENTION: \proof is deprecated (line 704). Use \IEEEproof instead.
 
-Underfull \hbox (badness 1888) in paragraph at lines 698--700
+Underfull \hbox (badness 1888) in paragraph at lines 704--706
  \OT1/ptm/m/it/10 Proof: \OT1/ptm/m/n/10 By the-o-rem[][]3[][], we on-ly need t
 o check that
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 698--700
-$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 pins\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT
-1/cmr/m/n/10 )\OML/cmm/m/it/10 ; pini\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/cm
-r/m/n/10 )\OML/cmm/m/it/10 ; prules\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/cmr/
-m/n/10 ))$ \OT1/ptm/m/n/10 re-la-tion hold-s.
+Underfull \hbox (badness 10000) in paragraph at lines 704--706
+[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 pins\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1
+/cmr/m/n/10 )\OML/cmm/m/it/10 ; pini\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/cmr
+/m/n/10 )\OML/cmm/m/it/10 ; prules\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/cmr/m
+/n/10 ))$ \OT1/ptm/m/n/10 re-la-tion hold-s.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 704--705
+Underfull \hbox (badness 10000) in paragraph at lines 710--711
 []\OT1/ptm/m/n/10 We need to con-struc-t a set of aux-il-iary
  []
 
 
-Underfull \hbox (badness 7925) in paragraph at lines 704--705
+Underfull \hbox (badness 7925) in paragraph at lines 710--711
 \OT1/ptm/m/n/10 in-vari-ants $\OML/cmm/m/it/10 invs$ \OT1/ptm/m/n/10 which con-
 tain-s $\OML/cmm/m/it/10 f$ \OT1/ptm/m/n/10 and sat-is-fies
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 704--705
-$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 invs; inis; rs\OT1/cmr/m/n/10 )$\OT1/ptm/m
-/n/10 . Con-struct-ing a set of
+Underfull \hbox (badness 10000) in paragraph at lines 710--711
+[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 invs; inis; rs\OT1/cmr/m/n/10 )$\OT1/ptm/m/
+n/10 . Con-struct-ing a set of
  []
 
 [5]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6.25002> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 780.
-
-Underfull \hbox (badness 10000) in paragraph at lines 831--832
-[]\OT1/ptm/m/n/10 In Al-go-rith-m [][]1[][], the pa-ram-e-ter gen-er-a-tion pol
--i-cy
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 856--857
-
- []
-
-
-Underfull \vbox (badness 1005) has occurred while \output is active []
-
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 786.
  [6]
-Underfull \hbox (badness 7133) in paragraph at lines 862--863
+Underfull \hbox (badness 10000) in paragraph at lines 862--863
+
+ []
+
+
+Underfull \hbox (badness 7133) in paragraph at lines 868--869
 []$\OML/cmm/m/it/10 para \OMS/cmsy/m/n/10 [] \OML/cmm/m/it/10 para[] \OMS/cmsy
 /m/n/10 $ $\OML/cmm/m/it/10 normPara\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 para; n\
-OT1/cmr/m/n/10 ) =$
+OT1/cmr/m/n/10 ) =
  []
 
 
-Underfull \hbox (badness 2080) in paragraph at lines 864--865
+Underfull \hbox (badness 2080) in paragraph at lines 870--871
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 m; n; S\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
 0  \OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 8\OML/cmm/m/it/10 para \OMS/cmsy/m/n/10 2
- [][]9\OML/cmm/m/it/10 para[] \OMS/cmsy/m/n/10 2$
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 914--916
-[]\OT1/ptm/m/it/10 Let $\OML/cmm/m/it/10 n \OT1/cmr/m/n/10 = 2$\OT1/ptm/m/it/10
- , $\OML/cmm/m/it/10 n[] \OT1/cmr/m/n/10 = 2$\OT1/ptm/m/it/10 , $\OML/cmm/m/it/
-10 paras \OT1/cmr/m/n/10 =$
- []
-
-
-Underfull \hbox (badness 6725) in paragraph at lines 914--916
-$\OMS/cmsy/m/n/10 f\OT1/cmr/m/n/10 [1\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 2]\OML/
-cmm/m/it/10 ; \OT1/cmr/m/n/10 [1\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 3]\OML/cmm/m
-/it/10 ; \OT1/cmr/m/n/10 [2\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 1]\OML/cmm/m/it/1
-0 ; \OT1/cmr/m/n/10 [2\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 3]\OML/cmm/m/it/10 ; \
-OT1/cmr/m/n/10 [3\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 4]\OMS/cmsy/m/n/10 g$\OT1/p
-tm/m/it/10 , and $\OML/cmm/m/it/10 paras$ \OT1/ptm/m/it/10 is the
+ [][]9\OML/cmm/m/it/10 para[] \OMS/cmsy/m/n/10 2
  []
 
 Missing character: There is no £ in font cmr10!
@@ -784,237 +760,269 @@ Missing character: There is no ¬ in font cmr10!
 Missing character: There is no £ in font cmr10!
 Missing character: There is no ¬ in font cmr10!
 
-Overfull \hbox (23.57079pt too wide) in alignment at lines 926--929
+Overfull \hbox (19.89806pt too wide) in alignment at lines 932--935
  [][] []
  []
 
 
-Underfull \hbox (badness 6364) in paragraph at lines 978--978
+Underfull \hbox (badness 6364) in paragraph at lines 989--989
 []\OT1/ptm/b/n/10 Algorithm 2: \OT1/ptm/m/n/10 Com-put-ing a quo-tien-t of $[][
 ]$:
  []
 
-
-LaTeX Warning: Reference `alg:invFinder-I' on page 7 undefined on input line 10
-55.
-
 [7]
-Underfull \hbox (badness 1533) in paragraph at lines 1088--1099
+Underfull \hbox (badness 1533) in paragraph at lines 1102--1113
 []\OT1/ptm/m/n/10 If nei-ther of the above t-wo cas-es hold-s, then
  []
 
 
-Underfull \hbox (badness 3449) in paragraph at lines 1088--1099
-\OT1/ptm/m/n/10 struct-ed, which will make the causal re-la-tion
+Underfull \hbox (badness 10000) in paragraph at lines 1102--1113
+\OT1/ptm/m/n/10 a new aux-il-iary in-vari-ant $\OML/cmm/m/it/10 newInv$ \OT1/pt
+m/m/n/10 will be
  []
 
 
-Underfull \hbox (badness 7704) in paragraph at lines 1088--1099
-$[][]$ \OT1/ptm/m/n/10 to hold. The can-di-date set is
+Underfull \hbox (badness 7704) in paragraph at lines 1102--1113
+[][]$ \OT1/ptm/m/n/10 to hold. The can-di-date set is
  []
 
-[8]
-Underfull \hbox (badness 10000) in paragraph at lines 1173--1175
+
+Underfull \hbox (badness 10000) in paragraph at lines 1102--1113
+[]\OT1/cmr/m/n/10 ([]([](\OML/cmm/m/it/10 cf[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
+0 ^ \OML/cmm/m/it/10 g\OT1/cmr/m/n/10 ))$\OT1/ptm/m/n/10 , where
+ []
+
+
+Underfull \hbox (badness 2173) in paragraph at lines 1102--1113
+\OT1/ptm/m/n/10 is cho-sen from the can-di-date set to con-struc-t
+ []
+
+
+Underfull \hbox (badness 3954) in paragraph at lines 1102--1113
+\OT1/ptm/m/n/10 in the giv-en ref-er-ence mod-el. Af-ter $\OML/cmm/m/it/10 newI
+nv$
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1102--1113
+\OT1/ptm/m/n/10 is cho-sen, the func-tion $[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 
+newInv; invs\OT1/cmr/m/n/10 )$
+ []
+
+
+Underfull \hbox (badness 6204) in paragraph at lines 1102--1113
+\OT1/ptm/m/n/10 the $[]$ call-s $[]$ o-r-a-cle to s-e-lec-t
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [8]
+Underfull \hbox (badness 10000) in paragraph at lines 1221--1223
 []\OT1/ptm/m/it/10 symbolic com-par-i-son con-di-tion gen-er-al-ized from
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1173--1175
+Underfull \hbox (badness 10000) in paragraph at lines 1221--1223
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1183--1184
+Underfull \hbox (badness 10000) in paragraph at lines 1231--1232
 []\OT1/ptm/m/it/10 symbolic par-ti-tion gen-er-al-ized from com-par-ing
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1183--1184
+Underfull \hbox (badness 10000) in paragraph at lines 1231--1232
 \OT1/ptm/m/it/10 al-l $\OML/cmm/m/it/10 LRS[]$ \OT1/ptm/m/it/10 with $\OML/cmm/
 m/it/10 LI$\OT1/ptm/m/it/10 , where $\OML/cmm/m/it/10 LRS$ \OT1/ptm/m/it/10 is 
 a
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1183--1184
+Underfull \hbox (badness 10000) in paragraph at lines 1231--1232
 \OT1/ptm/m/it/10 list of per-mu-ta-tion-s with the same length:
  []
 
 
-Underfull \hbox (badness 3792) in paragraph at lines 1188--1193
+Underfull \hbox (badness 3792) in paragraph at lines 1236--1241
 \OT1/ptm/m/n/10 a sym-bol-ic for-mu-la sum-ma-riz-ing the re-sult-s of com-
  []
 
 
-Underfull \hbox (badness 3019) in paragraph at lines 1188--1193
+Underfull \hbox (badness 3019) in paragraph at lines 1236--1241
 \OT1/ptm/m/n/10 par-i-son be-tween $\OML/cmm/m/it/10 LR[]$ \OT1/ptm/m/n/10 and 
 al-l $\OML/cmm/m/it/10 LI[]$ \OT1/ptm/m/n/10 such that $\OML/cmm/m/it/10 j \OMS
-/cmsy/m/n/10 $
+/cmsy/m/n/10 
  []
 
 
-Underfull \hbox (badness 4416) in paragraph at lines 1206--1207
-$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10
- symbCaseI\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI; \OT1/cmr/m/n/10 1) =$
+Underfull \hbox (badness 4416) in paragraph at lines 1254--1255
+[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 
+symbCaseI\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI; \OT1/cmr/m/n/10 1) =
  []
 
-
-Underfull \hbox (badness 7576) in paragraph at lines 1219--1221
+[9]
+Underfull \hbox (badness 7576) in paragraph at lines 1267--1269
 []\OT1/ptm/m/it/10 Let $\OML/cmm/m/it/10 LI$ \OT1/ptm/m/it/10 and $\OML/cmm/m/i
 t/10 LR$ \OT1/ptm/m/it/10 are t-wo per-mu-ta-tion-s,
  []
 
 
-Overfull \hbox (2.44438pt too wide) in paragraph at lines 1263--1311
+Overfull \hbox (2.44438pt too wide) in paragraph at lines 1311--1359
  [] 
  []
 
-[9]
-Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 1400--1402
+Underfull \hbox (badness 10000) in paragraph at lines 1448--1450
 []\OT1/ptm/m/n/10 With the help of al-l the lem-mas such as
  []
-
-
-Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 1513.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [10]
-Underfull \hbox (badness 7504) in paragraph at lines 1658--1659
-[]\OT1/ptm/m/n/10 The proof struc-ture of \OT1/phv/m/n/10 lemma$[]$inv1$[]$on$[
-]$rules \OT1/ptm/m/n/10 and
- []
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 1561.
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-Overfull \hbox (8.78873pt too wide) in paragraph at lines 1692--1728
+Underfull \hbox (badness 7504) in paragraph at lines 1706--1707
+[]\OT1/ptm/m/n/10 The proof struc-ture of \OT1/phv/m/n/10 lemma$[]$inv1$[]$on$[
+]$rules \OT1/ptm/m/n/10 and
+ []
+
+
+Overfull \hbox (8.78873pt too wide) in paragraph at lines 1740--1776
  [] 
  []
 
 
-LaTeX Warning: Reference `subsection:introOfIsabelleProof' on page 11 undefined
- on input line 1762.
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [11]
+
+LaTeX Warning: Reference `subsection:introOfIsabelleProof' on page 12 undefined
+ on input line 1810.
 
 
-Underfull \hbox (badness 3815) in paragraph at lines 1790--1793
+Underfull \hbox (badness 3815) in paragraph at lines 1838--1841
 []\OT1/ptm/m/n/10 In the body of func-tion \OT1/phv/m/n/10 rel2proof\OT1/ptm/m/
 n/10 , $\OML/cmm/m/it/10 sprintf$ \OT1/ptm/m/n/10 writes
  []
 
 
-Underfull \hbox (badness 7273) in paragraph at lines 1790--1793
+Underfull \hbox (badness 7273) in paragraph at lines 1838--1841
 \OT1/ptm/m/n/10 a for-mat-ted da-ta to string and re-turn-s it. In line
  []
 
 
-Underfull \hbox (badness 4479) in paragraph at lines 1790--1793
+Underfull \hbox (badness 4479) in paragraph at lines 1838--1841
 [][]\OT1/ptm/m/n/10 10[][], $\OML/cmm/m/it/10 getFormField\OT1/cmr/m/n/10 (\OML
 /cmm/m/it/10 relTag\OT1/cmr/m/n/10 )$ \OT1/ptm/m/n/10 re-turn-s $\OML/cmm/m/it/
-10 f[]$ \OT1/ptm/m/n/10 if $\OML/cmm/m/it/10 relTag \OT1/cmr/m/n/10 =$
+10 f[]$ \OT1/ptm/m/n/10 if $\OML/cmm/m/it/10 relTag \OT1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 4072) in paragraph at lines 1790--1793
-$\OML/cmm/m/it/10 invHoldForRule[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 f[]\OT1/cmr
-/m/n/10 )$\OT1/ptm/m/n/10 . \OT1/phv/m/n/10 rel2proof \OT1/ptm/m/n/10 trans-for
-m-s a a re-la-
+Underfull \hbox (badness 4072) in paragraph at lines 1838--1841
+\OML/cmm/m/it/10 invHoldForRule[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 f[]\OT1/cmr/
+m/n/10 )$\OT1/ptm/m/n/10 . \OT1/phv/m/n/10 rel2proof \OT1/ptm/m/n/10 trans-form
+-s a a re-la-
  []
 
 
-Underfull \hbox (badness 3977) in paragraph at lines 1790--1793
+Underfull \hbox (badness 3977) in paragraph at lines 1838--1841
 \OT1/ptm/m/n/10 tion tag in-to a para-graph of proof.If the tag is a-
  []
 
 
-Underfull \hbox (badness 2285) in paragraph at lines 1790--1793
+Underfull \hbox (badness 2285) in paragraph at lines 1838--1841
 \OT1/ptm/m/n/10 mu-la $\OML/cmm/m/it/10 getFormField\OT1/cmr/m/n/10 (\OML/cmm/m
 /it/10 relTag\OT1/cmr/m/n/10 )$\OT1/ptm/m/n/10 , and pro-vid-ed to tel-l Is-
  []
 
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 1804
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 1852
 .
 (C:\CTEX\MiKTeX\tex\latex\psnfss\omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 1804.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 1852.
 
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 1811.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 1859.
 
- [11]
-Underfull \hbox (badness 6625) in paragraph at lines 1835--1836
+
+Underfull \hbox (badness 6625) in paragraph at lines 1883--1884
 \OT1/ptm/m/n/10 for-mu-la comes from the dis-junc-tion of for-mu-las in
  []
 
 
-Underfull \hbox (badness 3965) in paragraph at lines 1835--1836
+Underfull \hbox (badness 3965) in paragraph at lines 1883--1884
 \OT1/ptm/m/n/10 the \OT1/pcr/m/n/10 symbCases \OT1/ptm/m/n/10 field of $\OML/cm
 m/m/it/10 rec$\OT1/ptm/m/n/10 , which is re-turned by
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1835--1836
-$\OML/cmm/m/it/10 caseField\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 rec\OT1/cmr/m/n/10
- )$\OT1/ptm/m/n/10 , sub-proof-s $\OML/cmm/m/it/10 subproofs$ \OT1/ptm/m/n/10 a
-re gen-er-at-ed
+Underfull \hbox (badness 10000) in paragraph at lines 1883--1884
+\OML/cmm/m/it/10 caseField\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 rec\OT1/cmr/m/n/10 
+)$\OT1/ptm/m/n/10 , sub-proof-s $\OML/cmm/m/it/10 subproofs$ \OT1/ptm/m/n/10 ar
+e gen-er-at-ed
  []
 
 
-Underfull \hbox (badness 2452) in paragraph at lines 1835--1836
+Underfull \hbox (badness 2452) in paragraph at lines 1883--1884
 \OT1/ptm/m/n/10 by con-cate-na-tion of al-l the sub-proof-s, each of which
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1835--1836
+Underfull \hbox (badness 10000) in paragraph at lines 1883--1884
 \OT1/ptm/m/n/10 is gen-er-at-ed by $\OML/cmm/m/it/10 oneMoreOverGenI\OT1/cmr/m/
 n/10 (\OML/cmm/m/it/10 case; rel\OT1/cmr/m/n/10 )$\OT1/ptm/m/n/10 .
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1835--1836
+Underfull \hbox (badness 10000) in paragraph at lines 1883--1884
 \OT1/ptm/m/n/10 The proof is sim-ply com-posed by call-ing
  []
 
 
-Underfull \hbox (badness 5105) in paragraph at lines 1860--1861
+Underfull \hbox (badness 5105) in paragraph at lines 1908--1909
 \OT1/ptm/m/n/10 by it-s name $\OML/cmm/m/it/10 invName$\OT1/ptm/m/n/10 , $\OML/
 cmm/m/it/10 invParaNum\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 invItem\OT1/cmr/m/n/10 
 )$ \OT1/ptm/m/n/10 and
  []
 
-
-Overfull \hbox (4.38802pt too wide) in paragraph at lines 1925--1925
-$\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 ruleName; invName; asm\OT1/cmr/m/n/9 1\OML/cmm
-/m/it/9 ; asm\OT1/cmr/m/n/9 2\OML/cmm/m/it/9 ; obtain\OT1/cmr/m/n/9 1\OML/cmm/m
-/it/9 ; obtain\OT1/cmr/m/n/9 2\OML/cmm/m/it/9 ; proof\OT1/cmr/m/n/9 )$ 
+[12]
+Overfull \hbox (4.38802pt too wide) in paragraph at lines 1973--1973
+\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 ruleName; invName; asm\OT1/cmr/m/n/9 1\OML/cmm/
+m/it/9 ; asm\OT1/cmr/m/n/9 2\OML/cmm/m/it/9 ; obtain\OT1/cmr/m/n/9 1\OML/cmm/m/
+it/9 ; obtain\OT1/cmr/m/n/9 2\OML/cmm/m/it/9 ; proof\OT1/cmr/m/n/9 )$ 
  []
 
-[12] [13]
-Overfull \hbox (9.05424pt too wide) in paragraph at lines 2028--2050
+[13]
+Overfull \hbox (9.05424pt too wide) in paragraph at lines 2076--2098
  [][] 
  []
 
-(D:\git\cav\cav\cavCoOperIEE2.bbl
+(C:\Users\lyj\Documents\git\cav\cavCoOperIEE2.bbl [14]
 Underfull \hbox (badness 3646) in paragraph at lines 83--86
 []\OT1/ptm/m/n/8 Y. Li, K.d.:  par-aver-i-fi-er (2016) [][]$https : / / github 
-. com / paraVerier /$
+. com / paraVerier /
  []
 
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2076.
- [14]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 2076.
- (D:\git\cav\cav\cavCoOperIEE2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2076.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2076.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2124.
+ [15
+
+]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 2124.
+ (C:\Users\lyj\Documents\git\cav\cavCoOperIEE2.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2124.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2124.
 
 
 
@@ -1038,13 +1046,13 @@ LaTeX Warning: There were multiply-defined labels.
 ### bottom level
 (\end occurred when \ifx on line 678 was incomplete) 
 Here is how much of TeX's memory you used:
- 9352 strings out of 495354
- 130395 string characters out of 3183860
- 266951 words of memory out of 3000000
- 12100 multiletter control sequences out of 15000+200000
- 64980 words of font info for 143 fonts, out of 3000000 for 9000
+ 9361 strings out of 495354
+ 130809 string characters out of 3183859
+ 257358 words of memory out of 3000000
+ 12106 multiletter control sequences out of 15000+200000
+ 66836 words of font info for 149 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
- 31i,21n,30p,1507b,715s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 31i,21n,30p,1507b,717s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/CTEX/MiKTeX/fonts/enc/d
 vips/fontname/8r.enc}<C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb>
 <C:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/CTEX/MiKTeX/f
@@ -1072,9 +1080,9 @@ ier/ucrr8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/helvetic/uhvr8a.pfb><C:/CTEX/MiK
 TeX/fonts/type1/urw/times/utmb8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmb
 i8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/CTEX/MiKTeX/fonts/
 type1/urw/times/utmri8a.pfb>
-Output written on cavCoOperIEE2.pdf (14 pages, 578759 bytes).
+Output written on cavCoOperIEE2.pdf (15 pages, 580424 bytes).
 PDF statistics:
- 687 PDF objects out of 1000 (max. 8388607)
- 248 named destinations out of 1000 (max. 500000)
+ 686 PDF objects out of 1000 (max. 8388607)
+ 245 named destinations out of 1000 (max. 500000)
  126 words of extra memory for PDF output out of 10000 (max. 10000000)
 
