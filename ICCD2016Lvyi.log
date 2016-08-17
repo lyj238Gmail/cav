@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.4)  28 MAY 2016 10:16
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.12.9)  17 AUG 2016 22:39
 entering extended mode
 **ICCD2016Lvyi.tex
-(D:\git\cav\cav\ICCD2016Lvyi.tex
+(C:\Users\lyj\Documents\git\cav\ICCD2016Lvyi.tex
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for loaded.
-(D:\git\cav\cav\IEEEtran.cls
+(C:\Users\lyj\Documents\git\cav\IEEEtran.cls
 Document Class: IEEEtran 2007/03/05 V1.7a by Michael Shell
 -- See the "IEEEtran_HOWTO" manual for usage information.
 -- http://www.michaelshell.org/tex/ieeetran/
@@ -234,7 +234,8 @@ Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 130.
-) (D:\git\cav\cav\isabelle.sty
+)
+(C:\Users\lyj\Documents\git\cav\isabelle.sty
 \isa@parindent=\dimen130
 \isa@parskip=\dimen131
 
@@ -246,7 +247,8 @@ Including comment 'isadelimproof' Including comment 'isatagproof'
 Including comment 'isadelimML' Including comment 'isatagML'
 Including comment 'isadelimvisible' Including comment 'isatagvisible'
 Excluding comment 'isadeliminvisible' Excluding comment 'isataginvisible')
-(D:\git\cav\cav\isabellesym.sty) (C:\CTEX\MiKTeX\tex\latex\tools\theorem.sty
+(C:\Users\lyj\Documents\git\cav\isabellesym.sty)
+(C:\CTEX\MiKTeX\tex\latex\tools\theorem.sty
 Package: theorem 1995/11/23 v2.2c Theorem extension package (FMi)
 \theorem@style=\toks21
 \theorem@bodyfont=\toks22
@@ -492,7 +494,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip74
 )
-(D:\git\cav\cav\tcilatex.tex
+(C:\Users\lyj\Documents\git\cav\tcilatex.tex
 TCILATEX Macros for Scientific Word 2.5 <22 Dec 95>.
 NOTICE: This macro file is NOT proprietary and may be freely copied and distrib
 uted.
@@ -516,7 +518,7 @@ LaTeX Info: Redefining \sc on input line 563.
 \c@exercise=\count145
 \c@definition=\count146
 \c@equationnumber=\count147
-amsgen already loaded) (D:\git\cav\cav\ICCD2016Lvyi.aux)
+amsgen already loaded) (C:\Users\lyj\Documents\git\cav\ICCD2016Lvyi.aux)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 81.
 LaTeX Font Info:    ... okay on input line 81.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 81.
@@ -560,38 +562,40 @@ LaTeX Info: Redefining \ref on input line 81.
 LaTeX Info: Redefining \pageref on input line 81.
 LaTeX Info: Redefining \nameref on input line 81.
 
-(D:\git\cav\cav\ICCD2016Lvyi.out) (D:\git\cav\cav\ICCD2016Lvyi.out)
+(C:\Users\lyj\Documents\git\cav\ICCD2016Lvyi.out)
+(C:\Users\lyj\Documents\git\cav\ICCD2016Lvyi.out)
 \@outlinefile=\write4
-LaTeX Font Info:    Try loading font information for OT1+phv on input line 111.
+LaTeX Font Info:    Try loading font information for OT1+phv on input line 116.
 
 
 (C:\CTEX\MiKTeX\tex\latex\psnfss\ot1phv.fd
 File: ot1phv.fd 2001/06/04 scalable font definitions for OT1/phv.
 )
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 221.
-
-
-(C:\CTEX\MiKTeX\tex\latex\psnfss\ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-LaTeX Font Info:    Try loading font information for U+msa on input line 224.
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 116.
+LaTeX Font Info:    Try loading font information for U+msa on input line 116.
 
 (C:\CTEX\MiKTeX\tex\latex\amsfonts\umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 224.
+LaTeX Font Info:    Try loading font information for U+msb on input line 116.
 
 (C:\CTEX\MiKTeX\tex\latex\amsfonts\umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+stmry on input line 224.
+LaTeX Font Info:    Try loading font information for U+stmry on input line 116.
 
 
 (C:\CTEX\MiKTeX\tex\latex\stmaryrd\ustmry.fd)
-LaTeX Font Info:    Try loading font information for U+lasy on input line 224.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 116.
 
 (C:\CTEX\MiKTeX\tex\latex\base\ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
+)
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 226.
+
+
+(C:\CTEX\MiKTeX\tex\latex\psnfss\ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
@@ -599,78 +603,46 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 ]
-LaTeX Font Info:    Try loading font information for OMS+pcr on input line 346.
+LaTeX Font Info:    Try loading font information for OMS+pcr on input line 348.
 
 
 (C:\CTEX\MiKTeX\tex\latex\psnfss\omspcr.fd
 File: omspcr.fd 
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <7> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 346.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 348.
 
-Underfull \hbox (badness 10000) in paragraph at lines 404--407
-[]\OT1/ptm/m/it/10 We de-fine the fol-low-ing re-la-tion-s:
- []
-
-
-Underfull \hbox (badness 2922) in paragraph at lines 404--407
-$[] \OT1/cmr/m/n/10 :: \OML/cmm/m/it/10 state \OMS/cmsy/m/n/10  \OML/cmm/m/it/
-10 formula \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule \OMS/cmsy/m/n/10 ) \OML/cmm
-/m/it/10 bool$\OT1/ptm/m/it/10 ,
- []
-
-
-Underfull \hbox (badness 2922) in paragraph at lines 404--407
-$[] \OT1/cmr/m/n/10 :: \OML/cmm/m/it/10 state \OMS/cmsy/m/n/10  \OML/cmm/m/it/
-10 formula \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule \OMS/cmsy/m/n/10 ) \OML/cmm
-/m/it/10 bool$\OT1/ptm/m/it/10 ,
- []
-
-
-Underfull \hbox (badness 3199) in paragraph at lines 407--408
+Underfull \hbox (badness 3199) in paragraph at lines 409--410
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
 0 $$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/
 10 r\OT1/cmr/m/n/10 ) [][]\OMS/cmsy/m/n/10 ! \OML/cmm/m/it/10 s \OMS/cmsy/m/n/1
-0 j[]\OT1/cmr/m/n/10 =$
+0 j[]\OT1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 7415) in paragraph at lines 408--409
+Underfull \hbox (badness 7415) in paragraph at lines 410--411
 []$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 s; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/1
 0 $$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = \OML/cmm/m/it/10 
 f \OMS/cmsy/m/n/10  []! \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 
-=$
+=
  []
 
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 411--414
-$\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/10 s
-; f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 _ \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 
-j[]\OT1/cmr/m/n/10 =$
+Underfull \hbox (badness 10000) in paragraph at lines 413--416
+\OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j[]\OT1/cmr/m/n/10 = [](\OML/cmm/m/it/10 s;
+ f; r\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 _ \OML/cmm/m/it/10 s \OMS/cmsy/m/n/10 j
+[]\OT1/cmr/m/n/10 =
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 467--475
-[]\OT1/ptm/m/it/10 We de-fine a re-la-tion $\OML/cmm/m/it/10 consistent \OT1/cm
-r/m/n/10 ::$
- []
-
-
-Underfull \hbox (badness 3503) in paragraph at lines 467--475
-$\OML/cmm/m/it/10 formula []set \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 formula []s
-et \OMS/cmsy/m/n/10  \OML/cmm/m/it/10 rule []set \OMS/cmsy/m/n/10 ) \OML/cmm/m
-/it/10 bool$\OT1/ptm/m/it/10 .
- []
-
-
-Underfull \hbox (badness 1629) in paragraph at lines 516--517
+Underfull \hbox (badness 1629) in paragraph at lines 518--519
 []\OT1/ptm/m/it/10 In the fol-low-ing dis-cus-sion, we as-sume that $\OML/cmm/m
-/it/10 inv \OT1/cmr/m/n/10 =$
+/it/10 inv \OT1/cmr/m/n/10 =
  []
 
-** ATTENTION: \proof is deprecated (line 591). Use \IEEEproof instead.
+** ATTENTION: \proof is deprecated (line 593). Use \IEEEproof instead.
 
-Underfull \hbox (badness 2269) in paragraph at lines 591--594
+Underfull \hbox (badness 2269) in paragraph at lines 593--596
 \OT1/ptm/m/n/10 part-s (1) and (2) of the re-la-tion $[]\OT1/cmr/m/n/10 (\OML/c
 mm/m/it/10 pinvs\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 N\OT1/cmr/m/n/10 )\OML/cmm/m/
 it/10 ;$
@@ -678,38 +650,43 @@ it/10 ;$
 
 [3]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6.25002> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 639.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 641.
  [4] [5]
-Underfull \hbox (badness 10000) in paragraph at lines 964--966
+Underfull \hbox (badness 10000) in paragraph at lines 966--968
 
  []
 
 [6]
-Underfull \hbox (badness 3792) in paragraph at lines 979--984
+Underfull \hbox (badness 3792) in paragraph at lines 981--986
 \OT1/ptm/m/n/10 a sym-bol-ic for-mu-la sum-ma-riz-ing the re-sult-s of com-
  []
 
 
-Underfull \hbox (badness 3019) in paragraph at lines 979--984
+Underfull \hbox (badness 3019) in paragraph at lines 981--986
 \OT1/ptm/m/n/10 par-i-son be-tween $\OML/cmm/m/it/10 LR[]$ \OT1/ptm/m/n/10 and 
 al-l $\OML/cmm/m/it/10 LI[]$ \OT1/ptm/m/n/10 such that $\OML/cmm/m/it/10 j \OMS
-/cmsy/m/n/10 $
+/cmsy/m/n/10 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 997--998
-$[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI; \OT1/cmr/m/n/10 1\OML/cmm/m/it/10 
-; \OT1/cmr/m/n/10 2) = ([] \OMS/cmsy/m/n/10 6\OT1/cmr/m/n/10 = [])$\OT1/ptm/m/n
-/10 ,
+Underfull \hbox (badness 10000) in paragraph at lines 999--1000
+[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 LR; LI; \OT1/cmr/m/n/10 1\OML/cmm/m/it/10 ;
+ \OT1/cmr/m/n/10 2) = ([] \OMS/cmsy/m/n/10 6\OT1/cmr/m/n/10 = [])$\OT1/ptm/m/n/
+10 ,
  []
 
 
-Underfull \hbox (badness 7576) in paragraph at lines 1010--1012
+Underfull \hbox (badness 7576) in paragraph at lines 1012--1014
 []\OT1/ptm/m/it/10 Let $\OML/cmm/m/it/10 LI$ \OT1/ptm/m/it/10 and $\OML/cmm/m/i
 t/10 LR$ \OT1/ptm/m/it/10 are t-wo per-mu-ta-tion-s,
  []
 
 [7]
+Underfull \hbox (badness 2197) in paragraph at lines 1268--1280
+\OT1/ptm/b/n/10 Acknowledgments \OT1/ptm/m/n/10 This work was sup-port-ed by gr
+ants
+ []
+
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -721,12 +698,12 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1367.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1371.
 [8]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1367.
- (D:\git\cav\cav\ICCD2016Lvyi.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1367.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1367.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1371.
+ (C:\Users\lyj\Documents\git\cav\ICCD2016Lvyi.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1371.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1371.
 
 
 
@@ -740,15 +717,15 @@ Package rerunfilecheck Info: Checksums for `ICCD2016Lvyi.out':
  )
 (\end occurred inside a group at level 1)
 
-### simple group (level 1) entered at line 171 ({)
+### simple group (level 1) entered at line 176 ({)
 ### bottom level
 (\end occurred when \ifx on line 678 was incomplete) 
 Here is how much of TeX's memory you used:
- 9475 strings out of 495354
- 133283 string characters out of 3183860
- 265321 words of memory out of 3000000
- 12353 multiletter control sequences out of 15000+200000
- 63891 words of font info for 142 fonts, out of 3000000 for 9000
+ 9506 strings out of 495354
+ 134061 string characters out of 3183859
+ 264321 words of memory out of 3000000
+ 12383 multiletter control sequences out of 15000+200000
+ 68114 words of font info for 157 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
  31i,21n,30p,1505b,718s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/CTEX/MiKTeX/fonts/enc/d
@@ -774,9 +751,9 @@ fonts/type1/urw/courier/ucrr8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/helvetic/uhv
 r8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/CTEX/MiKTeX/fonts/
 type1/urw/times/utmbi8a.pfb><C:/CTEX/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C
 :/CTEX/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on ICCD2016Lvyi.pdf (8 pages, 408335 bytes).
+Output written on ICCD2016Lvyi.pdf (8 pages, 407898 bytes).
 PDF statistics:
- 409 PDF objects out of 1000 (max. 8388607)
+ 408 PDF objects out of 1000 (max. 8388607)
  118 named destinations out of 1000 (max. 500000)
  89 words of extra memory for PDF output out of 10000 (max. 10000000)
 

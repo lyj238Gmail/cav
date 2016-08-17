@@ -83,7 +83,12 @@
 \title{ {\sf A Novel Approach to Parameterized verification of Cache Coherence Protocols}
 }
 %\titlerunning{A Novel Approach to Parameterized verification of Cache Coherence Protocols}
-\author{\vspace{-2cm}}
+
+
+\author{Yongjian~Li$^1$, Kaiqiang~ Duan$^1$, Yi~Lv$^1$, Jun~Pang$^2$ and Shaowei~Cai$^1$\\
+${^1}$The  State Key Laboratory of Computer Science,  Institute of Software,
+ Chinese Academy of Sciences    \\
+${^2}$Computer Science and Communications, University of Luxembourg, Luxembourg  } 
 %\author{Yongjian Li  \and
 %        Kaiqiang Duan  \and
 %        Yi Lv  \and
@@ -513,7 +518,7 @@ $\wedge$ f =  aux2  \iInv1 \iInv2) \}.
 
 \end{specification}
 
-In the following discussion, we assume that $inv=\mathsf{mutual} (i_1,i_2)$, $r=\mathsf{crit}(iR_1)$, $rs= \mathsf{pinvs} (N)$, and   assumptions  $i_1 \neq N$, $i_2 \neq N$, $i_1 \neq i_2$, and $iR_1 \leq N$ hold.
+In the following discussion, we assume that $inv=\mathsf{mutual} (i_1,i_2)$, $r=\mathsf{crit}(iR_1)$, $rs= \mathsf{pinvs} (N)$, and   assumptions  $i_1 \leq N$, $i_2 \leq N$, $i_1 \neq i_2$, and $iR_1 \leq N$ hold.
 
 \begin{itemize}[leftmargin=12pt,noitemsep,nolistsep]
 %\item  $\mathsf{invHoldRule_1 }(s,\mathsf{invOnXC}( 1),
@@ -1178,7 +1183,7 @@ be found in \cite{LiCache16}. Each experiment data includes the
 ${\sf paraVerifier}$ instance, invariant sets, and Isabelle proof
 scripts.  Experiment results are summarized in Table \ref{Summarization of experiment results}. Among them,  German protocol was posted
 as a challenge to the formal verification community by
-Steven German, and FLASH protocol is a real-world protocol  at an industrial scale.  
+Steven German, and FLASH protocol is a real-world protocol  at an industrial scale.
 %German is moderate, and FLASH protocol is  at an industrial scale.
  %Among the benchmarks, the German
 %protocol   was posted
@@ -1267,7 +1272,9 @@ As we demonstrate in this work, combining theorem proving with
 automatic proof generation is promising in the field of formal
 verification of industrial protocols. Theorem proving can guarantee the rigorousness of the verification results,
 while automatic proof generation can release the burden of human interaction.
-
+\section{Acknowledgments} This work was supported by grants
+(61170073 ) from the National Natural Science Foundation of
+China.
 %\vspace{-5pt}
 %\bibliographystyle{splncsnat}
 %\bibliographystyle{IEEEtran}
